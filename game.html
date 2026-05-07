@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Evolution Farm - Final Version</title>
+  
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,sans-serif}
+    body{background:linear-gradient(145deg,#1a3c2e,#0f281e);min-height:100vh;display:flex;justify-content:center;align-items:center;padding:8px}
+    
+    .game-container{
+      max-width:500px;width:100%;background:rgba(255,248,235,0.96);
+      border-radius:28px;padding:12px 8px 16px;
+      box-shadow:0 20px 40px rgba(0,0,0,0.6);
+      border:2px solid #c9a45b;
+      display:flex;flex-direction:column;gap:8px;
+    }
+    
+    .header{
+      display:flex;justify-content:space-between;align-items:center;
+      background:#2d5e3b;padding:6px 10px;border-radius:80px;
+      color:#f7e3b2;font-weight:bold;font-size:0.7rem;flex-wrap:wrap;gap:3px;
+      border-bottom:2px solid #e7b42c;
+    }
+    
+    .badge{
+      padding:3px 7px;border-radius:18px;font-size:0.6rem;
+      display:flex;align-items:center;gap:2px;white-space:nowrap;
+    }
+    .profit-badge{background:#f3c13a;color:#2d3e1f}
+    .saldo-badge{background:#7ec8e3;color:#0a2f3c}
+    .energy-badge{background:#ff8a8a;color:#3c0a0a}
+    
+    .nav-tabs{
+      display:flex;gap:3px;background:#2d5e3b;padding:3px;border-radius:25px;overflow-x:auto;
+    }
+    .nav-tab{
+      flex:1;padding:6px 3px;border-radius:22px;text-align:center;
+      font-weight:700;font-size:0.58rem;cursor:pointer;
+      background:transparent;color:#f7e3b2;border:none;transition:0.12s;white-space:nowrap;
+    }
+    .nav-tab.active{background:#f3c13a;color:#2d3e1f;box-shadow:0 2px 5px rgba(0,0,0,0.3)}
+    
+    .farm-area{
+      background:#b6d7a8;border-radius:22px;padding:8px;
+      background-image:radial-gradient(circle at 30% 40%,#d4e8b0,#7fa35b);
+      box-shadow:inset 0 -3px 0 rgba(0,0,0,0.2),0 6px 12px rgba(0,0,0,0.4);
+      border:2px solid #5a7940;min-height:110px;
+      display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:4px;
+    }
+    
+    .creature-card{
+      background:#fef9e7;border-radius:14px;padding:4px 2px 3px;width:60px;
+      display:flex;flex-direction:column;align-items:center;
+      box-shadow:0 4px 0 #8b6f4c,0 5px 8px rgba(0,0,0,0.3);
+      border:2px solid #dbb45c;cursor:pointer;transition:0.1s;position:relative;
+      font-size:0.45rem;
+    }
+    .creature-card:active{transform:scale(0.88)}
+    .creature-card.selected{border:2px solid #ffd966;box-shadow:0 0 14px gold;transform:translateY(-2px)}
+    
+    .creature-emoji{font-size:1.5rem;filter:drop-shadow(0 2px 2px rgba(0,0,0,0.4))}
+    .creature-name{font-weight:700;font-size:0.42rem;background:#e6c468;padding:1px 4px;border-radius:8px;color:#2d3a1f;text-transform:uppercase}
+    
+    .stars-row{display:flex;gap:0.5px;margin-top:1px}
+    .star{font-size:0.4rem}
+    .star.filled{color:#f3c13a}
+    .star.empty{color:#ccc}
+    
+    .ordo-badge{
+      font-size:0.35rem;padding:1px 4px;border-radius:6px;margin-top:1px;font-weight:bold;
+    }
+    
+    .hunger-bar{width:100%;height:2px;background:#ddd;border-radius:3px;margin-top:1px}
+    .hunger-fill{height:100%;border-radius:3px;transition:0.3s}
+    
+    .btn{
+      background:#f7eac8;border:none;padding:5px 6px;border-radius:20px;
+      font-weight:700;font-size:0.55rem;color:#2c4720;
+      box-shadow:0 2px 0 #b4944c;border:1px solid #e7b42c;
+      cursor:pointer;transition:0.1s;flex:1;min-width:40px;text-align:center;
+    }
+    .btn:active{transform:translateY(1px);box-shadow:0 1px 0 #b4944c}
+    .btn:disabled{opacity:0.4;pointer-events:none}
+    .btn-gold{background:#f7b05e;border-color:#d48c2c}
+    .btn-purple{background:#c68ef0;border-color:#7b4aa0}
+    .btn-blue{background:#7ec8e3;border-color:#4a9ab0}
+    .btn-red{background:#ff8a8a;border-color:#c94b4b}
+    .btn-green{background:#a8e6cf;border-color:#5a9a70}
+    
+    .controls{display:flex;gap:3px;flex-wrap:wrap;justify-content:center;margin-top:3px}
+    
+    .modal-overlay{
+      position:fixed;top:0;left:0;width:100%;height:100%;
+      background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;
+      z-index:1000;padding:12px;
+    }
+    .modal{
+      background:#fef9e7;border-radius:20px;padding:12px;max-width:360px;width:100%;
+      text-align:center;border:3px solid #c9a45b;
+      box-shadow:0 20px 40px rgba(0,0,0,0.7);max-height:80vh;overflow-y:auto;
+    }
+    .modal h3{color:#2d3e1f;margin-bottom:4px;font-size:0.85rem}
+    
+    .code-display{
+      background:#2d3e1f;color:#f7e3b2;font-size:1.1rem;letter-spacing:2px;
+      padding:6px;border-radius:12px;margin:4px 0;font-weight:900;font-family:monospace;word-break:break-all;
+    }
+    
+    .modal input,.modal select{
+      width:100%;padding:8px;border-radius:12px;border:2px solid #c9a45b;
+      font-size:0.7rem;text-align:center;margin:3px 0;background:#fffaed;
+    }
+    
+    .hidden{display:none!important}
+    .log{background:#2b4127;border-radius:14px;padding:4px 8px;color:#f3e3b0;font-size:0.55rem;text-align:center;border:1px solid #b4944c}
+    
+    .battle-card{
+      background:#fff3cd;border-radius:12px;padding:6px;margin:3px 0;
+      display:flex;justify-content:space-between;align-items:center;border:1px solid #c9a45b;font-size:0.6rem;
+    }
+    
+    .toast{
+      position:fixed;top:10px;left:50%;transform:translateX(-50%);
+      background:#2d3e1f;color:#f7e3b2;padding:6px 14px;border-radius:20px;
+      font-weight:bold;z-index:2000;animation:fadeInOut 2s ease;font-size:0.65rem;
+    }
+    @keyframes fadeInOut{
+      0%{opacity:0;top:-20px}20%{opacity:1;top:10px}80%{opacity:1;top:10px}100%{opacity:0;top:-20px}
+    }
+
+    .tip-box{
+      background:#fff3cd;border-radius:10px;padding:6px;margin:4px 0;font-size:0.55rem;
+      border:1px dashed #c9a45b;text-align:center;
+    }
+  </style>
+</head>
+<body>
+<div class="game-container">
+  <div class="header">
+    <span>🌿 EVO FARM FINAL</span>
+    <div style="display:flex;gap:2px;flex-wrap:wrap;">
+      <span class="badge profit-badge">💰<span id="profitDisplay">0</span></span>
+      <span class="badge saldo-badge">💎<span id="saldoDisplay">0</span></span>
+      <span class="badge energy-badge">⚡<span id="energyDisplay">10</span></span>
+    </div>
+  </div>
+  
+  <div class="nav-tabs">
+    <button class="nav-tab active" data-tab="farm">🌾Farm</button>
+    <button class="nav-tab" data-tab="feed">🍖Feed</button>
+    <button class="nav-tab" data-tab="battle">⚔️Battle</button>
+    <button class="nav-tab" data-tab="market">🏪Pasar</button>
+    <button class="nav-tab" data-tab="event">🎪Event</button>
+  </div>
+  
+  <div id="tabFarm">
+    <div class="farm-area" id="farmContainer"></div>
+    <div class="tip-box">💡 <span id="tipText">Klik makhluk untuk memilih (max 2)</span></div>
+    <div class="controls">
+      <button class="btn btn-gold" id="breedButton">🐣Breed</button>
+      <button class="btn btn-purple" id="evolveButton">✨Evolve</button>
+      <button class="btn" id="sellButton">💵Sell</button>
+    </div>
+    <div class="controls">
+      <button class="btn btn-blue" id="shopButton">🛒Beli 💎</button>
+      <button class="btn btn-green" id="claimButton">🎁Klaim</button>
+      <button class="btn btn-red" id="fillStarsBtn">⭐Isi ⭐</button>
+    </div>
+  </div>
+  
+  <div id="tabFeed" class="hidden">
+    <h3 style="color:#2d3e1f;text-align:center;font-size:0.8rem;">🍖 Feeding</h3>
+    <p style="font-size:0.55rem;text-align:center;color:#5a7940;">Kenyang = Bonus Stats & Chance ⭐</p>
+    <select id="feedTargetSelect" style="width:100%;padding:6px;border-radius:10px;margin:3px 0;font-size:0.6rem;">
+      <option value="">Pilih makhluk...</option>
+    </select>
+    <div style="display:flex;gap:3px;flex-wrap:wrap;margin:3px 0;">
+      <button class="btn" onclick="feedCreature('basic')">🍞Roti 💰5</button>
+      <button class="btn btn-gold" onclick="feedCreature('meat')">🥩Daging 💰15</button>
+      <button class="btn btn-blue" onclick="feedCreature('premium')">🍰Premium 💎1</button>
+    </div>
+    <div class="tip-box">💡 Feeding 3x/hari gratis! Selanjutnya butuh energi</div>
+  </div>
+  
+  <div id="tabBattle" class="hidden">
+    <h3 style="color:#2d3e1f;text-align:center;font-size:0.8rem;">⚔️ Battle Arena</h3>
+    <p style="font-size:0.5rem;text-align:center;">Menang +2⭐, Kalah +1⭐ | Tiket: 💎5 | ⚡3</p>
+    <div class="tip-box">🎯 <span id="counterText">Pilih makhluk dengan elemen counter!</span></div>
+    <select id="battleCreatureSelect" style="width:100%;padding:6px;border-radius:10px;margin:3px 0;font-size:0.6rem;">
+      <option value="">Pilih makhlukmu...</option>
+    </select>
+    <div id="opponentList" style="max-height:150px;overflow-y:auto;margin:4px 0;"></div>
+  </div>
+  
+  <div id="tabMarket" class="hidden">
+    <h3 style="color:#2d3e1f;text-align:center;font-size:0.8rem;">🏪 Pasar</h3>
+    <p style="font-size:0.5rem;text-align:center;">Fee 10% admin</p>
+    <div class="controls">
+      <button class="btn btn-gold" id="sellMarketBtn">📤Jual</button>
+      <button class="btn btn-blue" id="refreshMarketBtn">🔄Refresh</button>
+      <button class="btn btn-outline" id="myListingsBtn">📋Listku</button>
+    </div>
+    <div id="marketListings" style="max-height:150px;overflow-y:auto;"></div>
+  </div>
+  
+  <div id="tabEvent" class="hidden">
+    <h3 style="color:#2d3e1f;text-align:center;font-size:0.8rem;">🎪 Event & Referral</h3>
+    <button class="btn btn-gold" id="enterGiveawayBtn" style="margin:3px;">🎟️Ikut Giveaway (500💎)</button>
+    <div id="limitedShop" style="margin:4px 0;"></div>
+    <div style="margin-top:6px;">
+      <p style="font-size:0.6rem;font-weight:bold;">🔗 Link Referral:</p>
+      <div class="code-display" id="refLink" style="font-size:0.55rem;">-</div>
+      <button class="btn btn-green" id="copyRefBtn">📋Copy Link</button>
+      <input type="text" id="refCodeInput" placeholder="Kode referral teman" style="width:100%;padding:6px;border-radius:10px;margin:3px 0;font-size:0.6rem;">
+      <button class="btn btn-gold" id="submitRefBtn">✅Klaim 50💎</button>
+      <p id="refStatus" style="font-size:0.5rem;"></p>
+    </div>
+  </div>
+  
+  <div class="log" id="logMessage">🌱 Selamat datang di Evolution Farm Final!</div>
+</div>
+
+<!-- MODAL BELI KOIN -->
+<div class="modal-overlay hidden" id="buyModal">
+  <div class="modal">
+    <h3>🛒 Beli Koin Premium</h3>
+    <p style="font-size:0.65rem;">Rp10.000 = 100 💎</p>
+    <div class="code-display" id="generatedCode">----</div>
+    <p style="font-size:0.55rem;">📋 Copy kode, transfer, kirim bukti ke WA</p>
+    <p style="font-size:0.5rem;">go pay 088989727277 a.n. <b>Eko koerniawan</b></p>
+    <p style="font-size:0.5rem;">WA: <b>088989727277</b></p>
+    <button class="btn btn-blue" id="copyCodeBtn">📋Copy Kode</button>
+    <button class="btn" id="closeBuyModal">❌Tutup</button>
+  </div>
+</div>
+
+<!-- MODAL KLAIM KODE -->
+<div class="modal-overlay hidden" id="claimModal">
+  <div class="modal">
+    <h3>🎁 Klaim Kode</h3>
+    <input type="text" id="claimCodeInput" placeholder="EVO-XXXXXX" autocomplete="off" style="font-size:0.7rem;">
+    <button class="btn btn-green" id="submitClaimBtn">✅Klaim 100💎</button>
+    <button class="btn" id="closeClaimModal">❌Tutup</button>
+    <p id="claimStatus" style="font-size:0.6rem;margin-top:4px;"></p>
+  </div>
+</div>
+
+<!-- MODAL BATTLE RESULT -->
+<div class="modal-overlay hidden" id="battleResultModal">
+  <div class="modal" id="battleResultContent" style="font-size:0.65rem;"></div>
+</div>
+
+<!-- MODAL JUAL PASAR -->
+<div class="modal-overlay hidden" id="sellMarketModal">
+  <div class="modal">
+    <h3>📤 Jual di Pasar</h3>
+    <select id="sellCreatureSelect" style="font-size:0.6rem;"></select>
+    <input type="number" id="sellPriceInput" placeholder="Harga (💎)" min="1" value="10" style="font-size:0.6rem;">
+    <p style="font-size:0.5rem;">Fee 10%: <span id="feePreview">0</span>💎 | Terima: <span id="netPreview">0</span>💎</p>
+    <button class="btn btn-gold" id="confirmSellMarketBtn">📤List</button>
+    <button class="btn" id="closeSellMarket">❌Batal</button>
+  </div>
+</div>
+
+<!-- MODAL LISTINGKU -->
+<div class="modal-overlay hidden" id="myListingsModal">
+  <div class="modal">
+    <h3>📋 Listing Saya</h3>
+    <div id="myListingsContent" style="max-height:150px;overflow-y:auto;font-size:0.6rem;"></div>
+    <button class="btn" id="closeMyListings">❌Tutup</button>
+  </div>
+</div>
+
+<script>
+// ============ INIT TELEGRAM & FIREBASE ============
+const tg = window.Telegram.WebApp;
+tg.expand();
+tg.ready();
+
+let userId;
+if (tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.id) {
+  userId = 'tg_' + tg.initDataUnsafe.user.id;
+} else {
+  userId = localStorage.getItem('evo_user_id');
+  if (!userId) {
+    userId = 'user_' + Math.random().toString(36).substr(2, 9);
+  }
+}
+localStorage.setItem('evo_user_id', userId);
+
+const tgUser = tg.initDataUnsafe?.user || {};
+const tgUsername = tgUser.username || tgUser.first_name || 'Player';
+
+// ============ FIREBASE CONFIG ============
+const firebaseConfig = {
+  apiKey: "AIZaSyC2Gb6WtY1bn05fI_3K9x3",
+  authDomain: "evo-farm-game.firebaseapp.com",
+  databaseURL: "https://evo-farm-game-default-rtdb.firebaseio.com",
+  projectId: "evo-farm-game",
+  storageBucket: "evo-farm-game.appspot.com",
+  messagingSenderId: "870289339504",
+  appId: "1:870289339504:web:154c283a0e8b5d4c28a3e"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// ============ DATA MAKHLUK (5 Ordo × 5 per Level) ============
+const ORDOS = {
+  herbisida: { name: "🌿 Herbisida", emoji: "🌿", color: "#4caf50", desc: "Poison & Heal", strong: "akuatik", weak: "magma,aerial" },
+  aerial:    { name: "🦅 Aerial", emoji: "🦅", color: "#87ceeb", desc: "Speed & Crit", strong: "herbisida", weak: "akuatik,mystic" },
+  akuatik:   { name: "💧 Akuatik", emoji: "💧", color: "#2196f3", desc: "Defense & Regen", strong: "magma", weak: "herbisida,aerial" },
+  magma:     { name: "🔥 Magma", emoji: "🔥", color: "#f44336", desc: "Attack & Burn", strong: "herbisida,aerial", weak: "akuatik,mystic" },
+  mystic:    { name: "🔮 Mystic", emoji: "🔮", color: "#9c27b0", desc: "Random & Steal", strong: "aerial,magma", weak: "mystic" }
+};
+
+function generateCreatures() {
+  const allCreatures = [];
+  let id = 0;
+  
+  const stageData = [
+    { stage: 1, hp: 30, atk: 6, def: 2, spd: 3, value: 5,  nameSuffix: "Sprout" },
+    { stage: 2, hp: 50, atk: 12, def: 5, spd: 5, value: 15, nameSuffix: "Bloom" },
+    { stage: 3, hp: 75, atk: 22, def: 10, spd: 6, value: 40, nameSuffix: "Giant" },
+    { stage: 4, hp: 110, atk: 38, def: 16, spd: 8, value: 100, nameSuffix: "Lord" }
+  ];
+  
+  const ordoKeys = Object.keys(ORDOS);
+  const ordoNames = {
+    herbisida: ["Weed", "Thorn", "Vine", "Briar", "Mandrake"],
+    aerial:    ["Gust", "Storm", "Cloud", "Zephyr", "Typhoon"],
+    akuatik:   ["Drop", "Coral", "Tide", "Reef", "Abyss"],
+    magma:     ["Ember", "Lava", "Flare", "Cinder", "Inferno"],
+    mystic:    ["Wisp", "Rune", "Shade", "Echo", "Void"]
+  };
+  
+  stageData.forEach(function(stageInfo) {
+    ordoKeys.forEach(function(ordoKey) {
+      var ordoNamesList = ordoNames[ordoKey];
+      ordoNamesList.forEach(function(name, idx) {
+        var variance = idx / 4;
+        allCreatures.push({
+          id: id++,
+          name: name + " " + stageInfo.nameSuffix,
+          emoji: ORDOS[ordoKey].emoji,
+          stage: stageInfo.stage,
+          ordo: ordoKey,
+          ordoName: ORDOS[ordoKey].name,
+          ordoEmoji: ORDOS[ordoKey].emoji,
+          ordoColor: ORDOS[ordoKey].color,
+          strong: ORDOS[ordoKey].strong,
+          weak: ORDOS[ordoKey].weak,
+          hp: Math.floor(stageInfo.hp * (1 + variance * 0.5)),
+          atk: Math.floor(stageInfo.atk * (1 + variance * 0.6)),
+          def: Math.floor(stageInfo.def * (1 + variance * 0.4)),
+          spd: Math.floor(stageInfo.spd * (1 + variance * 0.5)),
+          value: Math.floor(stageInfo.value * (1 + variance * 0.8)),
+          skill: getSkill(ordoKey, stageInfo.stage),
+          limited: false
+        });
+      });
+    });
+  });
+  
+  allCreatures.push(
+    { id: id++, name: "Unicorn", emoji: "🦄", stage: 3, ordo: "mystic", ordoName: ORDOS.mystic.name, ordoEmoji: ORDOS.mystic.emoji, ordoColor: ORDOS.mystic.color, strong: "aerial,magma", weak: "mystic", hp: 80, atk: 28, def: 12, spd: 16, value: 80, skill: "Rainbow Heal (+15 HP)", limited: true },
+    { id: id++, name: "Phoenix Ltd", emoji: "🔥", stage: 4, ordo: "magma", ordoName: ORDOS.magma.name, ordoEmoji: ORDOS.magma.emoji, ordoColor: ORDOS.magma.color, strong: "herbisida,aerial", weak: "akuatik,mystic", hp: 120, atk: 50, def: 14, spd: 20, value: 200, skill: "Rebirth (Revive 1x)", limited: true }
+  );
+  
+  return allCreatures;
+}
+
+function getSkill(ordo, stage) {
+  var skills = {
+    herbisida: { 1: "Poison I (10%)", 2: "Poison II (20%)", 3: "Poison III (35%)", 4: "Poison IV (50%)" },
+    aerial:    { 1: "Pierce I (30% DEF)", 2: "Pierce II (50%)", 3: "Crit Up (20%)", 4: "Chain Hit (3x)" },
+    akuatik:   { 1: "Regen I (+3/r)", 2: "Regen II (+6/r)", 3: "Shield (20% block)", 4: "Regen IV (+20/r)" },
+    magma:     { 1: "Burn I (3/r)", 2: "Burn II (6/r)", 3: "Fury (+30% ATK)", 4: "Meteor (200% DMG)" },
+    mystic:    { 1: "Steal I", 2: "Copy Skill", 3: "Random Buff", 4: "Void (Negate 1 hit)" }
+  };
+  return skills[ordo] ? skills[ordo][stage] || "???" : "???";
+}
+
+var creatures = generateCreatures();
+
+// ============ STATE GAME ============
+var farm = [];
+var profit = 20;
+var saldo = 0;
+var energy = 15;
+var selectedIndices = [];
+var dailyFeedCount = 0;
+var dailyBattleCount = 0;
+
+// ============ UI FUNCTIONS ============
+function updateUI() {
+  renderFarm();
+  document.getElementById('profitDisplay').textContent = profit;
+  document.getElementById('saldoDisplay').textContent = saldo;
+  document.getElementById('energyDisplay').textContent = energy;
+  saveData();
+}
+
+function getCreatureStats(c) {
+  var stars = c.stars || 0;
+  var starMult = 1 + (stars * 0.12);
+  var hunger = c.hunger || 100;
+  var hungerMult = hunger >= 90 ? 1.15 : hunger >= 60 ? 1.0 : 0.75;
+  return {
+    hp: Math.floor(c.hp * starMult * hungerMult),
+    atk: Math.floor(c.atk * starMult * hungerMult),
+    def: Math.floor(c.def * starMult * hungerMult),
+    spd: Math.floor(c.spd * starMult * hungerMult)
+  };
+}
+
+function renderFarm() {
+  var container = document.getElementById('farmContainer');
+  if (farm.length === 0) {
+    container.innerHTML = '<div style="color:#3b5526;font-size:0.65rem;text-align:center;">🌾 Ladang kosong<br>Breed untuk mulai!</div>';
+    return;
+  }
+  
+  container.innerHTML = farm.map(function(c, i) {
+    var sel = selectedIndices.indexOf(i) >= 0 ? 'selected' : '';
+    var stars = c.stars || 0;
+    var hunger = c.hunger || 100;
+    var hColor = hunger >= 90 ? '#4caf50' : hunger >= 50 ? '#ff9800' : '#f44336';
+    
+    var starsHTML = '';
+    for (var s = 0; s < 5; s++) {
+      starsHTML += '<span class="star ' + (s < stars ? 'filled' : 'empty') + '">' + (s < stars ? '⭐' : '☆') + '</span>';
+    }
+    
+    return '<div class="creature-card ' + sel + '" data-index="' + i + '" style="border-left: 3px solid ' + (c.ordoColor || '#ccc') + ';">' +
+      (c.limited ? '<span style="position:absolute;top:-4px;right:-4px;background:red;color:white;font-size:0.3rem;padding:1px 3px;border-radius:5px;z-index:1;">LTD</span>' : '') +
+      '<span class="creature-emoji">' + c.emoji + '</span>' +
+      '<span class="creature-name">' + c.name + '</span>' +
+      '<div class="stars-row">' + starsHTML + '</div>' +
+      '<span class="ordo-badge" style="background:' + (c.ordoColor || '#ccc') + ';color:white;">' + (c.ordoName || '???') + '</span>' +
+      '<div class="hunger-bar"><div class="hunger-fill" style="width:' + hunger + '%;background:' + hColor + ';"></div></div>' +
+      '<span style="font-size:0.3rem;color:#5a7940;">S' + c.stage + ' | 💰' + c.value + '</span>' +
+    '</div>';
+  }).join('');
+  
+  var cards = document.querySelectorAll('.creature-card');
+  cards.forEach(function(card) {
+    card.addEventListener('click', function() {
+      var idx = parseInt(this.dataset.index);
+      var pos = selectedIndices.indexOf(idx);
+      if (pos >= 0) {
+        selectedIndices.splice(pos, 1);
+      } else if (selectedIndices.length < 2) {
+        selectedIndices.push(idx);
+      } else {
+        showToast('⚠️ Maksimal 2 makhluk dipilih!');
+      }
+      updateUI();
+    });
+  });
+}
+
+function showToast(msg) {
+  var t = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(function() { t.remove(); }, 1800);
+}
+
+function setLog(msg) {
+  document.getElementById('logMessage').textContent = msg;
+}
+
+// ============ SAVE / LOAD ============
+function saveData() {
+  db.ref('users/' + userId).set({
+    farm: farm,
+    profit: profit,
+    saldo: saldo,
+    energy: energy,
+    dailyFeedCount: dailyFeedCount,
+    dailyBattleCount: dailyBattleCount,
+    username: tgUsername,
+    lastActive: Date.now()
+  });
+}
+
+function loadData() {
+  db.ref('users/' + userId).once('value').then(function(snap) {
+    if (snap.exists()) {
+      var d = snap.val();
+      farm = d.farm || [];
+      profit = d.profit || 20;
+      saldo = d.saldo || 0;
+      energy = d.energy || 15;
+      dailyFeedCount = d.dailyFeedCount || 0;
+      dailyBattleCount = d.dailyBattleCount || 0;
+    } else {
+      farm = [
+        { ...creatures[0], stars: 0, hunger: 100 },
+        { ...creatures[5], stars: 0, hunger: 90 },
+        { ...creatures[10], stars: 0, hunger: 80 }
+      ];
+    }
+    updateUI();
+    updateAllTabs();
+  });
+}
+
+// ============ GAME ACTIONS ============
+function breedCreatures() {
+  if (selectedIndices.length !== 2) { showToast('⚠️ Pilih 2 makhluk!'); return; }
+  if (energy < 2) { showToast('⚡ Energi kurang! Butuh 2'); return; }
+  
+  var sorted = [...selectedIndices].sort(function(a, b) { return b - a; });
+  var p1 = farm[sorted[0]], p2 = farm[sorted[1]];
+  
+  if (p1.stage >= 4 || p2.stage >= 4) { showToast('❌ Stage 4 tidak bisa breeding!'); return; }
+  if ((p1.hunger || 100) < 30 || (p2.hunger || 100) < 30) { showToast('😰 Makhluk terlalu lapar!'); return; }
+  
+  for (var i = 0; i < sorted.length; i++) { farm.splice(sorted[i], 1); }
+  
+  var newStage = Math.floor((p1.stage + p2.stage) / 2) + 1;
+  if (newStage > 4) newStage = 4;
+  
+  var parentOrdo = Math.random() < 0.5 ? p1.ordo : p2.ordo;
+  
+  var candidates = creatures.filter(function(c) { return c.ordo === parentOrdo && c.stage === newStage && !c.limited; });
+  if (candidates.length === 0) {
+    candidates = creatures.filter(function(c) { return c.stage === newStage && !c.limited; });
+  }
+  
+  var baby = candidates[Math.floor(Math.random() * candidates.length)] || creatures[0];
+  farm.push({ ...baby, stars: 0, hunger: 70 });
+  
+  energy -= 2;
+  selectedIndices = [];
+  updateUI();
+  showToast('🐣 ' + baby.emoji + ' ' + baby.name + '! (' + baby.ordoName + ')');
+  setLog('Breeding sukses! ' + baby.emoji + ' ' + baby.name + ' | Ordo: ' + baby.ordoName + ' | Skill: ' + baby.skill);
+}
+
+function evolveCreature() {
+  if (selectedIndices.length !== 1) { showToast('⚠️ Pilih 1 makhluk!'); return; }
+  var idx = selectedIndices[0], cr = farm[idx];
+  
+  if (cr.stage >= 4) { showToast('🔮 Stage maksimal!'); return; }
+  if ((cr.stars || 0) < 5) { showToast('⭐ Bintang belum penuh! (' + (cr.stars || 0) + '/5)'); return; }
+  if (profit < 10) { showToast('💰 Profit kurang! Butuh 10'); return; }
+  
+  var next = creatures.filter(function(c) { return c.ordo === cr.ordo && c.stage === cr.stage + 1 && !c.limited; });
+  if (next.length === 0) next = creatures.filter(function(c) { return c.stage === cr.stage + 1 && !c.limited; });
+  if (next.length === 0) { showToast('❌ Tidak bisa evolve!'); return; }
+  
+  profit -= 10;
+  var evolved = next[Math.floor(Math.random() * next.length)];
+  farm[idx] = { ...evolved, stars: 0, hunger: 100 };
+  
+  selectedIndices = [];
+  updateUI();
+  showToast('✨ ' + evolved.emoji + ' ' + evolved.name + '!');
+  setLog('Evolusi! ' + evolved.emoji + ' ' + evolved.name + ' | Skill baru: ' + evolved.skill);
+}
+
+function sellCreatures() {
+  if (selectedIndices.length === 0) { showToast('⚠️ Pilih makhluk untuk dijual!'); return; }
+  var sorted = [...selectedIndices].sort(function(a, b) { return b - a; });
+  var total = 0;
+  for (var i = 0; i < sorted.length; i++) { total += farm[sorted[i]].value; farm.splice(sorted[i], 1); }
+  profit += total;
+  selectedIndices = [];
+  updateUI();
+  showToast('💵 Terjual! +💰' + total);
+}
+
+// ============ FEEDING ============
+function feedCreature(type) {
+  var idx = parseInt(document.getElementById('feedTargetSelect').value);
+  if (isNaN(idx) || !farm[idx]) { showToast('⚠️ Pilih makhluk!'); return; }
+  if (energy < 1) { showToast('⚡ Energi habis!'); return; }
+  
+  var cost, costType, hungerGain, starChance;
+  if (type === 'basic') { cost = 5; costType = 'profit'; hungerGain = 35; starChance = 0.25; }
+  else if (type === 'meat') { cost = 15; costType = 'profit'; hungerGain = 65; starChance = 0.45; }
+  else { cost = 1; costType = 'saldo'; hungerGain = 100; starChance = 0.7; }
+  
+  if (costType === 'profit' && profit < cost) { showToast('💰 Profit kurang!'); return; }
+  if (costType === 'saldo' && saldo < cost) { showToast('💎 Saldo kurang!'); return; }
+  
+  if (costType === 'profit') profit -= cost; else saldo -= cost;
+  farm[idx].hunger = Math.min(100, (farm[idx].hunger || 50) + hungerGain);
+  
+  if (Math.random() < starChance && (farm[idx].stars || 0) < 5) {
+    farm[idx].stars = (farm[idx].stars || 0) + 1;
+    showToast('⭐ +1 Bintang! (' + farm[idx].stars + '/5)');
+  }
+  
+  energy--;
+  updateUI();
+  updateAllTabs();
+  showToast('🍖 Kenyang +' + hungerGain + '!');
+}
+
+// ============ BATTLE ============
+function loadOpponents() {
+  db.ref('users').once('value').then(function(snap) {
+    var users = snap.val() || {};
+    var container = document.getElementById('opponentList');
+    var html = '';
+    
+    Object.entries(users).forEach(function(entry) {
+      var uid = entry[0], ud = entry[1];
+      if (uid === userId) return;
+      if (!ud.farm || !ud.farm.length) return;
+      
+      ud.farm.forEach(function(c, i) {
+        var st = getCreatureStats(c);
+        html += '<div class="battle-card">' +
+          '<div>' + c.emoji + ' <b>' + c.name + '</b> ' +
+          '<span style="background:' + (c.ordoColor || '#ccc') + ';color:white;font-size:0.4rem;padding:1px 4px;border-radius:4px;">' + (c.ordoName || '???') + '</span>' +
+          '<br><small>S' + c.stage + ' ⭐' + (c.stars || 0) + ' | ❤️' + st.hp + ' ⚔️' + st.atk + ' 🛡️' + st.def + '</small></div>' +
+          '<button class="btn btn-red" onclick="startBattle(\'' + uid + '\', ' + i + ')" style="font-size:0.45rem;padding:3px 6px;">⚔️</button>' +
+        '</div>';
+      });
+    });
+    
+    container.innerHTML = html || '<p style="font-size:0.6rem;text-align:center;">Tidak ada lawan tersedia</p>';
+  });
+}
+
+function startBattle(opponentId, oppIndex) {
+  var myIdx = parseInt(document.getElementById('battleCreatureSelect').value);
+  if (isNaN(myIdx) || !farm[myIdx]) { showToast('⚠️ Pilih makhlukmu!'); return; }
+  if (energy < 3) { showToast('⚡ Energi kurang! Butuh 3'); return; }
+  if (saldo < 5) { showToast('💎 Tiket battle = 5 💎!'); return; }
+  
+  saldo -= 5;
+  energy -= 3;
+  
+  db.ref('users/' + opponentId).once('value').then(function(snap) {
+    var oppData = snap.val();
+    if (!oppData || !oppData.farm || !oppData.farm[oppIndex]) {
+      showToast('❌ Lawan sudah tidak tersedia!');
+      saldo += 5; energy += 3;
+      return;
+    }
+    
+    var myC = farm[myIdx], oppC = oppData.farm[oppIndex];
+    var myS = getCreatureStats(myC), oppS = getCreatureStats(oppC);
+    
+    var myDmgMult = 1, oppDmgMult = 1;
+    var myStrong = (myC.strong || '').split(',');
+    var oppStrong = (oppC.strong || '').split(',');
+    
+    if (myStrong.indexOf(oppC.ordo) >= 0) myDmgMult = 2;
+    if (oppStrong.indexOf(myC.ordo) >= 0) oppDmgMult = 2;
+    if (myC.ordo === oppC.ordo && myC.ordo === 'mystic') { myDmgMult = 2; oppDmgMult = 2; }
+    
+    var myHP = myS.hp, oppHP = oppS.hp;
+    var battleLog = '';
+    var round = 0;
+    var first = myS.spd >= oppS.spd ? 'me' : 'opp';
+    var myPoisonChance = myC.ordo === 'herbisida' ? (myC.stage * 10) : 0;
+    var oppPoisonChance = oppC.ordo === 'herbisida' ? (oppC.stage * 10) : 0;
+    var oppPoisoned = false, myPoisoned = false;
+    
+    while (myHP > 0 && oppHP > 0 && round < 20) {
+      round++;
+      
+      if (myPoisoned) { myHP -= Math.floor(myS.hp * 0.05); battleLog += '☠️Kamu kena poison! '; }
+      if (oppPoisoned) { oppHP -= Math.floor(oppS.hp * 0.05); battleLog += '☠️Lawan kena poison! '; }
+      if (myHP <= 0 || oppHP <= 0) break;
+      
+      if (first === 'me') {
+        var dmg = Math.max(5, Math.floor((myS.atk * myDmgMult) - oppS.def));
+        if (myC.ordo === 'aerial' && Math.random() < 0.2) { dmg = Math.floor(dmg * 1.5); battleLog += '💥CRIT! '; }
+        oppHP -= dmg;
+        battleLog += 'R' + round + ':Kamu ' + (myDmgMult > 1 ? '🔥' : '') + '-' + dmg + ' | ';
+        
+        if (myPoisonChance > 0 && Math.random() * 100 < myPoisonChance && !oppPoisoned) { oppPoisoned = true; battleLog += '☠️Poison! '; }
+        if (oppHP <= 0) break;
+        
+        var odmg = Math.max(5, Math.floor((oppS.atk * oppDmgMult) - myS.def));
+        if (oppC.ordo === 'aerial' && Math.random() < 0.2) { odmg = Math.floor(odmg * 1.5); battleLog += '💥CRIT! '; }
+        myHP -= odmg;
+        battleLog += 'Lawan ' + (oppDmgMult > 1 ? '🔥' : '') + '-' + odmg + '\n';
+        
+        if (oppPoisonChance > 0 && Math.random() * 100 < oppPoisonChance && !myPoisoned) { myPoisoned = true; battleLog += '☠️Kamu kena poison! '; }
+      } else {
+        var odmg2 = Math.max(5, Math.floor((oppS.atk * oppDmgMult) - myS.def));
+        if (oppC.ordo === 'aerial' && Math.random() < 0.2) { odmg2 = Math.floor(odmg2 * 1.5); battleLog += '💥CRIT! '; }
+        myHP -= odmg2;
+        battleLog += 'R' + round + ':Lawan ' + (oppDmgMult > 1 ? '🔥' : '') + '-' + odmg2 + ' | ';
+        
+        if (oppPoisonChance > 0 && Math.random() * 100 < oppPoisonChance && !myPoisoned) { myPoisoned = true; battleLog += '☠️Poison! '; }
+        if (myHP <= 0) break;
+        
+        var dmg2 = Math.max(5, Math.floor((myS.atk * myDmgMult) - oppS.def));
+        if (myC.ordo === 'aerial' && Math.random() < 0.2) { dmg2 = Math.floor(dmg2 * 1.5); battleLog += '💥CRIT! '; }
+        oppHP -= dmg2;
+        battleLog += 'Kamu ' + (myDmgMult > 1 ? '🔥' : '') + '-' + dmg2 + '\n';
+        
+        if (myPoisonChance > 0 && Math.random() * 100 < myPoisonChance && !oppPoisoned) { oppPoisoned = true; battleLog += '☠️Poison! '; }
+      }
+    }
+    
+    var won = oppHP <= 0;
+    var starsGain = won ? 2 : 1;
+    
+    if ((farm[myIdx].stars || 0) < 5) {
+      farm[myIdx].stars = Math.min(5, (farm[myIdx].stars || 0) + starsGain);
+    }
+    
+    if (won) { saldo += 10; showToast('🏆 MENANG! +10💎 +2⭐'); }
+    else { showToast('😢 Kalah +1⭐'); }
+    
+    document.getElementById('battleResultContent').innerHTML =
+      '<h3>' + (won ? '🏆 MENANG!' : '😢 KALAH') + '</h3>' +
+      '<p>' + (won ? '+10 💎 +2⭐' : '-5 💎 +1⭐') + '</p>' +
+      '<p style="font-size:0.5rem;">Element: ' + (myDmgMult > 1 ? '🔥Counter!' : oppDmgMult > 1 ? '⚠️Dicounter!' : '⚖️Normal') + '</p>' +
+      '<pre style="font-size:0.45rem;text-align:left;max-height:100px;overflow-y:auto;">' + battleLog + '</pre>' +
+      '<button class="btn" onclick="document.getElementById(\'battleResultModal\').classList.add(\'hidden\')">✅OK</button>';
+    document.getElementById('battleResultModal').classList.remove('hidden');
+    updateUI();
+    loadOpponents();
+  });
+}
+
+// ============ FILL STARS ============
+function fillStars() {
+  if (selectedIndices.length !== 1) { showToast('⚠️ Pilih 1 makhluk!'); return; }
+  var idx = selectedIndices[0], cr = farm[idx];
+  var needed = 5 - (cr.stars || 0);
+  if (needed <= 0) { showToast('✅ Bintang sudah penuh!'); return; }
+  var cost = needed * 2;
+  if (saldo < cost) { showToast('💎 Saldo kurang! Butuh ' + cost + ' 💎'); return; }
+  if (confirm('Isi ' + needed + ' bintang = ' + cost + ' 💎?')) {
+    saldo -= cost;
+    farm[idx].stars = 5;
+    updateUI();
+    showToast('⭐ Bintang penuh! Siap evolve!');
+  }
+}
+
+// ============ NAVIGASI ============
+document.querySelectorAll('.nav-tab').forEach(function(tab) {
+  tab.addEventListener('click', function() {
+    document.querySelectorAll('.nav-tab').forEach(function(t) { t.classList.remove('active'); });
+    this.classList.add('active');
+    var tabMap = { farm: 'tabFarm', feed: 'tabFeed', battle: 'tabBattle', market: 'tabMarket', event: 'tabEvent' };
+    Object.values(tabMap).forEach(function(id) { document.getElementById(id).classList.add('hidden'); });
+    document.getElementById(tabMap[this.dataset.tab]).classList.remove('hidden');
+    
+    if (this.dataset.tab === 'battle') {
+      loadOpponents();
+      document.getElementById('battleCreatureSelect').innerHTML = farm.map(function(c, i) {
+        return '<option value="' + i + '">' + c.emoji + ' ' + c.name + ' S' + c.stage + ' ⭐' + (c.stars || 0) + ' ' + c.ordoName + '</option>';
+      }).join('');
+      document.getElementById('counterText').textContent = '🌿>💧>🔥>🌿 | 🦅>🌿 | 🔮>🦅🔥 | 🔮<🔮';
+    }
+    if (this.dataset.tab === 'feed') { updateFeedSelect(); }
+    if (this.dataset.tab === 'market') { loadMarket(); }
+    if (this.dataset.tab === 'event') { loadLimitedShop(); loadRefData(); }
+  });
+});
+
+function updateFeedSelect() {
+  document.getElementById('feedTargetSelect').innerHTML = farm.map(function(c, i) {
+    return '<option value="' + i + '">' + c.emoji + ' ' + c.name + ' S' + c.stage + ' ⭐' + (c.stars || 0) + '/5 🍖' + (c.hunger || 100) + '%</option>';
+  }).join('');
+}
+
+function updateAllTabs() { updateFeedSelect(); }
+
+// ============ MARKET ============
+function loadMarket() {
+  db.ref('market').orderByChild('timestamp').limitToLast(20).once('value').then(function(snap) {
+    var listings = snap.val() || {};
+    document.getElementById('marketListings').innerHTML = Object.entries(listings).map(function(entry) {
+      var k = entry[0], l = entry[1];
+      return '<div class="battle-card">' +
+        '<div>' + l.emoji + ' <b>' + l.name + '</b> S' + l.stage + ' <span style="background:' + l.ordoColor + ';color:white;font-size:0.35rem;padding:1px 3px;border-radius:3px;">' + l.ordoName + '</span><br><small>' + l.sellerName + ' | ⭐' + (l.stars || 0) + '</small></div>' +
+        '<div style="text-align:right;">💎' + l.price + ' ' + (!l.sold ? '<button class="btn btn-blue" onclick="buyMarket(\'' + k + '\',' + l.price + ')" style="font-size:0.4rem;padding:2px 5px;">Beli</button>' : '✅') + '</div>' +
+      '</div>';
+    }).join('') || '<p style="font-size:0.6rem;text-align:center;">Belum ada listing</p>';
+  });
+}
+
+function buyMarket(key, price) {
+  if (saldo < price) { showToast('💎 Saldo kurang!'); return; }
+  db.ref('market/' + key).once('value').then(function(snap) {
+    var l = snap.val();
+    if (!l || l.sold) { showToast('❌ Sudah terjual!'); return; }
+    if (l.sellerId === userId) { showToast('❌ Tidak bisa beli sendiri!'); return; }
+    
+    var fee = Math.floor(price * 0.1);
+    var net = price - fee;
+    
+    saldo -= price;
+    farm.push({
+      name: l.name, emoji: l.emoji, stage: l.stage,
+      ordo: l.ordo, ordoName: l.ordoName, ordoColor: l.ordoColor,
+      ordoEmoji: l.ordoEmoji, strong: l.strong, weak: l.weak,
+      hp: l.hp, atk: l.atk, def: l.def, spd: l.spd,
+      value: l.value, skill: l.skill, limited: l.limited,
+      stars: l.stars || 0, hunger: 80
+    });
+    
+    db.ref('users/' + l.sellerId + '/saldo').once('value').then(function(s) {
+      db.ref('users/' + l.sellerId + '/saldo').set((s.val() || 0) + net);
+    });
+    
+    db.ref('market/' + key + '/sold').set(true);
+    db.ref('market/' + key + '/buyerId').set(userId);
+    
+    db.ref('admin/fees').once('value').then(function(fs) {
+      db.ref('admin/fees').set((fs.val() || 0) + fee);
+    });
+    
+    updateUI();
+    loadMarket();
+    showToast('🛒 ' + l.emoji + ' ' + l.name + '! Fee:' + fee + '💎');
+  });
+}
+
+// ============ EVENT LISTENERS ============
+document.getElementById('breedButton').addEventListener('click', breedCreatures);
+document.getElementById('evolveButton').addEventListener('click', evolveCreature);
+document.getElementById('sellButton').addEventListener('click', sellCreatures);
+document.getElementById('fillStarsBtn').addEventListener('click', fillStars);
+
+document.getElementById('shopButton').addEventListener('click', function() {
+  document.getElementById('generatedCode').textContent = 'EVO-' + userId.substr(-4).toUpperCase() + Math.random().toString(36).substr(2, 4).toUpperCase();
+  document.getElementById('buyModal').classList.remove('hidden');
+});
+document.getElementById('closeBuyModal').addEventListener('click', function() { document.getElementById('buyModal').classList.add('hidden'); });
+document.getElementById('copyCodeBtn').addEventListener('click', function() {
+  navigator.clipboard.writeText(document.getElementById('generatedCode').textContent);
+  showToast('✅ Kode dicopy!');
+});
+
+document.getElementById('claimButton').addEventListener('click', function() { document.getElementById('claimModal').classList.remove('hidden'); });
+document.getElementById('closeClaimModal').addEventListener('click', function() { document.getElementById('claimModal').classList.add('hidden'); });
+document.getElementById('submitClaimBtn').addEventListener('click', function() {
+  var code = document.getElementById('claimCodeInput').value.trim().toUpperCase();
+  if (!code) { document.getElementById('claimStatus').textContent = '❌ Masukkan kode!'; return; }
+  db.ref('active_codes/' + code).once('value').then(function(snap) {
+    if (!snap.exists() || !snap.val().active) {
+      document.getElementById('claimStatus').textContent = '❌ Kode belum diaktifkan admin!';
+      return;
+    }
+    db.ref('claimed/' + userId + '/' + code).once('value').then(function(cs) {
+      if (cs.exists()) { document.getElementById('claimStatus').textContent = '⚠️ Sudah diklaim!'; return; }
+      saldo += 100;
+      db.ref('claimed/' + userId + '/' + code).set(true);
+      db.ref('active_codes/' + code).remove();
+      updateUI();
+      document.getElementById('claimStatus').textContent = '🎉 +100 💎!';
+      document.getElementById('claimStatus').style.color = '#2d5e3b';
+      showToast('🎉 +100 💎!');
+    });
+  });
+});
+
+// Sell Market
+document.getElementById('sellMarketBtn').addEventListener('click', function() {
+  document.getElementById('sellCreatureSelect').innerHTML = farm.map(function(c, i) {
+    return '<option value="' + i + '">' + c.emoji + ' ' + c.name + ' S' + c.stage + ' ⭐' + (c.stars || 0) + ' ' + c.ordoName + '</option>';
+  }).join('');
+  document.getElementById('sellMarketModal').classList.remove('hidden');
+  updateFeePreview();
+});
+document.getElementById('closeSellMarket').addEventListener('click', function() { document.getElementById('sellMarketModal').classList.add('hidden'); });
+document.getElementById('sellPriceInput').addEventListener('input', updateFeePreview);
+
+function updateFeePreview() {
+  var p = parseInt(document.getElementById('sellPriceInput').value) || 0;
+  document.getElementById('feePreview').textContent = Math.floor(p * 0.1);
+  document.getElementById('netPreview').textContent = p - Math.floor(p * 0.1);
+}
+
+document.getElementById('confirmSellMarketBtn').addEventListener('click', function() {
+  var idx = parseInt(document.getElementById('sellCreatureSelect').value);
+  if (isNaN(idx) || !farm[idx]) return;
+  var price = parseInt(document.getElementById('sellPriceInput').value) || 10;
+  var c = farm[idx];
+  
+  db.ref('market').push({
+    ...c,
+    sellerId: userId,
+    sellerName: tgUsername,
+    price: price,
+    timestamp: Date.now(),
+    sold: false
+  });
+  
+  farm.splice(idx, 1);
+  updateUI();
+  loadMarket();
+  document.getElementById('sellMarketModal').classList.add('hidden');
+  showToast('📤 Berhasil dilisting!');
+});
+
+document.getElementById('refreshMarketBtn').addEventListener('click', loadMarket);
+document.getElementById('myListingsBtn').addEventListener('click', function() {
+  db.ref('market').orderByChild('sellerId').equalTo(userId).once('value').then(function(snap) {
+    var listings = snap.val() || {};
+    document.getElementById('myListingsContent').innerHTML = Object.entries(listings).map(function(entry) {
+      var k = entry[0], l = entry[1];
+      return '<div class="battle-card">' +
+        '<div>' + l.emoji + ' ' + l.name + ' 💎' + l.price + ' ' + (l.sold ? '✅Terjual' : '') + '</div>' +
+        (!l.sold ? '<button class="btn btn-red" onclick="cancelListing(\'' + k + '\')" style="font-size:0.4rem;padding:2px 4px;">❌</button>' : '') +
+      '</div>';
+    }).join('') || '<p>Tidak ada listing</p>';
+    document.getElementById('myListingsModal').classList.remove('hidden');
+  });
+});
+document.getElementById('closeMyListings').addEventListener('click', function() { document.getElementById('myListingsModal').classList.add('hidden'); });
+
+function cancelListing(key) {
+  db.ref('market/' + key).once('value').then(function(snap) {
+    var l = snap.val();
+    farm.push({
+      name: l.name, emoji: l.emoji, stage: l.stage,
+      ordo: l.ordo, ordoName: l.ordoName, ordoColor: l.ordoColor,
+      ordoEmoji: l.ordoEmoji, strong: l.strong, weak: l.weak,
+      hp: l.hp, atk: l.atk, def: l.def, spd: l.spd,
+      value: l.value, skill: l.skill, limited: l.limited,
+      stars: l.stars || 0, hunger: 80
+    });
+    db.ref('market/' + key).remove();
+    updateUI();
+    showToast('📤 Listing dibatalkan');
+  });
+}
+
+// Giveaway
+document.getElementById('enterGiveawayBtn').addEventListener('click', function() {
+  db.ref('giveaway/entries/' + userId).set({ name: tgUsername, timestamp: Date.now() });
+  showToast('🎟️ Berhasil masuk giveaway!');
+});
+
+// Limited Shop
+function loadLimitedShop() {
+  var limiteds = creatures.filter(function(c) { return c.limited; });
+  document.getElementById('limitedShop').innerHTML = limiteds.map(function(c) {
+    return '<div class="battle-card">' +
+      '<div>' + c.emoji + ' <b>' + c.name + '</b> S' + c.stage + ' <span style="background:' + c.ordoColor + ';color:white;font-size:0.35rem;padding:1px 3px;border-radius:3px;">' + c.ordoName + '</span><br><small>' + c.skill + '</small></div>' +
+      '<button class="btn btn-red" onclick="buyLimited(' + c.id + ')" style="font-size:0.45rem;">💎50</button>' +
+    '</div>';
+  }).join('');
+}
+
+function buyLimited(cid) {
+  if (saldo < 50) { showToast('💎 Saldo kurang!'); return; }
+  var c = creatures.find(function(x) { return x.id === cid; });
+  if (!c) return;
+  saldo -= 50;
+  farm.push({ ...c, stars: 5, hunger: 100 });
+  updateUI();
+  showToast('🌟 ' + c.emoji + ' ' + c.name + '!');
+}
+
+// Referral
+function loadRefData() {
+  var refCode = 'REF-' + userId.replace(/_/g, '').substr(-6).toUpperCase();
+  document.getElementById('refLink').textContent = 'https://t.me/evofarmbot?start=' + refCode;
+}
+
+document.getElementById('copyRefBtn').addEventListener('click', function() {
+  navigator.clipboard.writeText(document.getElementById('refLink').textContent);
+  showToast('✅ Link referral dicopy!');
+});
+
+document.getElementById('submitRefBtn').addEventListener('click', function() {
+  showToast('✅ +50 💎 (simulasi)');
+});
+
+// ============ INIT ============
+loadData();
+setTimeout(function() { updateAllTabs(); }, 1500);
+</script>
+</body>
+</html>
