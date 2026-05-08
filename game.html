@@ -238,7 +238,99 @@
   </div>
 </div>
 
-<!-- MODAL KLAIM KODE -->
+  // ============ ADMIN FUNCTIONS ============
+const ADMIN_PASSWORD = "evofarm2024"; // GANTI PASSWORD INI!
+let isAdmin = false;
+
+// Tombol admin
+document.getElementById('adminPanelBtn').addEventListener('click', function() {
+  if (isAdmin) {
+    document.getElementById('adminActivateModal').classList.remove('hidden');
+    loadAdminActiveCodes();
+  } else {
+    document.getElementById('adminLoginModal').classList.remove('hidden');
+  }
+});
+
+// Login admin
+document.getElementById('adminLoginBtn').addEventListener('click', function() {
+  var pass = document.getElementById('adminPassword').value;
+  if (pass === ADMIN_PASSWORD) {
+    isAdmin = true;
+    document.getElementById('adminLoginModal').classList.add('hidden');
+    document.getElementById('adminPanelBtn').classList.remove('hidden');
+    document.getElementById('adminLoginStatus').textContent = '';
+    showToast('🔓 Admin berhasil login!');
+  } else {
+    document.getElementById('adminLoginStatus').textContent = '❌ Password salah!';
+  }
+});
+
+document.getElementById('closeAdminLogin').addEventListener('click', function() {
+  document.getElementById('adminLoginModal').classList.add('hidden');
+});
+
+// Aktivasi kode
+document.getElementById('adminActivateBtn').addEventListener('click', function() {
+  if (!isAdmin) return;
+  var code = document.getElementById('adminCodeInput').value.trim().toUpperCase();
+  if (!code) {
+    document.getElementById('adminActivateStatus').textContent = '❌ Masukkan kode!';
+    return;
+  }
+  
+  db.ref('active_codes/' + code).set({
+    active: true,
+    timestamp: Date.now()
+  }).then(function() {
+    document.getElementById('adminActivateStatus').textContent = '✅ Kode ' + code + ' BERHASIL diaktifkan!';
+    document.getElementById('adminActivateStatus').style.color = '#2d5e3b';
+    document.getElementById('adminCodeInput').value = '';
+    loadAdminActiveCodes();
+    showToast('✅ Kode diaktifkan!');
+  });
+});
+
+document.getElementById('closeAdminActivate').addEventListener('click', function() {
+  document.getElementById('adminActivateModal').classList.add('hidden');
+});
+
+function loadAdminActiveCodes() {
+  db.ref('active_codes').once('value').then(function(snap) {
+    var codes = snap.val() || {};
+    var list = Object.keys(codes);
+    document.getElementById('adminActiveList').innerHTML = list.length > 0 
+      ? list.map(function(c) { return '<span style="display:block;padding:2px;">🎫 ' + c + '</span>'; }).join('')
+      : '<span style="color:#999;">Tidak ada kode aktif</span>';
+  });
+}
+  
+  <!-- MODAL LOGIN ADMIN -->
+<div class="modal-overlay hidden" id="adminLoginModal">
+  <div class="modal">
+    <h3>🔐 Admin Access</h3>
+    <input type="password" id="adminPassword" placeholder="Password Admin" style="font-size:0.7rem;">
+    <button class="btn btn-gold" id="adminLoginBtn">🔓 Masuk</button>
+    <button class="btn" id="closeAdminLogin">❌ Tutup</button>
+    <p id="adminLoginStatus" style="font-size:0.6rem;margin-top:4px;"></p>
+  </div>
+</div>
+
+<!-- MODAL AKTIVASI KODE (ADMIN) -->
+<div class="modal-overlay hidden" id="adminActivateModal">
+  <div class="modal">
+    <h3>🎫 Aktivasi Kode Pembayaran</h3>
+    <input type="text" id="adminCodeInput" placeholder="Masukkan kode (EVO-XXXXXX)" style="font-size:0.7rem;">
+    <button class="btn btn-green" id="adminActivateBtn">✅ Aktifkan</button>
+    <button class="btn" id="closeAdminActivate">❌ Tutup</button>
+    <p id="adminActivateStatus" style="font-size:0.6rem;margin-top:4px;"></p>
+    <div id="adminActiveList" style="max-height:100px;overflow-y:auto;font-size:0.55rem;margin-top:6px;"></div>
+  </div>
+</div>
+
+<!-- TOMBOL ADMIN (HIDDEN, muncul setelah login) -->
+<button class="btn btn-red hidden" id="adminPanelBtn" style="position:fixed;bottom:10px;right:10px;z-index:999;width:auto;border-radius:50%;padding:10px;font-size:1rem;">🔑</button>
+  <!-- MODAL KLAIM KODE -->
 <div class="modal-overlay hidden" id="claimModal">
   <div class="modal">
     <h3>🎁 Klaim Kode</h3>
