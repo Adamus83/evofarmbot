@@ -4,460 +4,170 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Evolution Farm</title>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,sans-serif}
-    html,body{width:100%;height:100vh;height:100dvh;overflow:hidden;background:#1a3c2e;display:flex;justify-content:center;align-items:center}
-    .game-container{width:100%;height:100vh;height:100dvh;max-width:100%;background:rgba(255,248,235,0.96);display:flex;flex-direction:column;overflow:hidden;border:2px solid #c9a45b}
-    .header{display:flex;justify-content:space-between;align-items:center;background:#2d5e3b;padding:8px 12px;color:#f7e3b2;font-weight:bold;font-size:0.75rem;flex-shrink:0;border-bottom:2px solid #e7b42c}
-    .badge{padding:4px 8px;border-radius:18px;font-size:0.65rem;display:flex;align-items:center;gap:2px}
-    .profit-badge{background:#f3c13a;color:#2d3e1f}
-    .saldo-badge{background:#7ec8e3;color:#0a2f3c}
-    .energy-badge{background:#ff8a8a;color:#3c0a0a}
-    .nav-tabs{display:flex;gap:3px;background:#2d5e3b;padding:4px;overflow-x:auto;flex-shrink:0}
-    .nav-tab{flex:1;padding:7px 4px;text-align:center;font-weight:700;font-size:0.6rem;cursor:pointer;background:transparent;color:#f7e3b2;border:none;border-radius:22px;white-space:nowrap}
-    .nav-tab.active{background:#f3c13a;color:#2d3e1f}
-    .content-area{flex:1;overflow-y:auto;padding:8px}
-    .farm-area{background:#b6d7a8;border-radius:20px;padding:8px;background-image:radial-gradient(circle at 30% 40%,#d4e8b0,#7fa35b);box-shadow:inset 0 -3px 0 rgba(0,0,0,0.2);border:2px solid #5a7940;min-height:100px;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:5px}
-    .creature-card{background:#fef9e7;border-radius:14px;padding:5px 3px;width:62px;display:flex;flex-direction:column;align-items:center;box-shadow:0 4px 0 #8b6f4c;border:2px solid #dbb45c;cursor:pointer;font-size:0.45rem;flex-shrink:0}
-    .creature-card.selected{border:2px solid #ffd966;box-shadow:0 0 12px gold}
-    .creature-emoji{font-size:1.6rem}
-    .creature-name{font-weight:700;font-size:0.42rem;background:#e6c468;padding:1px 5px;border-radius:8px;color:#2d3a1f}
-    .stars-row{display:flex;gap:1px;margin-top:1px}
-    .star{font-size:0.4rem}
-    .star.filled{color:#f3c13a}
-    .star.empty{color:#ccc}
-    .btn{background:#f7eac8;border:none;padding:6px 8px;border-radius:20px;font-weight:700;font-size:0.55rem;color:#2c4720;box-shadow:0 2px 0 #b4944c;border:1px solid #e7b42c;cursor:pointer;flex:1;min-width:45px;text-align:center}
+    body{background:#1a3c2e;display:flex;justify-content:center;align-items:center;height:100vh;padding:10px}
+    .container{width:100%;max-width:400px;background:#fef9e7;border-radius:28px;padding:16px;border:3px solid #c9a45b;text-align:center}
+    h2{color:#2d3e1f;margin-bottom:10px}
+    .farm{background:#b6d7a8;border-radius:20px;padding:12px;min-height:120px;display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:8px;margin:10px 0;border:2px solid #5a7940}
+    .card{background:white;border-radius:14px;padding:8px;width:70px;text-align:center;border:2px solid #dbb45c;cursor:pointer;box-shadow:0 3px 0 #8b6f4c;font-size:0.65rem}
+    .card:active{transform:translateY(2px);box-shadow:0 1px 0 #8b6f4c}
+    .card.selected{border-color:gold;box-shadow:0 0 10px gold}
+    .emoji{font-size:2rem}
+    .btn{background:#f7eac8;border:none;padding:10px;border-radius:20px;font-weight:bold;font-size:0.7rem;margin:4px;cursor:pointer;box-shadow:0 2px 0 #b4944c;border:1px solid #e7b42c;min-width:60px}
+    .btn:active{transform:translateY(1px);box-shadow:0 1px 0 #b4944c}
     .btn-gold{background:#f7b05e}
     .btn-purple{background:#c68ef0}
-    .btn-blue{background:#7ec8e3}
-    .btn-red{background:#ff8a8a}
-    .btn-green{background:#a8e6cf}
-    .controls{display:flex;gap:4px;flex-wrap:wrap;justify-content:center;margin-top:6px}
-    .hidden{display:none!important}
-    .log{background:#2b4127;padding:5px 10px;color:#f3e3b0;font-size:0.55rem;text-align:center;border:1px solid #b4944c;flex-shrink:0}
-    .modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;z-index:1000}
-    .modal{background:#fef9e7;border-radius:18px;padding:14px;max-width:350px;width:100%;text-align:center;border:3px solid #c9a45b;max-height:80vh;overflow-y:auto}
-    .modal h3{color:#2d3e1f;margin-bottom:6px;font-size:0.9rem}
-    .modal input,.modal select{width:100%;padding:8px;border-radius:12px;border:2px solid #c9a45b;font-size:0.7rem;text-align:center;margin:4px 0;background:#fffaed}
-    .code-display{background:#2d3e1f;color:#f7e3b2;font-size:1.2rem;letter-spacing:3px;padding:8px;border-radius:12px;margin:6px 0;font-weight:900;font-family:monospace}
-    .battle-card{background:#fff3cd;border-radius:12px;padding:6px;margin:3px 0;display:flex;justify-content:space-between;align-items:center;border:1px solid #c9a45b;font-size:0.6rem}
-    .shop-card{display:inline-block;background:#fef9e7;border-radius:14px;padding:5px;margin:3px;text-align:center;border:2px solid #dbb45c;cursor:pointer;width:65px;font-size:0.45rem}
-    .toast{position:fixed;top:10px;left:50%;transform:translateX(-50%);background:#2d3e1f;color:#f7e3b2;padding:8px 16px;border-radius:20px;font-weight:bold;z-index:2000;font-size:0.7rem}
-    .admin-btn{position:fixed;bottom:15px;right:15px;z-index:999;width:45px;height:45px;border-radius:50%;background:#c94b4b;color:white;border:2px solid #fff;font-size:1.2rem;cursor:pointer;box-shadow:0 4px 10px rgba(0,0,0,0.5)}
+    .log{background:#2d3e1f;color:#f7e3b2;padding:6px;border-radius:12px;font-size:0.6rem;margin-top:8px}
+    .info{display:flex;justify-content:space-around;margin:6px 0;font-weight:bold;font-size:0.65rem}
   </style>
 </head>
 <body>
-<div class="game-container">
-  <div class="header">
-    <span>🌿 EVO FARM</span>
-    <div style="display:flex;gap:3px;">
-      <span class="badge profit-badge">💰<span id="profitDisplay">20</span></span>
-      <span class="badge saldo-badge">💎<span id="saldoDisplay">0</span></span>
-      <span class="badge energy-badge">⚡<span id="energyDisplay">15</span></span>
-    </div>
+<div class="container">
+  <h2>🌿 EVOLUTION FARM</h2>
+  <div class="info">
+    <span>💰 Profit: <span id="profit">20</span></span>
+    <span>💎 Saldo: <span id="saldo">0</span></span>
+    <span>⚡ Energi: <span id="energi">15</span></span>
   </div>
-  <div class="nav-tabs">
-    <button class="nav-tab active" data-tab="farm">🌾Farm</button>
-    <button class="nav-tab" data-tab="battle">⚔️Battle</button>
-    <button class="nav-tab" data-tab="shop">🛍️Beli</button>
+  
+  <div class="farm" id="farmArea"></div>
+  
+  <p style="font-size:0.5rem;color:#5a7940;">Klik makhluk untuk pilih (max 2)</p>
+  
+  <div>
+    <button class="btn btn-gold" onclick="breed()">🐣 Breed</button>
+    <button class="btn btn-purple" onclick="evolve()">✨ Evolve</button>
+    <button class="btn" onclick="sell()">💵 Sell</button>
   </div>
-  <div class="content-area">
-    <div id="tabFarm">
-      <div class="farm-area" id="farmContainer"></div>
-      <div class="controls">
-        <button class="btn btn-gold" id="breedButton">🐣Breed</button>
-        <button class="btn btn-purple" id="evolveButton">✨Evolve</button>
-        <button class="btn" id="sellButton">💵Sell</button>
-      </div>
-      <div class="controls">
-        <button class="btn btn-blue" id="topupButton">🛒TopUp</button>
-        <button class="btn btn-green" id="claimButton">🎁Klaim</button>
-      </div>
-    </div>
-    <div id="tabBattle" class="hidden">
-      <h3 style="text-align:center;color:#2d3e1f;">⚔️ Battle</h3>
-      <div id="opponentList"><p style="font-size:0.6rem;">Loading...</p></div>
-    </div>
-    <div id="tabShop" class="hidden">
-      <h3 style="text-align:center;color:#2d3e1f;">🛍️ Beli Makhluk</h3>
-      <div id="botShopList" style="display:flex;flex-wrap:wrap;justify-content:center;gap:4px;"></div>
-    </div>
+  <div>
+    <button class="btn" onclick="addRandom()">➕ Tambah</button>
+    <button class="btn" onclick="reset()">🔄 Reset</button>
   </div>
-  <div class="log" id="logMessage">🌱 Selamat datang!</div>
+  
+  <div class="log" id="log">🌱 Klik Breed untuk mulai!</div>
 </div>
 
-<div class="modal-overlay hidden" id="buyModal"><div class="modal"><h3>🛒 Beli Koin</h3><p>Rp10.000 = 100💎</p><div class="code-display" id="generatedCode">----</div><p style="font-size:0.5rem;">BCA 1234567890 a.n. <b>NAMA ANDA</b></p><p style="font-size:0.5rem;">WA: <b>08xxxxxxxxxx</b></p><button class="btn btn-blue" id="copyCodeBtn">📋Copy</button><button class="btn" id="closeBuyModal">❌Tutup</button></div></div>
-<div class="modal-overlay hidden" id="claimModal"><div class="modal"><h3>🎁 Klaim</h3><input type="text" id="claimCodeInput" placeholder="EVO-XXXXXX"><button class="btn btn-green" id="submitClaimBtn">✅Klaim 100💎</button><button class="btn" id="closeClaimModal">❌Tutup</button><p id="claimStatus"></p></div></div>
-<div class="modal-overlay hidden" id="adminModal"><div class="modal"><h3>🔐 Admin</h3><input type="password" id="adminPassword" placeholder="Password"><button class="btn btn-gold" id="adminLoginBtn">🔓Masuk</button><button class="btn" id="closeAdminModal">❌Tutup</button><p id="adminStatus"></p><div id="adminPanel" class="hidden"><hr><b>Kode Aktif:</b><div id="pendingList"></div><input type="text" id="manualCode" placeholder="Kode manual"><button class="btn btn-green" id="activateManualBtn">✅Aktifkan</button></div></div></div>
-<button class="admin-btn hidden" id="adminBtn">🔑</button>
-
 <script>
-// ============ INIT ============
-var tg = window.Telegram.WebApp;
-tg.expand();
-tg.ready();
-
-var userId = 'user_' + Math.random().toString(36).substr(2,9);
-var tgUsername = 'Player';
-
-try {
-  if(tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.id) {
-    userId = 'tg_' + tg.initDataUnsafe.user.id;
-    tgUsername = tg.initDataUnsafe.user.username || tg.initDataUnsafe.user.first_name || 'Player';
-  }
-} catch(e) {
-  userId = localStorage.getItem('evo_user_id') || userId;
-}
-localStorage.setItem('evo_user_id', userId);
-
-// ============ FIREBASE ============
-var firebaseConfig = {
-  apiKey: "AIZaSyC2Gb6WtY1bn05fI_3K9x3",
-  authDomain: "evo-farm-game.firebaseapp.com",
-  databaseURL: "https://evo-farm-game-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "evo-farm-game",
-  storageBucket: "evo-farm-game.appspot.com",
-  messagingSenderId: "870289339504",
-  appId: "1:870289339504:web:154c283a0e8b5d4c28a3e"
-};
-
-firebase.initializeApp(firebaseConfig);
-var db = firebase.database();
-
-// ============ DATA MAKHLUK SEDERHANA ============
-var creatures = [
-  { id:0, name:"Sprout", emoji:"🌱", stage:1, value:5, hp:30, atk:5, def:2, spd:3 },
-  { id:1, name:"Bloom", emoji:"🌸", stage:2, value:15, hp:50, atk:12, def:5, spd:5 },
-  { id:2, name:"Treant", emoji:"🌳", stage:3, value:40, hp:80, atk:22, def:12, spd:6 },
-  { id:3, name:"Dragon", emoji:"🐉", stage:4, value:120, hp:120, atk:40, def:18, spd:10 },
-  { id:4, name:"Unicorn", emoji:"🦄", stage:3, value:80, hp:75, atk:25, def:10, spd:14 }
+var makhluk = [
+  {nama:"Sprout", emoji:"🌱", stage:1, value:5},
+  {nama:"Bloom", emoji:"🌸", stage:2, value:15},
+  {nama:"Treant", emoji:"🌳", stage:3, value:40},
+  {nama:"Dragon", emoji:"🐉", stage:4, value:120}
 ];
 
-// ============ STATE ============
-var farm = [];
+var farm = [
+  {nama:"Sprout", emoji:"🌱", stage:1, value:5},
+  {nama:"Sprout", emoji:"🌱", stage:1, value:5},
+  {nama:"Bloom", emoji:"🌸", stage:2, value:15}
+];
+
 var profit = 20;
 var saldo = 0;
-var energy = 15;
+var energi = 15;
 var selected = [];
-var isAdmin = false;
-var ADMIN_PASS = "evofarm2024";
 
-// ============ UI ============
-function updateUI() {
-  renderFarm();
-  document.getElementById('profitDisplay').textContent = profit;
-  document.getElementById('saldoDisplay').textContent = saldo;
-  document.getElementById('energyDisplay').textContent = energy;
-  saveData();
-}
-
-function renderFarm() {
-  var container = document.getElementById('farmContainer');
-  if (!farm || farm.length === 0) {
-    container.innerHTML = '<div style="color:#3b5526;text-align:center;padding:20px;">🌾 Ladang kosong<br><small>Klik Breed untuk mulai!</small></div>';
-    return;
-  }
-  
+function render() {
   var html = '';
-  for (var i = 0; i < farm.length; i++) {
+  for(var i=0; i<farm.length; i++) {
     var c = farm[i];
     var sel = selected.indexOf(i) >= 0 ? 'selected' : '';
-    html += '<div class="creature-card ' + sel + '" data-index="' + i + '">';
-    html += '<span class="creature-emoji">' + (c.emoji || '❓') + '</span>';
-    html += '<span class="creature-name">' + (c.name || '??') + '</span>';
-    html += '<span style="font-size:0.4rem;color:#5a3a7a;">S' + (c.stage||1) + ' | 💰' + (c.value||5) + '</span>';
+    html += '<div class="card '+sel+'" onclick="klik('+i+')">';
+    html += '<div class="emoji">'+c.emoji+'</div>';
+    html += '<b>'+c.nama+'</b><br>';
+    html += 'S'+c.stage+' | 💰'+c.value;
     html += '</div>';
   }
-  container.innerHTML = html;
-  
-  var cards = document.querySelectorAll('.creature-card');
-  for (var j = 0; j < cards.length; j++) {
-    cards[j].addEventListener('click', function() {
-      var idx = parseInt(this.dataset.index);
-      var pos = selected.indexOf(idx);
-      if (pos >= 0) {
-        selected.splice(pos, 1);
-      } else if (selected.length < 2) {
-        selected.push(idx);
-      }
-      updateUI();
-    });
-  }
+  document.getElementById('farmArea').innerHTML = html || '<span style="color:#555;">Ladang kosong</span>';
+  document.getElementById('profit').textContent = profit;
+  document.getElementById('saldo').textContent = saldo;
+  document.getElementById('energi').textContent = energi;
 }
 
-function showToast(msg) {
-  var t = document.createElement('div');
-  t.style.cssText = 'position:fixed;top:60px;left:50%;transform:translateX(-50%);background:#2d3e1f;color:#f7e3b2;padding:8px 16px;border-radius:20px;font-weight:bold;z-index:2000;font-size:0.7rem;';
-  t.textContent = msg;
-  document.body.appendChild(t);
-  setTimeout(function() { t.remove(); }, 2000);
+function klik(i) {
+  var pos = selected.indexOf(i);
+  if(pos >= 0) { selected.splice(pos, 1); }
+  else if(selected.length < 2) { selected.push(i); }
+  render();
+  log('Dipilih: ' + selected.length + '/2');
 }
 
-// ============ SAVE ============
-function saveData() {
-  try {
-    db.ref('users/' + userId).set({
-      farm: farm,
-      profit: profit,
-      saldo: saldo,
-      energy: energy,
-      lastActive: Date.now()
-    });
-  } catch(e) {}
-}
-
-function loadData() {
-  db.ref('users/' + userId).once('value').then(function(snap) {
-    if (snap.exists()) {
-      var d = snap.val();
-      farm = d.farm || [];
-      profit = d.profit || 20;
-      saldo = d.saldo || 0;
-      energy = d.energy || 15;
-    } else {
-      // Data starter
-      farm = [
-        { id:0, name:"Sprout", emoji:"🌱", stage:1, value:5, hp:30, atk:5, def:2, spd:3 },
-        { id:0, name:"Sprout", emoji:"🌱", stage:1, value:5, hp:30, atk:5, def:2, spd:3 },
-        { id:1, name:"Bloom", emoji:"🌸", stage:2, value:15, hp:50, atk:12, def:5, spd:5 }
-      ];
-    }
-    updateUI();
-  }).catch(function() {
-    // Fallback kalau Firebase error
-    farm = [
-      { id:0, name:"Sprout", emoji:"🌱", stage:1, value:5 },
-      { id:0, name:"Sprout", emoji:"🌱", stage:1, value:5 },
-      { id:1, name:"Bloom", emoji:"🌸", stage:2, value:15 }
-    ];
-    updateUI();
-  });
-}
-
-// ============ GAME ACTIONS ============
-function breedCreatures() {
-  if (selected.length !== 2) { showToast('Pilih 2 makhluk!'); return; }
-  if (energy < 2) { showToast('Energi kurang!'); return; }
+function breed() {
+  if(selected.length !== 2) { log('⚠️ Pilih 2 makhluk!'); return; }
+  if(energi < 2) { log('⚡ Energi kurang!'); return; }
   
   var sorted = selected.slice().sort(function(a,b){return b-a});
-  var p1 = farm[sorted[0]];
-  var p2 = farm[sorted[1]];
+  var p1 = farm[sorted[0]], p2 = farm[sorted[1]];
   
-  // Hapus parent
   farm.splice(sorted[0], 1);
   farm.splice(sorted[1], 1);
   
-  // Buat anak
-  var newStage = Math.floor((p1.stage + p2.stage) / 2) + 1;
-  if (newStage > 4) newStage = 4;
+  var ns = Math.floor((p1.stage + p2.stage) / 2) + 1;
+  if(ns > 4) ns = 4;
   
-  var candidates = creatures.filter(function(c){ return c.stage === newStage; });
-  var baby = candidates[Math.floor(Math.random() * candidates.length)] || creatures[0];
+  var candidates = makhluk.filter(function(c){return c.stage === ns});
+  var baby = candidates[Math.floor(Math.random()*candidates.length)] || makhluk[0];
   
-  farm.push({
-    id: baby.id,
-    name: baby.name,
-    emoji: baby.emoji,
-    stage: baby.stage,
-    value: baby.value,
-    hp: baby.hp,
-    atk: baby.atk,
-    def: baby.def,
-    spd: baby.spd
-  });
-  
-  energy -= 2;
+  farm.push({nama:baby.nama, emoji:baby.emoji, stage:baby.stage, value:baby.value});
+  energi -= 2;
   selected = [];
-  updateUI();
-  showToast('🐣 ' + baby.emoji + ' ' + baby.name + '!');
+  render();
+  log('🐣 Dapat: ' + baby.emoji + ' ' + baby.nama + '!');
 }
 
-function evolveCreature() {
-  if (selected.length !== 1) { showToast('Pilih 1 makhluk!'); return; }
-  var idx = selected[0];
-  var cr = farm[idx];
-  
-  if (cr.stage >= 4) { showToast('Stage maksimal!'); return; }
-  if (profit < 10) { showToast('Profit kurang! Butuh 10'); return; }
+function evolve() {
+  if(selected.length !== 1) { log('⚠️ Pilih 1 makhluk!'); return; }
+  var idx = selected[0], cr = farm[idx];
+  if(cr.stage >= 4) { log('🔮 Sudah maksimal!'); return; }
+  if(profit < 10) { log('💰 Profit kurang!'); return; }
   
   profit -= 10;
+  var next = makhluk.filter(function(c){return c.stage === cr.stage + 1});
+  var ev = next[Math.floor(Math.random()*next.length)] || makhluk[cr.stage];
   
-  var next = creatures.filter(function(c){ return c.stage === cr.stage + 1; });
-  var evolved = next[Math.floor(Math.random() * next.length)] || creatures[cr.stage];
-  
-  farm[idx] = {
-    id: evolved.id,
-    name: evolved.name,
-    emoji: evolved.emoji,
-    stage: evolved.stage,
-    value: evolved.value,
-    hp: evolved.hp,
-    atk: evolved.atk,
-    def: evolved.def,
-    spd: evolved.spd
-  };
-  
+  farm[idx] = {nama:ev.nama, emoji:ev.emoji, stage:ev.stage, value:ev.value};
   selected = [];
-  updateUI();
-  showToast('✨ ' + evolved.emoji + ' ' + evolved.name + '!');
+  render();
+  log('✨ Evolusi: ' + ev.emoji + ' ' + ev.nama + '!');
 }
 
-function sellCreatures() {
-  if (selected.length === 0) { showToast('Pilih makhluk!'); return; }
+function sell() {
+  if(selected.length === 0) { log('⚠️ Pilih makhluk!'); return; }
   var sorted = selected.slice().sort(function(a,b){return b-a});
   var total = 0;
-  for (var i = 0; i < sorted.length; i++) {
-    total += farm[sorted[i]].value || 5;
+  for(var i=sorted.length-1; i>=0; i--) {
+    total += farm[sorted[i]].value;
     farm.splice(sorted[i], 1);
   }
   profit += total;
   selected = [];
-  updateUI();
-  showToast('💵 Terjual! +' + total);
+  render();
+  log('💵 Terjual! +'+total+' profit');
 }
 
-// ============ SHOP ============
-function loadBotShop() {
-  var shopItems = [
-    { name:"Sprout", emoji:"🌱", stage:1, price:10 },
-    { name:"Bloom", emoji:"🌸", stage:2, price:25 },
-    { name:"Treant", emoji:"🌳", stage:3, price:60 },
-    { name:"Dragon", emoji:"🐉", stage:4, price:150 },
-    { name:"Unicorn", emoji:"🦄", stage:3, price:100 }
+function addRandom() {
+  var r = makhluk[Math.floor(Math.random()*makhluk.length)];
+  farm.push({nama:r.nama, emoji:r.emoji, stage:r.stage, value:r.value});
+  render();
+  log('➕ Dapat: ' + r.emoji + ' ' + r.nama);
+}
+
+function reset() {
+  farm = [
+    {nama:"Sprout", emoji:"🌱", stage:1, value:5},
+    {nama:"Sprout", emoji:"🌱", stage:1, value:5},
+    {nama:"Bloom", emoji:"🌸", stage:2, value:15}
   ];
-  
-  var html = '';
-  for (var i = 0; i < shopItems.length; i++) {
-    var item = shopItems[i];
-    html += '<div class="shop-card" onclick="buyFromBot(' + i + ')">';
-    html += '<span class="creature-emoji">' + item.emoji + '</span><br>';
-    html += '<span class="creature-name">' + item.name + '</span><br>';
-    html += '<span style="font-size:0.4rem;">S' + item.stage + ' | 💎' + item.price + '</span>';
-    html += '</div>';
-  }
-  document.getElementById('botShopList').innerHTML = html;
-  
-  window.shopItems = shopItems;
+  profit = 20; saldo = 0; energi = 15; selected = [];
+  render();
+  log('🔄 Game di-reset!');
 }
 
-function buyFromBot(index) {
-  var item = window.shopItems[index];
-  if (!item) return;
-  if (saldo < item.price) { showToast('💎 Saldo kurang!'); return; }
-  
-  saldo -= item.price;
-  farm.push({
-    name: item.name,
-    emoji: item.emoji,
-    stage: item.stage,
-    value: item.price,
-    hp: 50 + item.stage * 20,
-    atk: 5 + item.stage * 8,
-    def: 2 + item.stage * 3,
-    spd: 3 + item.stage * 2
-  });
-  
-  updateUI();
-  showToast('🛍️ ' + item.emoji + ' ' + item.name + '!');
+function log(msg) {
+  document.getElementById('log').textContent = msg;
 }
 
-// ============ ADMIN ============
-function loadPending() {
-  db.ref('active_codes').once('value').then(function(snap) {
-    var codes = snap.val() || {};
-    var list = Object.keys(codes);
-    var html = '';
-    if (list.length > 0) {
-      for (var i = 0; i < list.length; i++) {
-        html += '<div style="padding:3px;border-bottom:1px solid #ccc;">🎫 ' + list[i] + ' <button onclick="activateCode(\'' + list[i] + '\')" style="font-size:0.5rem;padding:2px 6px;background:#4caf50;color:white;border:none;border-radius:8px;">Aktifkan</button></div>';
-      }
-    } else {
-      html = '<span style="color:#999;">Tidak ada kode</span>';
-    }
-    document.getElementById('pendingList').innerHTML = html;
-  }).catch(function(){});
-}
-
-function activateCode(code) {
-  db.ref('active_codes/' + code).set({active:true, timestamp:Date.now()}).then(function() {
-    showToast('✅ ' + code + ' aktif!');
-    loadPending();
-  });
-}
-
-// ============ EVENT LISTENERS ============
-document.getElementById('breedButton').addEventListener('click', breedCreatures);
-document.getElementById('evolveButton').addEventListener('click', evolveCreature);
-document.getElementById('sellButton').addEventListener('click', sellCreatures);
-
-document.getElementById('topupButton').addEventListener('click', function() {
-  document.getElementById('generatedCode').textContent = 'EVO-' + Math.random().toString(36).substr(2,6).toUpperCase();
-  document.getElementById('buyModal').classList.remove('hidden');
-});
-
-document.getElementById('closeBuyModal').addEventListener('click', function() {
-  document.getElementById('buyModal').classList.add('hidden');
-});
-
-document.getElementById('copyCodeBtn').addEventListener('click', function() {
-  var code = document.getElementById('generatedCode').textContent;
-  try {
-    navigator.clipboard.writeText(code);
-    showToast('✅ Kode dicopy!');
-  } catch(e) {
-    showToast('Kode: ' + code);
-  }
-});
-
-document.getElementById('claimButton').addEventListener('click', function() {
-  document.getElementById('claimModal').classList.remove('hidden');
-});
-
-document.getElementById('closeClaimModal').addEventListener('click', function() {
-  document.getElementById('claimModal').classList.add('hidden');
-});
-
-document.getElementById('submitClaimBtn').addEventListener('click', function() {
-  var code = document.getElementById('claimCodeInput').value.trim().toUpperCase();
-  if (!code) { document.getElementById('claimStatus').textContent = '❌ Masukkan kode!'; return; }
-  
-  db.ref('active_codes/' + code).once('value').then(function(snap) {
-    if (!snap.exists() || !snap.val().active) {
-      document.getElementById('claimStatus').textContent = '❌ Kode belum aktif!';
-      return;
-    }
-    db.ref('claimed/' + userId + '/' + code).once('value').then(function(cs) {
-      if (cs.exists()) {
-        document.getElementById('claimStatus').textContent = '⚠️ Sudah diklaim!';
-        return;
-      }
-      saldo += 100;
-      db.ref('claimed/' + userId + '/' + code).set(true);
-      db.ref('active_codes/' + code).remove();
-      updateUI();
-      document.getElementById('claimStatus').textContent = '🎉 +100 💎!';
-      document.getElementById('claimStatus').style.color = 'green';
-      showToast('🎉 +100 💎!');
-    });
-  }).catch(function() {
-    document.getElementById('claimStatus').textContent = '❌ Error! Coba lagi.';
-  });
-});
-
-// Admin
-document.getElementById('adminBtn').addEventListener('click', function() {
-  if (isAdmin) {
-    document.getElementById('adminPanel').classList.remove('hidden');
-    loadPending();
-  }
-  document.getElementById('adminModal').classList.remove('hidden');
-});
-
-document.getElementById('adminLoginBtn').addEventListener('click', function() {
-  var pass = document.getElementById('adminPassword').value;
-  if (pass === ADMIN_PASS) {
-    isAdmin = true;
-    document.g
+render();
+</script>
+</body>
+</html>
