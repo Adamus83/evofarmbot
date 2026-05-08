@@ -2,194 +2,63 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, orientation=landscape">
-  <title>Evolution Farm - Full Version</title>
-  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Evolution Farm</title>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  
   <style>
     *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,sans-serif}
-    html,body{
-      width:100%;height:100vh;height:100dvh;
-      overflow:hidden;
-      background:linear-gradient(145deg,#1a3c2e,#0f281e);
-      display:flex;justify-content:center;align-items:center;
-      padding:0;
-    }
-    
-    .game-container{
-      width:100%;height:100vh;height:100dvh;
-      max-width:100%;max-height:100%;
-      background:rgba(255,248,235,0.96);
-      box-shadow:0 20px 40px rgba(0,0,0,0.6);
-      border:2px solid #c9a45b;
-      display:flex;flex-direction:column;
-      overflow:hidden;
-    }
-    
-    @media (orientation: landscape) {
-      .game-container{
-        flex-direction:row;
-        flex-wrap:wrap;
-      }
-      .header{width:100%;}
-      .nav-tabs{width:100%;}
-      .farm-area{flex:1;min-width:55%;}
-      .side-panel{width:40%;overflow-y:auto;padding:8px;}
-    }
-    
-    @media (orientation: portrait) {
-      .game-container{flex-direction:column;}
-      .farm-area{min-height:120px;}
-      .side-panel{flex:1;overflow-y:auto;padding:6px;}
-    }
-    
-    .header{
-      display:flex;justify-content:space-between;align-items:center;
-      background:#2d5e3b;padding:6px 10px;
-      color:#f7e3b2;font-weight:bold;font-size:0.7rem;flex-wrap:wrap;gap:3px;
-      border-bottom:2px solid #e7b42c;flex-shrink:0;
-    }
-    
-    .badge{
-      padding:3px 7px;border-radius:18px;font-size:0.6rem;
-      display:flex;align-items:center;gap:2px;white-space:nowrap;
-    }
+    html,body{width:100%;height:100vh;height:100dvh;overflow:hidden;background:#1a3c2e;display:flex;justify-content:center;align-items:center}
+    .game-container{width:100%;height:100vh;height:100dvh;max-width:100%;background:rgba(255,248,235,0.96);display:flex;flex-direction:column;overflow:hidden;border:2px solid #c9a45b}
+    .header{display:flex;justify-content:space-between;align-items:center;background:#2d5e3b;padding:8px 12px;color:#f7e3b2;font-weight:bold;font-size:0.75rem;flex-shrink:0;border-bottom:2px solid #e7b42c}
+    .badge{padding:4px 8px;border-radius:18px;font-size:0.65rem;display:flex;align-items:center;gap:2px}
     .profit-badge{background:#f3c13a;color:#2d3e1f}
     .saldo-badge{background:#7ec8e3;color:#0a2f3c}
     .energy-badge{background:#ff8a8a;color:#3c0a0a}
-    
-    .nav-tabs{
-      display:flex;gap:3px;background:#2d5e3b;padding:3px;
-      overflow-x:auto;flex-shrink:0;
-    }
-    .nav-tab{
-      flex:1;padding:6px 3px;text-align:center;
-      font-weight:700;font-size:0.58rem;cursor:pointer;
-      background:transparent;color:#f7e3b2;border:none;transition:0.12s;white-space:nowrap;
-      border-radius:22px;
-    }
-    .nav-tab.active{background:#f3c13a;color:#2d3e1f;box-shadow:0 2px 5px rgba(0,0,0,0.3)}
-    
-    .farm-area{
-      background:#b6d7a8;
-      background-image:radial-gradient(circle at 30% 40%,#d4e8b0,#7fa35b);
-      box-shadow:inset 0 -3px 0 rgba(0,0,0,0.2),0 6px 12px rgba(0,0,0,0.4);
-      border:2px solid #5a7940;
-      display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:4px;
-      padding:6px;overflow-y:auto;
-    }
-    
-    .creature-card{
-      background:#fef9e7;border-radius:14px;padding:4px 2px 3px;width:60px;
-      display:flex;flex-direction:column;align-items:center;
-      box-shadow:0 4px 0 #8b6f4c,0 5px 8px rgba(0,0,0,0.3);
-      border:2px solid #dbb45c;cursor:pointer;transition:0.1s;position:relative;
-      font-size:0.45rem;flex-shrink:0;
-    }
-    .creature-card:active{transform:scale(0.88)}
-    .creature-card.selected{border:2px solid #ffd966;box-shadow:0 0 14px gold;transform:translateY(-2px)}
-    
-    .creature-emoji{font-size:1.5rem;filter:drop-shadow(0 2px 2px rgba(0,0,0,0.4))}
-    .creature-name{font-weight:700;font-size:0.42rem;background:#e6c468;padding:1px 4px;border-radius:8px;color:#2d3a1f;text-transform:uppercase}
-    
-    .stars-row{display:flex;gap:0.5px;margin-top:1px}
+    .nav-tabs{display:flex;gap:3px;background:#2d5e3b;padding:4px;overflow-x:auto;flex-shrink:0}
+    .nav-tab{flex:1;padding:7px 4px;text-align:center;font-weight:700;font-size:0.6rem;cursor:pointer;background:transparent;color:#f7e3b2;border:none;border-radius:22px;white-space:nowrap}
+    .nav-tab.active{background:#f3c13a;color:#2d3e1f}
+    .content-area{flex:1;overflow-y:auto;padding:8px}
+    .farm-area{background:#b6d7a8;border-radius:20px;padding:8px;background-image:radial-gradient(circle at 30% 40%,#d4e8b0,#7fa35b);box-shadow:inset 0 -3px 0 rgba(0,0,0,0.2);border:2px solid #5a7940;min-height:100px;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:5px}
+    .creature-card{background:#fef9e7;border-radius:14px;padding:5px 3px;width:62px;display:flex;flex-direction:column;align-items:center;box-shadow:0 4px 0 #8b6f4c;border:2px solid #dbb45c;cursor:pointer;font-size:0.45rem;flex-shrink:0}
+    .creature-card.selected{border:2px solid #ffd966;box-shadow:0 0 12px gold}
+    .creature-emoji{font-size:1.6rem}
+    .creature-name{font-weight:700;font-size:0.42rem;background:#e6c468;padding:1px 5px;border-radius:8px;color:#2d3a1f}
+    .stars-row{display:flex;gap:1px;margin-top:1px}
     .star{font-size:0.4rem}
     .star.filled{color:#f3c13a}
     .star.empty{color:#ccc}
-    
-    .ordo-badge{font-size:0.35rem;padding:1px 4px;border-radius:6px;margin-top:1px;font-weight:bold}
-    
-    .hunger-bar{width:100%;height:2px;background:#ddd;border-radius:3px;margin-top:1px}
-    .hunger-fill{height:100%;border-radius:3px;transition:0.3s}
-    
-    .btn{
-      background:#f7eac8;border:none;padding:5px 6px;border-radius:20px;
-      font-weight:700;font-size:0.55rem;color:#2c4720;
-      box-shadow:0 2px 0 #b4944c;border:1px solid #e7b42c;
-      cursor:pointer;transition:0.1s;flex:1;min-width:40px;text-align:center;
-    }
-    .btn:active{transform:translateY(1px);box-shadow:0 1px 0 #b4944c}
-    .btn:disabled{opacity:0.4;pointer-events:none}
-    .btn-gold{background:#f7b05e;border-color:#d48c2c}
-    .btn-purple{background:#c68ef0;border-color:#7b4aa0}
-    .btn-blue{background:#7ec8e3;border-color:#4a9ab0}
-    .btn-red{background:#ff8a8a;border-color:#c94b4b}
-    .btn-green{background:#a8e6cf;border-color:#5a9a70}
-    
-    .controls{display:flex;gap:3px;flex-wrap:wrap;justify-content:center;margin-top:3px;flex-shrink:0}
-    
-    .modal-overlay{
-      position:fixed;top:0;left:0;width:100%;height:100%;
-      background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;
-      z-index:1000;padding:12px;
-    }
-    .modal{
-      background:#fef9e7;border-radius:20px;padding:12px;max-width:360px;width:100%;
-      text-align:center;border:3px solid #c9a45b;
-      box-shadow:0 20px 40px rgba(0,0,0,0.7);max-height:80vh;overflow-y:auto;
-    }
-    .modal h3{color:#2d3e1f;margin-bottom:4px;font-size:0.85rem}
-    
-    .code-display{
-      background:#2d3e1f;color:#f7e3b2;font-size:1.1rem;letter-spacing:2px;
-      padding:6px;border-radius:12px;margin:4px 0;font-weight:900;font-family:monospace;word-break:break-all;
-    }
-    
-    .modal input,.modal select{
-      width:100%;padding:8px;border-radius:12px;border:2px solid #c9a45b;
-      font-size:0.7rem;text-align:center;margin:3px 0;background:#fffaed;
-    }
-    
+    .btn{background:#f7eac8;border:none;padding:6px 8px;border-radius:20px;font-weight:700;font-size:0.55rem;color:#2c4720;box-shadow:0 2px 0 #b4944c;border:1px solid #e7b42c;cursor:pointer;flex:1;min-width:45px;text-align:center}
+    .btn-gold{background:#f7b05e}
+    .btn-purple{background:#c68ef0}
+    .btn-blue{background:#7ec8e3}
+    .btn-red{background:#ff8a8a}
+    .btn-green{background:#a8e6cf}
+    .controls{display:flex;gap:4px;flex-wrap:wrap;justify-content:center;margin-top:6px}
     .hidden{display:none!important}
-    .log{background:#2b4127;padding:4px 8px;color:#f3e3b0;font-size:0.55rem;text-align:center;border:1px solid #b4944c;flex-shrink:0}
-    
-    .battle-card{
-      background:#fff3cd;border-radius:12px;padding:6px;margin:3px 0;
-      display:flex;justify-content:space-between;align-items:center;border:1px solid #c9a45b;font-size:0.6rem;
-    }
-    
-    .toast{
-      position:fixed;top:10px;left:50%;transform:translateX(-50%);
-      background:#2d3e1f;color:#f7e3b2;padding:6px 14px;border-radius:20px;
-      font-weight:bold;z-index:2000;animation:fadeInOut 2s ease;font-size:0.65rem;
-    }
-    @keyframes fadeInOut{
-      0%{opacity:0;top:-20px}20%{opacity:1;top:10px}80%{opacity:1;top:10px}100%{opacity:0;top:-20px}
-    }
-
-    .tip-box{
-      background:#fff3cd;border-radius:10px;padding:6px;margin:4px 0;font-size:0.55rem;
-      border:1px dashed #c9a45b;text-align:center;
-    }
-
-    .admin-btn{
-      position:fixed;bottom:15px;right:15px;z-index:999;
-      width:45px;height:45px;border-radius:50%;padding:0;
-      font-size:1.1rem;flex:none;background:#c94b4b;color:white;
-      border:2px solid #fff;box-shadow:0 4px 10px rgba(0,0,0,0.5);
-    }
-
-    .shop-creature-card{
-      display:inline-block;background:#fef9e7;border-radius:14px;padding:4px;margin:3px;
-      text-align:center;border:2px solid #dbb45c;cursor:pointer;width:65px;font-size:0.45rem;
-    }
-    .shop-creature-card:hover{border-color:#ffd966;box-shadow:0 0 8px gold;}
+    .log{background:#2b4127;padding:5px 10px;color:#f3e3b0;font-size:0.55rem;text-align:center;border:1px solid #b4944c;flex-shrink:0}
+    .modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;z-index:1000}
+    .modal{background:#fef9e7;border-radius:18px;padding:14px;max-width:350px;width:100%;text-align:center;border:3px solid #c9a45b;max-height:80vh;overflow-y:auto}
+    .modal h3{color:#2d3e1f;margin-bottom:6px;font-size:0.9rem}
+    .modal input,.modal select{width:100%;padding:8px;border-radius:12px;border:2px solid #c9a45b;font-size:0.7rem;text-align:center;margin:4px 0;background:#fffaed}
+    .code-display{background:#2d3e1f;color:#f7e3b2;font-size:1.2rem;letter-spacing:3px;padding:8px;border-radius:12px;margin:6px 0;font-weight:900;font-family:monospace}
+    .battle-card{background:#fff3cd;border-radius:12px;padding:6px;margin:3px 0;display:flex;justify-content:space-between;align-items:center;border:1px solid #c9a45b;font-size:0.6rem}
+    .shop-card{display:inline-block;background:#fef9e7;border-radius:14px;padding:5px;margin:3px;text-align:center;border:2px solid #dbb45c;cursor:pointer;width:65px;font-size:0.45rem}
+    .toast{position:fixed;top:10px;left:50%;transform:translateX(-50%);background:#2d3e1f;color:#f7e3b2;padding:8px 16px;border-radius:20px;font-weight:bold;z-index:2000;font-size:0.7rem}
+    .admin-btn{position:fixed;bottom:15px;right:15px;z-index:999;width:45px;height:45px;border-radius:50%;background:#c94b4b;color:white;border:2px solid #fff;font-size:1.2rem;cursor:pointer;box-shadow:0 4px 10px rgba(0,0,0,0.5)}
   </style>
 </head>
 <body>
 <div class="game-container">
   <div class="header">
-    <span>🌿 EVO FARM FULL</span>
-    <div style="display:flex;gap:2px;flex-wrap:wrap;">
+    <span>🌿 EVO FARM</span>
+    <div style="display:flex;gap:3px;flex-wrap:wrap;">
       <span class="badge profit-badge">💰<span id="profitDisplay">0</span></span>
       <span class="badge saldo-badge">💎<span id="saldoDisplay">0</span></span>
       <span class="badge energy-badge">⚡<span id="energyDisplay">10</span></span>
     </div>
   </div>
-  
   <div class="nav-tabs">
     <button class="nav-tab active" data-tab="farm">🌾Farm</button>
     <button class="nav-tab" data-tab="feed">🍖Feed</button>
@@ -198,431 +67,58 @@
     <button class="nav-tab" data-tab="market">🏪Pasar</button>
     <button class="nav-tab" data-tab="event">🎪Event</button>
   </div>
-  
-  <!-- SIDE PANEL (untuk landscape) -->
-  <div class="side-panel" id="sidePanel">
-    <!-- TAB FARM -->
-    <div id="tabFarm">
-      <div class="farm-area" id="farmContainer"></div>
-      <div class="tip-box">💡 <span id="tipText">Klik makhluk untuk memilih (max 2)</span></div>
-      <div class="controls">
-        <button class="btn btn-gold" id="breedButton">🐣Breed</button>
-        <button class="btn btn-purple" id="evolveButton">✨Evolve</button>
-        <button class="btn" id="sellButton">💵Sell</button>
-      </div>
-      <div class="controls">
-        <button class="btn btn-blue" id="topupButton">🛒Beli 💎</button>
-        <button class="btn btn-green" id="claimButton">🎁Klaim</button>
-        <button class="btn btn-red" id="fillStarsBtn">⭐Isi ⭐</button>
-      </div>
-    </div>
-    
-    <!-- TAB FEED -->
-    <div id="tabFeed" class="hidden">
-      <h3 style="color:#2d3e1f;text-align:center;font-size:0.8rem;">🍖 Feeding</h3>
-      <select id="feedTargetSelect" style="width:100%;padding:6px;border-radius:10px;margin:3px 0;font-size:0.6rem;">
-        <option value="">Pilih makhluk...</option>
-      </select>
-      <div style="display:flex;gap:3px;flex-wrap:wrap;margin:3px 0;">
-        <button class="btn" onclick="feedCreature('basic')">🍞Roti 💰5</button>
-        <button class="btn btn-gold" onclick="feedCreature('meat')">🥩Daging 💰15</button>
-        <button class="btn btn-blue" onclick="feedCreature('premium')">🍰Premium 💎1</button>
-      </div>
-    </div>
-    
-    <!-- TAB BATTLE -->
-    <div id="tabBattle" class="hidden">
-      <h3 style="color:#2d3e1f;text-align:center;font-size:0.8rem;">⚔️ Battle Arena</h3>
-      <select id="battleCreatureSelect" style="width:100%;padding:6px;border-radius:10px;margin:3px 0;font-size:0.6rem;">
-        <option value="">Pilih makhlukmu...</option>
-      </select>
-      <div id="opponentList" style="max-height:150px;overflow-y:auto;margin:4px 0;"></div>
-    </div>
-    
-    <!-- TAB SHOP (BELI MAKHLUK DARI BOT) -->
-    <div id="tabShop" class="hidden">
-      <h3 style="color:#2d3e1f;text-align:center;font-size:0.8rem;">🛍️ Beli Makhluk</h3>
-      <p style="font-size:0.55rem;text-align:center;color:#5a7940;">Makhluk langsung dari bot (bukan pasar)</p>
-      <div id="botShopList" style="display:flex;flex-wrap:wrap;justify-content:center;gap:4px;max-height:300px;overflow-y:auto;"></div>
-    </div>
-    
-    <!-- TAB PASAR -->
-    <div id="tabMarket" class="hidden">
-      <h3 style="color:#2d3e1f;text-align:center;font-size:0.8rem;">🏪 Pasar Pemain</h3>
-      <div class="controls">
-        <button class="btn btn-gold" id="sellMarketBtn">📤Jual</button>
-        <button class="btn btn-blue" id="refreshMarketBtn">🔄Refresh</button>
-        <button class="btn btn-outline" id="myListingsBtn">📋Listku</button>
-      </div>
-      <div id="marketListings" style="max-height:150px;overflow-y:auto;"></div>
-    </div>
-    
-    <!-- TAB EVENT -->
-    <div id="tabEvent" class="hidden">
-      <h3 style="color:#2d3e1f;text-align:center;font-size:0.8rem;">🎪 Event & Referral</h3>
-      <button class="btn btn-gold" id="enterGiveawayBtn">🎟️Giveaway</button>
-      <div id="limitedShop" style="margin:4px 0;"></div>
-      <div class="code-display" id="refLink" style="font-size:0.55rem;">-</div>
-      <button class="btn btn-green" id="copyRefBtn">📋Copy Link</button>
-      <input type="text" id="refCodeInput" placeholder="Kode referral" style="width:100%;padding:6px;border-radius:10px;margin:3px 0;font-size:0.6rem;">
-      <button class="btn btn-gold" id="submitRefBtn">✅Klaim 50💎</button>
-    </div>
+  <div class="content-area" id="contentArea">
+    <div id="tabFarm"><div class="farm-area" id="farmContainer"></div><div class="controls"><button class="btn btn-gold" id="breedButton">🐣Breed</button><button class="btn btn-purple" id="evolveButton">✨Evolve</button><button class="btn" id="sellButton">💵Sell</button></div><div class="controls"><button class="btn btn-blue" id="topupButton">🛒Beli 💎</button><button class="btn btn-green" id="claimButton">🎁Klaim</button><button class="btn btn-red" id="fillStarsBtn">⭐Isi ⭐</button></div></div>
+    <div id="tabFeed" class="hidden"><h3 style="text-align:center;color:#2d3e1f;">🍖 Feeding</h3><select id="feedTargetSelect" style="width:100%;padding:6px;border-radius:10px;margin:4px 0;font-size:0.6rem;"><option value="">Pilih makhluk...</option></select><div style="display:flex;gap:4px;"><button class="btn" onclick="feedCreature('basic')">🍞💰5</button><button class="btn btn-gold" onclick="feedCreature('meat')">🥩💰15</button><button class="btn btn-blue" onclick="feedCreature('premium')">🍰💎1</button></div></div>
+    <div id="tabBattle" class="hidden"><h3 style="text-align:center;color:#2d3e1f;">⚔️ Battle</h3><select id="battleCreatureSelect" style="width:100%;padding:6px;border-radius:10px;margin:4px 0;font-size:0.6rem;"><option value="">Pilih makhluk...</option></select><div id="opponentList"></div></div>
+    <div id="tabShop" class="hidden"><h3 style="text-align:center;color:#2d3e1f;">🛍️ Beli Makhluk</h3><div id="botShopList" style="display:flex;flex-wrap:wrap;justify-content:center;gap:4px;"></div></div>
+    <div id="tabMarket" class="hidden"><h3 style="text-align:center;color:#2d3e1f;">🏪 Pasar</h3><div class="controls"><button class="btn btn-gold" id="sellMarketBtn">📤Jual</button><button class="btn btn-blue" id="refreshMarketBtn">🔄Refresh</button></div><div id="marketListings"></div></div>
+    <div id="tabEvent" class="hidden"><h3 style="text-align:center;color:#2d3e1f;">🎪 Event</h3><button class="btn btn-gold" id="enterGiveawayBtn">🎟️Giveaway</button><div id="limitedShop"></div><div class="code-display" id="refLink" style="font-size:0.6rem;">-</div><button class="btn btn-green" id="copyRefBtn">📋Copy Link</button></div>
   </div>
-  
-  <div class="log" id="logMessage">🌱 Selamat datang di Evolution Farm Full!</div>
+  <div class="log" id="logMessage">🌱 Selamat datang!</div>
 </div>
 
-<!-- MODALS -->
-<div class="modal-overlay hidden" id="buyModal">
-  <div class="modal">
-    <h3>🛒 Beli Koin Premium</h3>
-    <p style="font-size:0.65rem;">Rp10.000 = 100 💎</p>
-    <div class="code-display" id="generatedCode">----</div>
-    <p style="font-size:0.5rem;">BCA 1234567890 a.n. <b>NAMA ANDA</b></p>
-    <p style="font-size:0.5rem;">WA: <b>08xxxxxxxxxx</b></p>
-    <button class="btn btn-blue" id="copyCodeBtn">📋Copy Kode</button>
-    <button class="btn" id="closeBuyModal">❌Tutup</button>
-  </div>
-</div>
-
-<div class="modal-overlay hidden" id="claimModal">
-  <div class="modal">
-    <h3>🎁 Klaim Kode</h3>
-    <input type="text" id="claimCodeInput" placeholder="EVO-XXXXXX" autocomplete="off">
-    <button class="btn btn-green" id="submitClaimBtn">✅Klaim 100💎</button>
-    <button class="btn" id="closeClaimModal">❌Tutup</button>
-    <p id="claimStatus"></p>
-  </div>
-</div>
-
-<div class="modal-overlay hidden" id="battleResultModal">
-  <div class="modal" id="battleResultContent"></div>
-</div>
-
-<div class="modal-overlay hidden" id="sellMarketModal">
-  <div class="modal">
-    <h3>📤 Jual di Pasar</h3>
-    <select id="sellCreatureSelect"></select>
-    <input type="number" id="sellPriceInput" placeholder="Harga (💎)" min="1" value="10">
-    <p style="font-size:0.5rem;">Fee 10%: <span id="feePreview">0</span>💎 | Terima: <span id="netPreview">0</span>💎</p>
-    <button class="btn btn-gold" id="confirmSellMarketBtn">📤List</button>
-    <button class="btn" id="closeSellMarket">❌Batal</button>
-  </div>
-</div>
-
-<div class="modal-overlay hidden" id="myListingsModal">
-  <div class="modal">
-    <h3>📋 Listing Saya</h3>
-    <div id="myListingsContent"></div>
-    <button class="btn" id="closeMyListings">❌Tutup</button>
-  </div>
-</div>
-
-<div class="modal-overlay hidden" id="adminLoginModal">
-  <div class="modal">
-    <h3>🔐 Admin</h3>
-    <input type="password" id="adminPassword" placeholder="Password">
-    <button class="btn btn-gold" id="adminLoginBtn">🔓Masuk</button>
-    <button class="btn" id="closeAdminLogin">❌Tutup</button>
-    <p id="adminLoginStatus"></p>
-  </div>
-</div>
-
-<div class="modal-overlay hidden" id="adminPanelModal">
-  <div class="modal">
-    <h3>🔑 Panel Admin</h3>
-    <div id="pendingPayments" style="max-height:150px;overflow-y:auto;font-size:0.6rem;text-align:left;"></div>
-    <input type="text" id="adminCodeInput" placeholder="Atau masukkan kode manual">
-    <button class="btn btn-green" id="adminActivateBtn">✅Aktifkan Kode</button>
-    <button class="btn" id="closeAdminPanel">❌Tutup</button>
-    <p id="adminActivateStatus"></p>
-  </div>
-</div>
-
-<button class="btn admin-btn hidden" id="adminPanelBtn">🔑</button>
+<div class="modal-overlay hidden" id="buyModal"><div class="modal"><h3>🛒 Beli Koin</h3><p>Rp10.000 = 100💎</p><div class="code-display" id="generatedCode">----</div><p style="font-size:0.5rem;">BCA 1234567890 a.n. <b>NAMA ANDA</b></p><p style="font-size:0.5rem;">WA: <b>08xxxxxxxxxx</b></p><button class="btn btn-blue" id="copyCodeBtn">📋Copy</button><button class="btn" id="closeBuyModal">❌Tutup</button></div></div>
+<div class="modal-overlay hidden" id="claimModal"><div class="modal"><h3>🎁 Klaim</h3><input type="text" id="claimCodeInput" placeholder="EVO-XXXXXX"><button class="btn btn-green" id="submitClaimBtn">✅Klaim 100💎</button><button class="btn" id="closeClaimModal">❌Tutup</button><p id="claimStatus"></p></div></div>
+<div class="modal-overlay hidden" id="battleResultModal"><div class="modal" id="battleResultContent"></div></div>
+<div class="modal-overlay hidden" id="adminLoginModal"><div class="modal"><h3>🔐 Admin</h3><input type="password" id="adminPassword" placeholder="Password"><button class="btn btn-gold" id="adminLoginBtn">🔓Masuk</button><button class="btn" id="closeAdminLogin">❌Tutup</button><p id="adminLoginStatus"></p></div></div>
+<div class="modal-overlay hidden" id="adminPanelModal"><div class="modal"><h3>🔑 Panel Admin</h3><div id="pendingPayments" style="max-height:150px;overflow-y:auto;font-size:0.6rem;text-align:left;"></div><input type="text" id="adminCodeInput" placeholder="Kode manual"><button class="btn btn-green" id="adminActivateBtn">✅Aktifkan</button><button class="btn" id="closeAdminPanel">❌Tutup</button></div></div>
+<button class="admin-btn hidden" id="adminPanelBtn">🔑</button>
 
 <script>
-// ============ INIT ============
-var tg = window.Telegram.WebApp;
-tg.expand();tg.ready();
-tg.enableClosingConfirmation();
+var tg=window.Telegram.WebApp;tg.expand();tg.ready();
+var userId=tg.initDataUnsafe?.user?.id?'tg_'+tg.initDataUnsafe.user.id:(localStorage.getItem('evo_user_id')||'user_'+Math.random().toString(36).substr(2,9));
+localStorage.setItem('evo_user_id',userId);
+var tgUsername=tg.initDataUnsafe?.user?.username||tg.initDataUnsafe?.user?.first_name||'Player';
 
-var userId = tg.initDataUnsafe?.user?.id ? 'tg_'+tg.initDataUnsafe.user.id : (localStorage.getItem('evo_user_id')||'user_'+Math.random().toString(36).substr(2,9));
-localStorage.setItem('evo_user_id', userId);
-var tgUsername = tg.initDataUnsafe?.user?.username || tg.initDataUnsafe?.user?.first_name || 'Player';
+var firebaseConfig={apiKey:"AIZaSyC2Gb6WtY1bn05fI_3K9x3",authDomain:"evo-farm-game.firebaseapp.com",databaseURL:"https://evo-farm-game-default-rtdb.asia-southeast1.firebasedatabase.app",projectId:"evo-farm-game",storageBucket:"evo-farm-game.appspot.com",messagingSenderId:"870289339504",appId:"1:870289339504:web:154c283a0e8b5d4c28a3e"};
+firebase.initializeApp(firebaseConfig);var db=firebase.database();
 
-var firebaseConfig = {
-  apiKey: "AIZaSyC2Gb6WtY1bn05fI_3K9x3",
-  authDomain: "evo-farm-game.firebaseapp.com",
-  databaseURL: "https://evo-farm-game-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "evo-farm-game",
-  storageBucket: "evo-farm-game.appspot.com",
-  messagingSenderId: "870289339504",
-  appId: "1:870289339504:web:154c283a0e8b5d4c28a3e"
-};
-firebase.initializeApp(firebaseConfig);
-var db = firebase.database();
+var ORDOS={herbisida:{name:"🌿Herbisida",emoji:"🌿",color:"#4caf50",strong:"akuatik",weak:"magma,aerial"},aerial:{name:"🦅Aerial",emoji:"🦅",color:"#87ceeb",strong:"herbisida",weak:"akuatik,mystic"},akuatik:{name:"💧Akuatik",emoji:"💧",color:"#2196f3",strong:"magma",weak:"herbisida,aerial"},magma:{name:"🔥Magma",emoji:"🔥",color:"#f44336",strong:"herbisida,aerial",weak:"akuatik,mystic"},mystic:{name:"🔮Mystic",emoji:"🔮",color:"#9c27b0",strong:"aerial,magma",weak:"mystic"}};
 
-// ============ DATA ============
-var ORDOS = {
-  herbisida:{name:"🌿Herbisida",emoji:"🌿",color:"#4caf50",strong:"akuatik",weak:"magma,aerial"},
-  aerial:{name:"🦅Aerial",emoji:"🦅",color:"#87ceeb",strong:"herbisida",weak:"akuatik,mystic"},
-  akuatik:{name:"💧Akuatik",emoji:"💧",color:"#2196f3",strong:"magma",weak:"herbisida,aerial"},
-  magma:{name:"🔥Magma",emoji:"🔥",color:"#f44336",strong:"herbisida,aerial",weak:"akuatik,mystic"},
-  mystic:{name:"🔮Mystic",emoji:"🔮",color:"#9c27b0",strong:"aerial,magma",weak:"mystic"}
-};
-
-function generateCreatures(){
-  var all=[],id=0;
-  var sd=[{stage:1,hp:30,atk:6,def:2,spd:3,value:5,ns:"Sprout"},{stage:2,hp:50,atk:12,def:5,spd:5,value:15,ns:"Bloom"},{stage:3,hp:75,atk:22,def:10,spd:6,value:40,ns:"Giant"},{stage:4,hp:110,atk:38,def:16,spd:8,value:100,ns:"Lord"}];
-  var ok=Object.keys(ORDOS);
-  var on={herbisida:["Weed","Thorn","Vine","Briar","Mandrake"],aerial:["Gust","Storm","Cloud","Zephyr","Typhoon"],akuatik:["Drop","Coral","Tide","Reef","Abyss"],magma:["Ember","Lava","Flare","Cinder","Inferno"],mystic:["Wisp","Rune","Shade","Echo","Void"]};
-  sd.forEach(function(s){ok.forEach(function(o){on[o].forEach(function(n,i){var v=i/4;all.push({id:id++,name:n+" "+s.ns,emoji:ORDOS[o].emoji,stage:s.stage,ordo:o,ordoName:ORDOS[o].name,ordoColor:ORDOS[o].color,strong:ORDOS[o].strong,weak:ORDOS[o].weak,hp:Math.floor(s.hp*(1+v*0.5)),atk:Math.floor(s.atk*(1+v*0.6)),def:Math.floor(s.def*(1+v*0.4)),spd:Math.floor(s.spd*(1+v*0.5)),value:Math.floor(s.value*(1+v*0.8)),skill:getSkill(o,s.stage),limited:false})})})});
-  all.push({id:id++,name:"Unicorn",emoji:"🦄",stage:3,ordo:"mystic",ordoName:ORDOS.mystic.name,ordoColor:ORDOS.mystic.color,strong:"aerial,magma",weak:"mystic",hp:80,atk:28,def:12,spd:16,value:80,skill:"Rainbow Heal",limited:true});
-  all.push({id:id++,name:"PhoenixLtd",emoji:"🔥",stage:4,ordo:"magma",ordoName:ORDOS.magma.name,ordoColor:ORDOS.magma.color,strong:"herbisida,aerial",weak:"akuatik,mystic",hp:120,atk:50,def:14,spd:20,value:200,skill:"Rebirth",limited:true});
-  return all;
-}
+function genCreatures(){var a=[],id=0;var sd=[{s:1,hp:30,atk:6,def:2,spd:3,v:5,n:"Sprout"},{s:2,hp:50,atk:12,def:5,spd:5,v:15,n:"Bloom"},{s:3,hp:75,atk:22,def:10,spd:6,v:40,n:"Giant"},{s:4,hp:110,atk:38,def:16,spd:8,v:100,n:"Lord"}];var ok=Object.keys(ORDOS);var on={herbisida:["Weed","Thorn","Vine","Briar","Mandrake"],aerial:["Gust","Storm","Cloud","Zephyr","Typhoon"],akuatik:["Drop","Coral","Tide","Reef","Abyss"],magma:["Ember","Lava","Flare","Cinder","Inferno"],mystic:["Wisp","Rune","Shade","Echo","Void"]};sd.forEach(function(s){ok.forEach(function(o){on[o].forEach(function(n,i){var v=i/4;a.push({id:id++,name:n+" "+s.n,emoji:ORDOS[o].emoji,stage:s.s,ordo:o,ordoName:ORDOS[o].name,ordoColor:ORDOS[o].color,strong:ORDOS[o].strong,weak:ORDOS[o].weak,hp:Math.floor(s.hp*(1+v*0.5)),atk:Math.floor(s.atk*(1+v*0.6)),def:Math.floor(s.def*(1+v*0.4)),spd:Math.floor(s.spd*(1+v*0.5)),value:Math.floor(s.v*(1+v*0.8)),skill:getSkill(o,s.s),limited:false})})})});a.push({id:id++,name:"Unicorn",emoji:"🦄",stage:3,ordo:"mystic",ordoName:ORDOS.mystic.name,ordoColor:ORDOS.mystic.color,strong:"aerial,magma",weak:"mystic",hp:80,atk:28,def:12,spd:16,value:80,skill:"RainbowHeal",limited:true});a.push({id:id++,name:"PhoenixLtd",emoji:"🔥",stage:4,ordo:"magma",ordoName:ORDOS.magma.name,ordoColor:ORDOS.magma.color,strong:"herbisida,aerial",weak:"akuatik,mystic",hp:120,atk:50,def:14,spd:20,value:200,skill:"Rebirth",limited:true});return a}
 function getSkill(o,s){var sk={herbisida:{1:"PoisonI",2:"PoisonII",3:"PoisonIII",4:"PoisonIV"},aerial:{1:"PierceI",2:"PierceII",3:"CritUp",4:"ChainHit"},akuatik:{1:"RegenI",2:"RegenII",3:"Shield",4:"RegenIV"},magma:{1:"BurnI",2:"BurnII",3:"Fury",4:"Meteor"},mystic:{1:"Steal",2:"Copy",3:"Buff",4:"Void"}};return sk[o]?sk[o][s]||"?":"?"}
-var creatures = generateCreatures();
+var creatures=genCreatures();
 
-// ============ STATE ============
-var farm=[],profit=20,saldo=0,energy=15,selectedIndices=[];
-var ADMIN_PASS="evofarm2024",isAdmin=false;
+var farm=[],profit=20,saldo=0,energy=15,selected=[],isAdmin=false,ADMIN_PASS="evofarm2024";
 
-// ============ UI ============
-function updateUI(){
-  renderFarm();
-  document.getElementById('profitDisplay').textContent=profit;
-  document.getElementById('saldoDisplay').textContent=saldo;
-  document.getElementById('energyDisplay').textContent=energy;
-  saveData();
-}
-
-function getStats(c){
-  var s=c.stars||0,sm=1+(s*0.12),h=c.hunger||100,hm=h>=90?1.15:h>=60?1:0.75;
-  return {hp:Math.floor(c.hp*sm*hm),atk:Math.floor(c.atk*sm*hm),def:Math.floor(c.def*sm*hm),spd:Math.floor(c.spd*sm*hm)};
-}
-
-function renderFarm(){
-  var co=document.getElementById('farmContainer');
-  if(!farm.length){co.innerHTML='<div style="color:#3b5526;font-size:0.65rem;">🌾 Ladang kosong</div>';return}
-  co.innerHTML=farm.map(function(c,i){
-    var sel=selectedIndices.indexOf(i)>=0?'selected':'',st=c.stars||0,h=c.hunger||100,hc=h>=90?'#4caf50':h>=50?'#ff9800':'#f44336';
-    var sh='';for(var s=0;s<5;s++)sh+='<span class="star '+(s<st?'filled':'empty')+'">'+(s<st?'⭐':'☆')+'</span>';
-    return '<div class="creature-card '+sel+'" data-index="'+i+'" style="border-left:3px solid '+(c.ordoColor||'#ccc')+'">'+(c.limited?'<span style="position:absolute;top:-4px;right:-4px;background:red;color:white;font-size:0.3rem;padding:1px 3px;border-radius:5px;">LTD</span>':'')+'<span class="creature-emoji">'+c.emoji+'</span><span class="creature-name">'+c.name+'</span><div class="stars-row">'+sh+'</div><span class="ordo-badge" style="background:'+(c.ordoColor||'#ccc')+';color:white;">'+(c.ordoName||'?')+'</span><div class="hunger-bar"><div class="hunger-fill" style="width:'+h+'%;background:'+hc+'"></div></div></div>';
-  }).join('');
-  document.querySelectorAll('.creature-card').forEach(function(card){card.addEventListener('click',function(){var i=parseInt(this.dataset.index),p=selectedIndices.indexOf(i);if(p>=0)selectedIndices.splice(p,1);else if(selectedIndices.length<2)selectedIndices.push(i);else showToast('⚠️Max 2!');updateUI()})});
-}
-
-function showToast(m){var t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);setTimeout(function(){t.remove()},1800)}
+function updateUI(){renderFarm();document.getElementById('profitDisplay').textContent=profit;document.getElementById('saldoDisplay').textContent=saldo;document.getElementById('energyDisplay').textContent=energy;saveData()}
+function getStats(c){var s=c.stars||0,sm=1+s*0.12,h=c.hunger||100,hm=h>=90?1.15:h>=60?1:0.75;return{hp:Math.floor(c.hp*sm*hm),atk:Math.floor(c.atk*sm*hm),def:Math.floor(c.def*sm*hm),spd:Math.floor(c.spd*sm*hm)}}
+function renderFarm(){var co=document.getElementById('farmContainer');if(!farm.length){co.innerHTML='<div style="color:#3b5526;">🌾 Kosong</div>';return}co.innerHTML=farm.map(function(c,i){var sel=selected.indexOf(i)>=0?'selected':'',st=c.stars||0,h=c.hunger||100,hc=h>=90?'#4caf50':h>=50?'#ff9800':'#f44336',sh='';for(var s=0;s<5;s++)sh+='<span class="star '+(s<st?'filled':'empty')+'">'+(s<st?'⭐':'☆')+'</span>';return'<div class="creature-card '+sel+'" data-index="'+i+'" style="border-left:3px solid '+(c.ordoColor||'#ccc')+'">'+(c.limited?'<span style="position:absolute;top:-5px;right:-5px;background:red;color:white;font-size:0.35rem;padding:1px 3px;border-radius:5px;">LTD</span>':'')+'<span class="creature-emoji">'+c.emoji+'</span><span class="creature-name">'+c.name+'</span><div class="stars-row">'+sh+'</div></div>'}).join('');document.querySelectorAll('.creature-card').forEach(function(card){card.addEventListener('click',function(){var i=parseInt(this.dataset.index),p=selected.indexOf(i);if(p>=0)selected.splice(p,1);else if(selected.length<2)selected.push(i);else showToast('⚠️Max 2!');updateUI()})})}
+function showToast(m){var t=document.createElement('div');t.style.cssText='position:fixed;top:10px;left:50%;transform:translateX(-50%);background:#2d3e1f;color:#f7e3b2;padding:8px 16px;border-radius:20px;font-weight:bold;z-index:2000;font-size:0.7rem;';t.textContent=m;document.body.appendChild(t);setTimeout(function(){t.remove()},1800)}
 function setLog(m){document.getElementById('logMessage').textContent=m}
-
-// ============ SAVE/LOAD ============
 function saveData(){db.ref('users/'+userId).set({farm,profit,saldo,energy,username:tgUsername,lastActive:Date.now()})}
-function loadData(){
-  db.ref('users/'+userId).once('value').then(function(snap){
-    if(snap.exists()){var d=snap.val();farm=d.farm||[];profit=d.profit||20;saldo=d.saldo||0;energy=d.energy||15}
-    else farm=[{...creatures[0],stars:0,hunger:100},{...creatures[5],stars:0,hunger:90},{...creatures[10],stars:0,hunger:80}];
-    updateUI();updateAllTabs();
-  });
-}
+function loadData(){db.ref('users/'+userId).once('value').then(function(snap){if(snap.exists()){var d=snap.val();farm=d.farm||[];profit=d.profit||20;saldo=d.saldo||0;energy=d.energy||15}else{farm=[{...creatures[0],stars:0,hunger:100},{...creatures[5],stars:0,hunger:90},{...creatures[10],stars:0,hunger:80}]}updateUI()})}
 
-// ============ ACTIONS ============
-function breedCreatures(){
-  if(selectedIndices.length!==2){showToast('Pilih 2!');return}
-  if(energy<2){showToast('⚡Kurang!');return}
-  var sorted=[...selectedIndices].sort(function(a,b){return b-a}),p1=farm[sorted[0]],p2=farm[sorted[1]];
-  if(p1.stage>=4||p2.stage>=4){showToast('Stage4 gabisa!');return}
-  if((p1.hunger||100)<30||(p2.hunger||100)<30){showToast('Lapar!');return}
-  for(var i=0;i<sorted.length;i++)farm.splice(sorted[i],1);
-  var ns=Math.floor((p1.stage+p2.stage)/2)+1;if(ns>4)ns=4;
-  var po=Math.random()<0.5?p1.ordo:p2.ordo;
-  var cand=creatures.filter(function(c){return c.ordo===po&&c.stage===ns&&!c.limited});
-  if(!cand.length)cand=creatures.filter(function(c){return c.stage===ns&&!c.limited});
-  var baby=cand[Math.floor(Math.random()*cand.length)]||creatures[0];
-  farm.push({...baby,stars:0,hunger:70});energy-=2;selectedIndices=[];updateUI();showToast('🐣'+baby.emoji+' '+baby.name);
-}
-function evolveCreature(){
-  if(selectedIndices.length!==1){showToast('Pilih 1!');return}
-  var idx=selectedIndices[0],cr=farm[idx];
-  if(cr.stage>=4){showToast('Max!');return}
-  if((cr.stars||0)<5){showToast('⭐'+(cr.stars||0)+'/5');return}
-  if(profit<10){showToast('💰Kurang!');return}
-  var next=creatures.filter(function(c){return c.ordo===cr.ordo&&c.stage===cr.stage+1&&!c.limited});
-  if(!next.length)next=creatures.filter(function(c){return c.stage===cr.stage+1&&!c.limited});
-  if(!next.length){showToast('Gabisa!');return}
-  profit-=10;var ev=next[Math.floor(Math.random()*next.length)];farm[idx]={...ev,stars:0,hunger:100};selectedIndices=[];updateUI();showToast('✨'+ev.emoji);
-}
-function sellCreatures(){
-  if(!selectedIndices.length){showToast('Pilih!');return}
-  var sorted=[...selectedIndices].sort(function(a,b){return b-a}),tot=0;
-  for(var i=0;i<sorted.length;i++){tot+=farm[sorted[i]].value;farm.splice(sorted[i],1)}
-  profit+=tot;selectedIndices=[];updateUI();showToast('💵+'+tot);
-}
-function feedCreature(type){
-  var idx=parseInt(document.getElementById('feedTargetSelect').value);
-  if(isNaN(idx)||!farm[idx]){showToast('Pilih!');return}
-  if(energy<1){showToast('⚡Habis!');return}
-  var cost,hg,sc;
-  if(type==='basic'){cost=5;hg=35;sc=0.25;if(profit<cost){showToast('💰Kurang');return}profit-=cost}
-  else if(type==='meat'){cost=15;hg=65;sc=0.45;if(profit<cost){showToast('💰Kurang');return}profit-=cost}
-  else{cost=1;hg=100;sc=0.7;if(saldo<cost){showToast('💎Kurang');return}saldo-=cost}
-  farm[idx].hunger=Math.min(100,(farm[idx].hunger||50)+hg);
-  if(Math.random()<sc&&(farm[idx].stars||0)<5){farm[idx].stars=(farm[idx].stars||0)+1;showToast('⭐+'+(farm[idx].stars)+'/5')}
-  energy--;updateUI();updateAllTabs();showToast('🍖+'+hg);
-}
+function breedCreatures(){if(selected.length!==2){showToast('Pilih 2!');return}if(energy<2){showToast('⚡Kurang');return}var sorted=[...selected].sort(function(a,b){return b-a}),p1=farm[sorted[0]],p2=farm[sorted[1]];if(p1.stage>=4||p2.stage>=4){showToast('Stage4 gabisa');return}if((p1.hunger||100)<30||(p2.hunger||100)<30){showToast('Lapar');return}for(var i=0;i<sorted.length;i++)farm.splice(sorted[i],1);var ns=Math.floor((p1.stage+p2.stage)/2)+1;if(ns>4)ns=4;var po=Math.random()<0.5?p1.ordo:p2.ordo;var cand=creatures.filter(function(c){return c.ordo===po&&c.stage===ns&&!c.limited});if(!cand.length)cand=creatures.filter(function(c){return c.stage===ns&&!c.limited});var baby=cand[Math.floor(Math.random()*cand.length)]||creatures[0];farm.push({...baby,stars:0,hunger:70});energy-=2;selected=[];updateUI();showToast('🐣'+baby.emoji)}
+function evolveCreature(){if(selected.length!==1){showToast('Pilih 1!');return}var idx=selected[0],cr=farm[idx];if(cr.stage>=4){showToast('Max!');return}if((cr.stars||0)<5){showToast('⭐'+(cr.stars||0)+'/5');return}if(profit<10){showToast('💰Kurang');return}var next=creatures.filter(function(c){return c.ordo===cr.ordo&&c.stage===cr.stage+1&&!c.limited});if(!next.length)next=creatures.filter(function(c){return c.stage===cr.stage+1&&!c.limited});if(!next.length){showToast('Gabisa');return}profit-=10;var ev=next[Math.floor(Math.random()*next.length)];farm[idx]={...ev,stars:0,hunger:100};selected=[];updateUI();showToast('✨'+ev.emoji)}
+function sellCreatures(){if(!selected.length){showToast('Pilih!');return}var sorted=[...selected].sort(function(a,b){return b-a}),tot=0;for(var i=0;i<sorted.length;i++){tot+=farm[sorted[i]].value;farm.splice(sorted[i],1)}profit+=tot;selected=[];updateUI();showToast('💵+'+tot)}
+function feedCreature(type){var idx=parseInt(document.getElementById('feedTargetSelect').value);if(isNaN(idx)||!farm[idx]){showToast('Pilih!');return}if(energy<1){showToast('⚡Habis');return}var cost,hg,sc;if(type==='basic'){cost=5;hg=35;sc=0.25;if(profit<cost){showToast('💰Kurang');return}profit-=cost}else if(type==='meat'){cost=15;hg=65;sc=0.45;if(profit<cost){showToast('💰Kurang');return}profit-=cost}else{cost=1;hg=100;sc=0.7;if(saldo<cost){showToast('💎Kurang');return}saldo-=cost}farm[idx].hunger=Math.min(100,(farm[idx].hunger||50)+hg);if(Math.random()<sc&&(farm[idx].stars||0)<5){farm[idx].stars=(farm[idx].stars||0)+1;showToast('⭐+'+(farm[idx].stars)+'/5')}energy--;updateUI();updateAllTabs()}
 
-// ============ BATTLE ============
-function loadOpponents(){
-  db.ref('users').once('value').then(function(snap){
-    var users=snap.val()||{},html='';
-    Object.entries(users).forEach(function(e){
-      var uid=e[0],ud=e[1];if(uid===userId)return;if(!ud.farm||!ud.farm.length)return;
-      ud.farm.forEach(function(c,i){var st=getStats(c);html+='<div class="battle-card"><div>'+c.emoji+' <b>'+c.name+'</b> <span style="background:'+(c.ordoColor||'#ccc')+';color:white;font-size:0.4rem;padding:1px 4px;border-radius:4px;">'+(c.ordoName||'?')+'</span><br><small>S'+c.stage+' ⭐'+(c.stars||0)+' | ❤️'+st.hp+' ⚔️'+st.atk+' 🛡️'+st.def+'</small></div><button class="btn btn-red" onclick="startBattle(\''+uid+'\','+i+')" style="font-size:0.45rem;padding:3px 6px;">⚔️</button></div>'});
-    });
-    document.getElementById('opponentList').innerHTML=html||'<p>Tidak ada lawan</p>';
-  });
-}
-function startBattle(oid,oi){
-  var mi=parseInt(document.getElementById('battleCreatureSelect').value);
-  if(isNaN(mi)||!farm[mi]){showToast('Pilih!');return}
-  if(energy<3){showToast('⚡Kurang');return}
-  if(saldo<5){showToast('💎Tiket=5');return}
-  saldo-=5;energy-=3;
-  db.ref('users/'+oid).once('value').then(function(snap){
-    var od=snap.val();if(!od||!od.farm||!od.farm[oi]){showToast('Lawan hilang');saldo+=5;energy+=3;return}
-    var mc=farm[mi],oc=od.farm[oi],ms=getStats(mc),os=getStats(oc);
-    var mm=1,om=1,msl=(mc.strong||'').split(','),osl=(oc.strong||'').split(',');
-    if(msl.indexOf(oc.ordo)>=0)mm=2;if(osl.indexOf(mc.ordo)>=0)om=2;
-    if(mc.ordo===oc.ordo&&mc.ordo==='mystic'){mm=2;om=2}
-    var mh=ms.hp,oh=os.hp,log='',r=0,f=ms.spd>=os.spd?'me':'opp',mp=mc.ordo==='herbisida'?mc.stage*10:0,op=oc.ordo==='herbisida'?oc.stage*10:0,mpd=false,opd=false;
-    while(mh>0&&oh>0&&r<20){r++;if(mpd){mh-=Math.floor(ms.hp*0.05);log+='☠️'}if(opd){oh-=Math.floor(os.hp*0.05);log+='☠️'}if(mh<=0||oh<=0)break;
-      if(f==='me'){var d=Math.max(5,Math.floor((ms.atk*mm)-os.def));if(mc.ordo==='aerial'&&Math.random()<0.2)d=Math.floor(d*1.5);oh-=d;log+='R'+r+':-'+d+' ';if(mp>0&&Math.random()*100<mp&&!opd){opd=true;log+='☠️'}if(oh<=0)break;var od2=Math.max(5,Math.floor((os.atk*om)-ms.def));if(oc.ordo==='aerial'&&Math.random()<0.2)od2=Math.floor(od2*1.5);mh-=od2;log+='L-'+od2+'\n';if(op>0&&Math.random()*100<op&&!mpd){mpd=true;log+='☠️'}}
-      else{var od3=Math.max(5,Math.floor((os.atk*om)-ms.def));if(oc.ordo==='aerial'&&Math.random()<0.2)od3=Math.floor(od3*1.5);mh-=od3;log+='R'+r+':L-'+od3+' ';if(op>0&&Math.random()*100<op&&!mpd){mpd=true;log+='☠️'}if(mh<=0)break;var d2=Math.max(5,Math.floor((ms.atk*mm)-os.def));if(mc.ordo==='aerial'&&Math.random()<0.2)d2=Math.floor(d2*1.5);oh-=d2;log+='-'+d2+'\n';if(mp>0&&Math.random()*100<mp&&!opd){opd=true;log+='☠️'}}
-    }
-    var won=oh<=0;if((farm[mi].stars||0)<5)farm[mi].stars=Math.min(5,(farm[mi].stars||0)+(won?2:1));if(won)saldo+=10;
-    document.getElementById('battleResultContent').innerHTML='<h3>'+(won?'🏆MENANG':'😢KALAH')+'</h3><pre>'+log+'</pre><button class="btn" onclick="document.getElementById(\'battleResultModal\').classList.add(\'hidden\')">OK</button>';
-    document.getElementById('battleResultModal').classList.remove('hidden');updateUI();loadOpponents();
-  });
-}
+function loadBotShop(){var sc=[{...creatures[0],price:10},{...creatures[5],price:15},{...creatures[25],price:50},{...creatures[50],price:80},{...creatures[75],price:120},{...creatures[100],price:200,limited:true},{...creatures[101],price:300,limited:true}];document.getElementById('botShopList').innerHTML=sc.map(function(c){return'<div class="shop-card" onclick="buyFromBot('+c.id+','+c.price+')"><span class="creature-emoji">'+c.emoji+'</span><br><span class="creature-name">'+c.name+'</span><br><span style="font-size:0.4rem;">💎'+c.price+'</span></div>'}).join('')}
+function buyFromBot(cid,price){if(saldo<price){showToast('💎Kurang');return}var c=creatures.find(function(x){return x.id===cid});if(!c)return;saldo-=price;farm.push({...c,stars:5,hunger:100});updateUI();showToast('🛍️'+c.emoji)}
 
-// ============ SHOP (BELI MAKHLUK DARI BOT) ============
-function loadBotShop(){
-  var shopCreatures = [
-    { ...creatures[0], price: 10 },
-    { ...creatures[5], price: 15 },
-    { ...creatures[10], price: 20 },
-    { ...creatures[25], price: 50 },
-    { ...creatures[50], price: 80 },
-    { ...creatures[75], price: 120 },
-    { ...creatures[100], price: 200, limited: true },
-    { ...creatures[101], price: 300, limited: true }
-  ];
-  document.getElementById('botShopList').innerHTML = shopCreatures.map(function(c){
-    return '<div class="shop-creature-card" onclick="buyFromBot('+c.id+','+c.price+')">'+
-      '<span class="creature-emoji">'+c.emoji+'</span><br>'+
-      '<span class="creature-name">'+c.name+'</span><br>'+
-      '<span style="font-size:0.4rem;">S'+c.stage+' | 💎'+c.price+'</span>'+
-    '</div>';
-  }).join('');
-}
-function buyFromBot(cid,price){
-  if(saldo<price){showToast('💎Kurang!');return}
-  var c=creatures.find(function(x){return x.id===cid});if(!c)return;
-  saldo-=price;farm.push({...c,stars:5,hunger:100});updateUI();showToast('🛍️'+c.emoji+' '+c.name);
-}
+function loadOpponents(){db.ref('users').once('value').then(function(snap){var users=snap.val()||{},html='';Object.entries(users).forEach(function(e){var uid=e[0],ud=e[1];if(uid===userId)return;if(!ud.farm||!ud.farm.length)return;ud.farm.forEach(function(c,i){var st=getStats(c);html+='<div class="battle-card"><div>'+c.emoji+' <b>'+c.name+'</b><br><small>S'+c.stage+' ⭐'+(c.stars||0)+' | ❤️'+st.hp+'</small></div><button class="btn btn-red" onclick="startBattle(\''+uid+'\','+i+')" style="font-size:0.45rem;padding:3px 6px;">⚔️</button></div>'})});document.getElementById('opponentList').innerHTML=html||'<p>Tidak ada lawan</p>'})}
 
-// ============ MARKET ============
-function loadMarket(){
-  db.ref('market').orderByChild('timestamp').limitToLast(20).once('value').then(function(snap){
-    var l=snap.val()||{};
-    document.getElementById('marketListings').innerHTML=Object.entries(l).map(function(e){var k=e[0],v=e[1];return '<div class="battle-card"><div>'+v.emoji+' <b>'+v.name+'</b> S'+v.stage+'<br><small>'+v.sellerName+'</small></div><div>💎'+v.price+' '+(v.sold?'✅':'<button class="btn btn-blue" onclick="buyMarket(\''+k+'\','+v.price+')">Beli</button>')+'</div></div>'}).join('')||'<p>Kosong</p>';
-  });
-}
-function buyMarket(key,price){
-  if(saldo<price){showToast('💎Kurang');return}
-  db.ref('market/'+key).once('value').then(function(snap){var l=snap.val();if(!l||l.sold||l.sellerId===userId)return;var fee=Math.floor(price*0.1);saldo-=price;farm.push({name:l.name,emoji:l.emoji,stage:l.stage,ordo:l.ordo,ordoName:l.ordoName,ordoColor:l.ordoColor,hp:l.hp,atk:l.atk,def:l.def,spd:l.spd,value:l.value,skill:l.skill,limited:l.limited,stars:l.stars||0,hunger:80});db.ref('users/'+l.sellerId+'/saldo').once('value').then(function(s){db.ref('users/'+l.sellerId+'/saldo').set((s.val()||0)+(price-fee))});db.ref('market/'+key+'/sold').set(true);db.ref('admin/fees').once('value').then(function(fs){db.ref('admin/fees').set((fs.val()||0)+fee)});updateUI();loadMarket();showToast('🛒Beli!')});
-}
-
-// ============ ADMIN ============
-function loadPendingPayments(){
-  db.ref('active_codes').once('value').then(function(snap){
-    var codes=snap.val()||{},list=Object.keys(codes);
-    var html='<b>Kode Aktif:</b><br>';
-    if(list.length)list.forEach(function(c){html+='<div style="padding:3px;border-bottom:1px solid #ccc;">🎫 '+c+' <button class="btn btn-green" onclick="activateCode(\''+c+'\')" style="font-size:0.5rem;padding:2px 6px;">Aktifkan</button></div>'});
-    else html+='<span style="color:#999">Tidak ada</span>';
-    document.getElementById('pendingPayments').innerHTML=html;
-  });
-}
-function activateCode(code){
-  db.ref('active_codes/'+code).set({active:true,timestamp:Date.now()}).then(function(){
-    showToast('✅'+code+' aktif!');loadPendingPayments();
-  });
-}
-
-// ============ NAVIGASI ============
-document.querySelectorAll('.nav-tab').forEach(function(tab){tab.addEventListener('click',function(){
-  document.querySelectorAll('.nav-tab').forEach(function(t){t.classList.remove('active')});this.classList.add('active');
-  var tm={farm:'tabFarm',feed:'tabFeed',battle:'tabBattle',shop:'tabShop',market:'tabMarket',event:'tabEvent'};
-  Object.values(tm).forEach(function(id){document.getElementById(id).classList.add('hidden')});
-  document.getElementById(tm[this.dataset.tab]).classList.remove('hidden');
-  if(this.dataset.tab==='battle'){loadOpponents();updateBattleSelect()}
-  if(this.dataset.tab==='feed')updateFeedSelect();
-  if(this.dataset.tab==='shop')loadBotShop();
-  if(this.dataset.tab==='market')loadMarket();
-  if(this.dataset.tab==='event'){loadLimitedShop();loadRefData()}
-})});
-
-function updateBattleSelect(){document.getElementById('battleCreatureSelect').innerHTML=farm.map(function(c,i){return '<option value="'+i+'">'+c.emoji+' '+c.name+' S'+c.stage+'</option>'}).join('')}
-function updateFeedSelect(){document.getElementById('feedTargetSelect').innerHTML=farm.map(function(c,i){return '<option value="'+i+'">'+c.emoji+' '+c.name+' S'+c.stage+'</option>'}).join('')}
-function updateAllTabs(){updateFeedSelect()}
-
-// ============ EVENT LISTENERS ============
-document.getElementById('breedButton').addEventListener('click',breedCreatures);
-document.getElementById('evolveButton').addEventListener('click',evolveCreature);
-document.getElementById('sellButton').addEventListener('click',sellCreatures);
-document.getElementById('fillStarsBtn').addEventListener('click',function(){
-  if(selectedIndices.length!==1)return;var idx=selectedIndices[0],cr=farm[idx],n=5-(cr.stars||0);if(n<=0)return;var c=n*2;if(saldo<c){showToast('💎'+c);return}saldo-=c;farm[idx].stars=5;updateUI();showToast('⭐Full');
-});
-document.getElementById('topupButton').addEventListener('click',function(){document.getElementById('generatedCode').textContent='EVO-'+userId.substr(-4).toUpperCase()+Math.random().toString(36).substr(2,4).toUpperCase();document.getElementById('buyModal').classList.remove('hidden')});
-document.getElementById('closeBuyModal').addEventListener('click',function(){document.getElementById('buyModal').classList.add('hidden')});
-document.getElementById('copyCodeBtn').addEventListener('click',function(){navigator.clipboard.writeText(document.getElementById('generatedCode').textContent);showToast('✅Copied')});
-document.getElementById('claimButton').addEventListener('click',function(){document.getElementById('claimModal').classList.remove('hidden')});
-document.getElementById('closeClaimModal').addEventListener('click',function(){document.getElementById('claimModal').classList.add('hidden')});
-document.getElementById('submitClaimBtn').addEventListener('click',function(){
-  var code=document.getElementById('claimCodeInput').value.trim().toUpperCase();
-  db.ref('active_codes/'+code).once('value').then(function(snap){if(!snap.exists()||!snap.val().active){document.getElementById('claimStatus').textContent='❌Belum aktif';return}db.ref('claimed/'+userId+'/'+code).once('value').then(function(cs){if(cs.exists()){document.getElementById('claimStatus').textContent='⚠️Sudah';return}saldo+=100;db.ref('claimed/'+userId+'/'+code).set(true);db.ref('active_codes/'+code).remove();updateUI();document.getElementById('claimStatus').textContent='🎉+100💎';})});
-});
-
-// Market
-document.getElementById('sellMarketBtn').addEventListener('click',function(){document.getElementById('sellCreatureSelect').innerHTML=farm.map(function(c,i){return '<option value="'+i+'">'+c.emoji+' '+c.name+'</option>'}).join('');document.getElementById('sellMarketModal').classList.remove('hidden')});
-document.getElementById('closeSellMarket').addEventListener('click',function(){document.getElementById('sellMarketModal').classList.add('hidden')});
-document.getElementById('sellPriceInput').addEventListener('input',function(){var p=parseInt(this.value)||0;document.getElementById('feePreview').textContent=Math.floor(p*0.1);document.getElementById('netPreview').textContent=p-Math.floor(p*0.1)});
-document.getElementById('confirmSellMarketBtn').addEventListener('click',function(){var i=parseInt(document.getElementById('sellCreatureSelect').value),p=parseInt(document.getElementById('sellPriceInput').value)||10,c=farm[i];db.ref('market').push({...c,sellerId:userId,sellerName:tgUsername,price:p,timestamp:Date.now(),sold:false});farm.splice(i,1);updateUI();loadMarket();document.getElementById('sellMarketModal').classList.add('hidden')});
-document.getElementById('refreshMarketBtn').addEventListener('click',loadMarket);
-document.getElementById('myListingsBtn').addEventListener('click',function(){db.ref('market').orderByChild('sellerId').equalTo(userId).once('value').then(function(snap){var l=snap.val()||{};document.getElementById('myListingsContent').innerHTML=Object.entries(l).map(function(e){var k=e[0],v=e[1];return '<div>'+v.emoji+' '+v.name+' 💎'+v.price+' '+(v.sold?'✅':'<button onclick="cancelListing(\''+k+'\')">❌</button>')+'</div>'}).join('');document.getElementById('myListingsModal').classList.remove('hidden')})});
-document.getElementById('closeMyListings').addEventListener('click',function(){document.getElementById('myListingsModal').classList.add('hidden')});
-function cancelListing(key){db.ref('market/'+key).once('value').then(function(snap){var l=snap.val();farm.push({name:l.name,emoji:l.emoji,stage:l.stage,ordo:l.ordo,ordoName:l.ordoName,ordoColor:l.ordoColor,hp:l.hp,atk:l.atk,def:l.def,spd:l.spd,value:l.value,skill:l.skill,limited:l.limited,stars:l.stars||0,hunger:80});db.ref('market/'+key).remove();updateUI()})}
-
-// Event
-document.getElementById('enterGiveawayBtn').addEventListener('click',function(){db.ref('giveaway/entries/'+userId).set({name:tgUsername});showToast('🎟️Masuk!')});
-function loadLimitedShop(){document.getElementById('limitedShop').innerHTML=creatures.filter(function(c){return c.limited}).map(function(c){return '<div class="battle-card"><div>'+c.emoji+' '+c.name+'</div><button class="btn btn-red" onclick="buyLimited('+c.id+')">💎50</button></div>'}).join('')}
-function buyLimited(cid){if(saldo<50)return;var c=creatures.find(function(x){return x.id===cid});saldo-=50;farm.push({...c,stars:5,hunger:100});updateUI()}
-function loadRefData(){document.getElementById('refLink').textContent='https://t.me/Evofarmbot?start=REF-'+userId.replace(/_/g,'').substr(-6).toUpperCase()}
-document.getElementById('copyRefBtn').addEventListener('click',function(){navigator.clipboard.writeText(document.getElementById('refLink').textContent);showToast('✅')});
-document.getElementById('submitRefBtn').addEventListener('click',function(){showToast('✅+50💎')});
-
-// ============ ADMIN PANEL ============
-document.getElementById('adminPanelBtn').addEventListener('click',function(){if(isAdmin){document.getElementById('adminPanelModal').classList.remove('hidden');loadPendingPayments()}else{document.getElementById('adminLoginModal').classList.remove('hidden')}});
-document.getElementById('adminLoginBtn').addEventListener('click',function(){if(document.getElementById('adminPassword').value===ADMIN_PASS){isAdmin=true;document.getElementById('adminLoginModal').classList.add('hidden');document.getElementById('adminPanelBtn').classList.remove('hidden');document.getElementById('adminPanelModal').classList.remove('hidden');loadPendingPayments()}else{document.getElementById('adminLoginStatus').textContent='❌Salah'}});
-document.getElementById('closeAdminLogin').addEventListener('click',function(){document.getElementById('adminLoginModal').classList.add('hidden')});
-document.getElementById('adminActivateBtn').addEventListener('click',function(){var code=document.getElementById('adminCodeInput').value.trim().toUpperCase();if(code){db.ref('active_codes/'+code).set({active:true,timestamp:Date.now()});document.getElementById('adminCodeInput').value='';loadPendingPayments();showToast('✅Aktif!')}});
-document.getElementById('closeAdminPanel').addEventListener('click',function(){document.getElementById('adminPanelModal').classList.add('hidden')});
-
-if(window.location.href.indexOf('?admin=true')>=0){isAdmin=true;document.getElementById('adminPanelBtn').classList.remove('hidden')}
-
-// ============ INIT ============
-loadData();setTimeout(updateAllTabs,1500);
-</script>
-</body>
-</html>
+function loadMarket(){db.ref('market').orderByChild('timestamp').limitToLast(20).once('value').then(function(snap){var l=snap.val()||{};document.getElementById('marketListings').innerHTML=Object.entries(l).map(function(e){var k=e[0],v=e[1];return'<div class="battle-card"><div>'+v.emoji+' <b>'+v.name+'</b> S'+v.stage+'</div><div>💎'+v.price+' '+(v.sold?'✅':'<button class="btn btn-blue" onclick="buyMarket(\''+k+'\','+v.price+')">Beli</button>')+'</div></div>'}).join('')||'<p>Kosong</p>'})}
+function buyMarket(key,price){if(saldo<price)return;db.ref('market/'+key).once('value').then(function(snap){var l=snap.val();if(!l||l.sold||l.sellerId===userId)return;var fee=Math.floor(price*0.1);saldo-=price;farm.push({name:l.name,emoji:l.emoji,stage:l.stage,ordo:l.ordo,ordoName:l.ordoName,ordoColor:l.ordoColor,hp:l.hp,atk:l.atk,def:l.def,spd:l.spd,value:l.value,skill:l.skill,limited:l.limited,stars:l.stars||0,hunger:80});db.ref(
