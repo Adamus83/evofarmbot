@@ -29,7 +29,7 @@
 })();</script>
 <script>window.Intl=window.Intl||{};Intl.t=function(s){return(Intl._locale&&Intl._locale[s])||s;};</script><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Evo Cards v5.0 - Full Features</title>
+<title>Evo Cards v5.5 - Energy Recharge</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
@@ -53,7 +53,7 @@ body{background:#0f172a;color:#e2e8f0;display:flex;justify-content:center;min-he
 .stars{display:flex;gap:1px;justify-content:center;margin-top:3px}
 .stars span{font-size:8px}.stars .on{color:#facc15}.stars .off{color:#475569}
 .btn{width:100%;padding:12px;border:none;border-radius:10px;font-weight:800;font-size:13px;cursor:pointer;background:#334155;color:#e2e8f0;margin:4px 0}
-.btn-primary{background:#facc15;color:#0f172a}.btn-green{background:#22c55e;color:#0f172a}.btn-red{background:#ef4444;color:white}.btn-blue{background:#3b82f6;color:white}
+.btn-primary{background:#facc15;color:#0f172a}.btn-green{background:#22c55e;color:#0f172a}.btn-red{background:#ef4444;color:white}.btn-blue{background:#3b82f6;color:white}.btn-gold{background:#f59e0b;color:white}
 .log{text-align:center;padding:7px;font-size:11px;color:#94a3b8;background:#0f172a;min-height:28px}
 .modal{position:fixed;inset:0;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;z-index:2000;padding:20px}
 .modal-box{background:#1e293b;border:2px solid #475569;border-radius:16px;padding:18px;max-width:340px;width:100%;text-align:center}
@@ -65,11 +65,11 @@ input,select{width:100%;padding:12px;margin:6px 0;border-radius:8px;border:none;
 .battle-card{background:#1e293b;border:1px solid #475569;border-radius:10px;padding:8px;margin:4px 0;display:flex;justify-content:space-between;align-items:center;font-size:11px}
 </style></head><body>
 <div class="app" id="gameApp">
-  <div class="top" onclick="tapLogo()"><div class="logo">⚡ EVO CARDS v5.0</div>
+  <div class="top" onclick="tapLogo()"><div class="logo">⚡ EVO CARDS v5.5</div>
     <div class="stats">
       <div class="badge">💰<span id="profit">80</span></div>
       <div class="badge">💎<span id="diamonds">30</span></div>
-      <div class="badge">⚡<span id="energy">12</span></div>
+      <div class="badge">⚡<span id="energy">12</span>/<span id="maxEnergy">20</span></div>
     </div>
   </div>
   <div class="tabs">
@@ -81,7 +81,7 @@ input,select{width:100%;padding:12px;margin:6px 0;border-radius:8px;border:none;
     <div class="tab" onclick="switchTab('shop',this)">🛒Shop</div>
   </div>
   <div class="content" id="content"></div>
-  <div class="log" id="log">⚡ v5.0 Full Features Ready</div>
+  <div class="log" id="log">⚡ v5.5 Energy Recharge Ready</div>
 </div>
 
 <!-- ADMIN PANEL -->
@@ -100,9 +100,7 @@ input,select{width:100%;padding:12px;margin:6px 0;border-radius:8px;border:none;
       <input id="genNote" placeholder="Catatan (nama pembeli)">
       <button class="btn btn-primary" onclick="generateCode()">Generate</button>
       <div id="genOut"></div>
-      <h4 style="margin-top:20px">📋 Kode Aktif</h4>
-      <div id="activeList" style="font-size:10px"></div>
-      <h4 style="margin-top:10px">📜 Riwayat</h4>
+      <h4 style="margin-top:20px">📜 Riwayat</h4>
       <div id="history" style="font-size:11px"></div>
     </div>
   </div>
@@ -112,20 +110,21 @@ input,select{width:100%;padding:12px;margin:6px 0;border-radius:8px;border:none;
 
 <script>
 // ===== CONFIG =====
-const ADMIN_CODE = '727277';
-const SECRET = 'evo2026'+ADMIN_CODE;
-const GOPAY = '088989727277';
-const WA = '6288989727277';
+var ADMIN_CODE = '727277';
+var SECRET = 'evo2026'+ADMIN_CODE;
+var GOPAY = '088989727277';
+var WA = '6288989727277';
 
 // ===== INIT =====
-const tg = window.Telegram?.WebApp; if(tg) tg.expand();
-let tapCount=0;
-function tapLogo(){ tapCount++; if(tapCount>=5){ document.getElementById('gameApp').classList.add('hidden'); document.getElementById('adminApp').classList.remove('hidden'); tapCount=0; } setTimeout(()=>tapCount=0,2000); }
+var tg = window.Telegram ? window.Telegram.WebApp : null;
+if(tg) tg.expand();
+var tapCount=0;
+function tapLogo(){ tapCount++; if(tapCount>=5){ document.getElementById('gameApp').classList.add('hidden'); document.getElementById('adminApp').classList.remove('hidden'); tapCount=0; } setTimeout(function(){tapCount=0},2000); }
 function closeAdmin(){ document.getElementById('adminApp').classList.add('hidden'); document.getElementById('gameApp').classList.remove('hidden'); updateUI(); }
 
 // ===== GAME STATE =====
-let state = JSON.parse(localStorage.getItem('evoV5')||'null') || {profit:80,diamonds:30,energy:12,cards:[],selected:[],marketListings:[]};
-const POOL = [
+var state = JSON.parse(localStorage.getItem('evoV55')||'null') || {profit:80,diamonds:30,energy:12,maxEnergy:20,cards:[],selected:[],marketListings:[]};
+var POOL = [
   {id:'sprout',name:'Sprout',emoji:'🌱',rarity:'common',atk:5,def:2,hp:30,stage:1},
   {id:'bloom',name:'Bloom',emoji:'🌸',rarity:'common',atk:12,def:5,hp:50,stage:2},
   {id:'cactus',name:'Cactus',emoji:'🌵',rarity:'common',atk:8,def:8,hp:40,stage:1},
@@ -136,36 +135,56 @@ const POOL = [
   {id:'zeus',name:'Zeus',emoji:'⚡',rarity:'legendary',atk:65,def:20,hp:140,stage:4}
 ];
 
-function save(){ localStorage.setItem('evoV5', JSON.stringify(state)); updateUI(); }
-function newCard(t,lvl=1){ const m=1+(lvl-1)*0.08; return {...t,uid:Math.random().toString(36).slice(2,9),level:lvl,atk:Math.floor(t.atk*m),def:Math.floor(t.def*m),hp:Math.floor(t.hp*m),stars:0,hunger:80}; }
-if(state.cards.length===0){ state.cards=[newCard(POOL[0],2),newCard(POOL[0],2),newCard(POOL[1],1),newCard(POOL[2],1)]; save(); }
+function save(){ localStorage.setItem('evoV55', JSON.stringify(state)); updateUI(); }
+function newCard(t,lvl){ lvl=lvl||1; var m=1+(lvl-1)*0.08; return {id:t.id,name:t.name,emoji:t.emoji,rarity:t.rarity,stage:t.stage,level:lvl,atk:Math.floor(t.atk*m),def:Math.floor(t.def*m),hp:Math.floor(t.hp*m),uid:Math.random().toString(36).slice(2,9),stars:0,hunger:80}; }
+if(!state.cards || state.cards.length===0){ state.cards=[newCard(POOL[0],2),newCard(POOL[0],2),newCard(POOL[1],1),newCard(POOL[2],1)]; }
+if(!state.maxEnergy) state.maxEnergy=20;
+if(state.energy > state.maxEnergy) state.energy = state.maxEnergy;
+save();
 
-function updateUI(){ document.getElementById('profit').textContent=state.profit; document.getElementById('diamonds').textContent=state.diamonds; document.getElementById('energy').textContent=state.energy; }
-function toast(m){ document.getElementById('log').textContent=m; setTimeout(()=>document.getElementById('log').textContent='⚡ v5.0 Ready',2500); }
+function updateUI(){ document.getElementById('profit').textContent=state.profit; document.getElementById('diamonds').textContent=state.diamonds; document.getElementById('energy').textContent=state.energy; document.getElementById('maxEnergy').textContent=state.maxEnergy; }
+function toast(m){ document.getElementById('log').textContent=m; }
+
+// ===== ENERGI RECHARGE OTOMATIS =====
+setInterval(function(){
+  if(state.energy < state.maxEnergy){
+    state.energy++;
+    save();
+  }
+}, 300000); // 5 menit +1 energi
 
 // ===== TABS =====
 function switchTab(t,el){
-  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active')); el.classList.add('active');
-  const c=document.getElementById('content');
+  var tabs = document.querySelectorAll('.tab');
+  for(var i=0;i<tabs.length;i++) tabs[i].classList.remove('active');
+  el.classList.add('active');
+  var c=document.getElementById('content');
   
   if(t==='cards'){
-    c.innerHTML='<p style="font-size:11px;color:#94a3b8;margin-bottom:6px;">🖱️ Klik kartu untuk pilih (max 2)</p><div class="grid">'+state.cards.map((card,i)=>{
-      let sel = state.selected.indexOf(i)>=0 ? ' selected':'';
-      let sh=''; for(let s=0;s<5;s++) sh+='<span class="'+(s<(card.stars||0)?'on':'off')+'">'+(s<(card.stars||0)?'⭐':'☆')+'</span>';
-      return '<div class="card rarity-'+card.rarity+sel+'" onclick="tapCard('+i+')"><div class="lvl">Lv'+card.level+'</div><div class="emoji">'+card.emoji+'</div><div class="name">'+card.name+'</div><div class="stars">'+sh+'</div><div class="stats-row">⚔'+card.atk+' 🛡'+card.def+' 🍖'+(card.hunger||80)+'%</div></div>';
-    }).join('')+'</div><button class="btn btn-green" onclick="evolveCard()">✨ Evolve (⭐5)</button><button class="btn btn-red" onclick="sellCard()">💵 Sell</button>';
+    var h='<p style="font-size:11px;color:#94a3b8;margin-bottom:6px;">🖱️ Klik kartu (max 2)</p><div class="grid">';
+    for(var i=0;i<state.cards.length;i++){
+      var card=state.cards[i], sel=state.selected.indexOf(i)>=0?' selected':'', sh='';
+      for(var s=0;s<5;s++) sh+='<span class="'+(s<(card.stars||0)?'on':'off')+'">'+(s<(card.stars||0)?'⭐':'☆')+'</span>';
+      h+='<div class="card rarity-'+card.rarity+sel+'" onclick="tapCard('+i+')"><div class="lvl">Lv'+card.level+'</div><div class="emoji">'+card.emoji+'</div><div class="name">'+card.name+'</div><div class="stars">'+sh+'</div><div class="stats-row">⚔'+card.atk+' 🛡'+card.def+' 🍖'+(card.hunger||80)+'%</div></div>';
+    }
+    h+='</div><button class="btn btn-green" onclick="evolveCard()">✨ Evolve (⭐5)</button><button class="btn btn-red" onclick="sellCard()">💵 Sell</button>';
+    c.innerHTML=h;
   }
   
   if(t==='breed'){
-    c.innerHTML='<p style="font-size:11px;color:#94a3b8;margin-bottom:6px;">Pilih 2 kartu di tab Kartu, lalu klik Breed</p><button class="btn btn-primary" onclick="breedCards()">🧬 Breed (⚡2)</button><p style="font-size:10px;color:#94a3b8;margin-top:6px;">Stage anak = rata-rata + 1</p>';
+    c.innerHTML='<p style="font-size:11px;color:#94a3b8;">Pilih 2 kartu di tab Kartu</p><button class="btn btn-primary" onclick="breedCards()">🧬 Breed (⚡2)</button><p style="font-size:10px;color:#94a3b8;">Stage anak = rata-rata + 1</p>';
   }
   
   if(t==='feed'){
-    c.innerHTML='<h4 style="margin-bottom:8px;">🍖 Feeding</h4><select id="feedTarget"><option value="">Pilih makhluk...</option>'+state.cards.map((c,i)=>'<option value="'+i+'">'+c.emoji+' '+c.name+' Lv'+c.level+' 🍖'+(c.hunger||80)+'%</option>').join('')+'</select><div class="feed-opt"><button class="btn" onclick="doFeed(\'basic\')">🍞Roti 💰5</button><button class="btn btn-primary" onclick="doFeed(\'meat\')">🥩Daging 💰15</button><button class="btn btn-blue" onclick="doFeed(\'premium\')">🍰Premium 💎1</button></div>';
+    var fo='<option value="">Pilih makhluk...</option>';
+    for(var i=0;i<state.cards.length;i++) fo+='<option value="'+i+'">'+state.cards[i].emoji+' '+state.cards[i].name+' Lv'+state.cards[i].level+' 🍖'+(state.cards[i].hunger||80)+'%</option>';
+    c.innerHTML='<h4 style="margin-bottom:8px;">🍖 Feeding</h4><select id="feedTarget">'+fo+'</select><div class="feed-opt"><button class="btn" onclick="doFeed(\'basic\')">🍞Roti 💰5</button><button class="btn btn-primary" onclick="doFeed(\'meat\')">🥩Daging 💰15</button><button class="btn btn-blue" onclick="doFeed(\'premium\')">🍰Premium 💎1</button></div>';
   }
   
   if(t==='battle'){
-    c.innerHTML='<h4 style="margin-bottom:8px;">⚔️ Battle</h4><select id="battleCard"><option value="">Pilih kartumu...</option>'+state.cards.map((c,i)=>'<option value="'+i+'">'+c.emoji+' '+c.name+' ⚔'+c.atk+'</option>').join('')+'</select><button class="btn btn-green" onclick="startBattle()">Battle (⚡3)</button><p style="font-size:10px;color:#94a3b8;margin-top:6px;">Menang: +15💰 +2💎 +2⭐</p>';
+    var bo='<option value="">Pilih kartumu...</option>';
+    for(var i=0;i<state.cards.length;i++) bo+='<option value="'+i+'">'+state.cards[i].emoji+' '+state.cards[i].name+' ⚔'+state.cards[i].atk+'</option>';
+    c.innerHTML='<h4 style="margin-bottom:8px;">⚔️ Battle</h4><select id="battleCard">'+bo+'</select><button class="btn btn-green" onclick="startBattle()">Battle (⚡3)</button><p style="font-size:10px;color:#94a3b8;">Menang: +15💰 +2💎 +2⭐</p>';
   }
   
   if(t==='market'){
@@ -173,30 +192,35 @@ function switchTab(t,el){
   }
   
   if(t==='shop'){
-    c.innerHTML='<button class="btn btn-primary" onclick="buyPack()">🎁 Buka Pack - 10💎</button><div id="packRes" style="text-align:center;margin:10px"></div><button class="btn btn-blue" onclick="buyDiamond()">💰 Beli 120💎 (Rp15.000)</button><button class="btn" onclick="redeem()">🎟️ Redeem Kode</button><p style="font-size:10px;color:#94a3b8;margin-top:6px;">Transfer GoPay '+GOPAY+' lalu minta kode ke admin</p>';
+    c.innerHTML='<button class="btn btn-primary" onclick="buyPack()">🎁 Buka Pack - 10💎</button><div id="packRes" style="text-align:center;margin:10px"></div>'+
+      '<button class="btn btn-blue" onclick="buyDiamond()">💰 Beli 120💎 (Rp15.000)</button>'+
+      '<button class="btn btn-green" onclick="buyEnergy()">⚡ Beli 10 Energi (5💎)</button>'+
+      '<button class="btn btn-gold" onclick="buyGold()">🪙 Beli 500 Profit (10💎)</button>'+
+      '<button class="btn" onclick="redeem()">🎟️ Redeem Kode</button>'+
+      '<p style="font-size:10px;color:#94a3b8;margin-top:6px;">Transfer GoPay '+GOPAY+' lalu minta kode ke admin</p>';
   }
 }
 
 // ===== CARD ACTIONS =====
 function tapCard(i){
-  let pos=state.selected.indexOf(i);
+  var pos=state.selected.indexOf(i);
   if(pos>=0) state.selected.splice(pos,1); else if(state.selected.length<2) state.selected.push(i); else toast('⚠️ Maks 2!');
-  switchTab('cards',document.querySelector('.tab.active')); if(document.querySelector('.tab.active').textContent.includes('Kartu')) switchTab('cards',document.querySelector('.tab'));
+  switchTab('cards',document.querySelector('.tab.active'));
 }
 function breedCards(){
   if(state.selected.length!==2) return toast('⚠️ Pilih 2 kartu!');
   if(state.energy<2) return toast('⚡ Energi kurang!');
-  let s=state.selected.slice().sort((a,b)=>b-a), p1=state.cards[s[0]], p2=state.cards[s[1]];
+  var s=state.selected.slice().sort(function(a,b){return b-a}), p1=state.cards[s[0]], p2=state.cards[s[1]];
   state.cards.splice(s[0],1); state.cards.splice(s[1],1);
-  let ns=Math.floor((p1.level+p2.level)/2)+1; if(ns>4)ns=4;
-  let cand=POOL.filter(c=>c.stage===ns||c.level===ns); if(!cand.length) cand=POOL;
-  let baby=newCard(cand[Math.floor(Math.random()*cand.length)],ns);
+  var ns=Math.floor((p1.level+p2.level)/2)+1; if(ns>4)ns=4;
+  var cand=POOL.filter(function(c){return c.stage===ns||c.level===ns}); if(!cand.length) cand=POOL;
+  var baby=newCard(cand[Math.floor(Math.random()*cand.length)],ns);
   state.cards.push(baby); state.energy-=2; state.selected=[]; save();
   toast('🧬 '+baby.emoji+' '+baby.name+' Lv'+baby.level+'!');
 }
 function evolveCard(){
   if(state.selected.length!==1) return toast('⚠️ Pilih 1 kartu!');
-  let i=state.selected[0], c=state.cards[i];
+  var i=state.selected[0], c=state.cards[i];
   if((c.stars||0)<5) return toast('⭐ Butuh 5 bintang! ('+(c.stars||0)+'/5)');
   if(state.profit<10) return toast('💰 Profit kurang!');
   state.profit-=10; c.level=Math.min(4,c.level+1); c.atk=Math.floor(c.atk*1.15); c.def=Math.floor(c.def*1.15); c.hp=Math.floor(c.hp*1.15); c.stars=0; c.hunger=100; state.selected=[]; save();
@@ -204,16 +228,16 @@ function evolveCard(){
 }
 function sellCard(){
   if(!state.selected.length) return toast('⚠️ Pilih kartu!');
-  let s=state.selected.slice().sort((a,b)=>b-a), tot=0;
-  s.forEach(i=>{ tot+=state.cards[i].atk+state.cards[i].def; state.cards.splice(i,1); });
+  var s=state.selected.slice().sort(function(a,b){return b-a}), tot=0;
+  s.forEach(function(i){ tot+=state.cards[i].atk+state.cards[i].def; state.cards.splice(i,1); });
   state.profit+=tot; state.selected=[]; save(); toast('💵 Terjual +💰'+tot);
 }
 
 // ===== FEEDING =====
 function doFeed(type){
-  let i=parseInt(document.getElementById('feedTarget').value);
+  var i=parseInt(document.getElementById('feedTarget').value);
   if(isNaN(i)||!state.cards[i]) return toast('Pilih makhluk!');
-  let c=state.cards[i], cost, hg, sc;
+  var c=state.cards[i], cost, hg, sc;
   if(type==='basic'){ cost=5; hg=30; sc=.25; if(state.profit<cost)return toast('💰Kurang'); state.profit-=cost; }
   else if(type==='meat'){ cost=15; hg=60; sc=.45; if(state.profit<cost)return toast('💰Kurang'); state.profit-=cost; }
   else{ cost=1; hg=100; sc=.7; if(state.diamonds<cost)return toast('💎Kurang'); state.diamonds-=cost; }
@@ -225,72 +249,29 @@ function doFeed(type){
 
 // ===== BATTLE =====
 function startBattle(){
-  let i=parseInt(document.getElementById('battleCard').value);
+  var i=parseInt(document.getElementById('battleCard').value);
   if(isNaN(i)||!state.cards[i]) return toast('Pilih kartumu!');
   if(state.energy<3) return toast('⚡ Energi kurang!');
   state.energy-=3; state.profit+=15; state.diamonds+=2;
-  let c=state.cards[i]; if((c.stars||0)<5) c.stars=(c.stars||0)+2; if(c.stars>5)c.stars=5;
+  var c=state.cards[i]; if((c.stars||0)<5) c.stars=(c.stars||0)+2; if(c.stars>5)c.stars=5;
   save(); toast('🏆 Menang! +15💰 +2💎 +2⭐');
 }
 
 // ===== MARKET =====
-function renderMarket(){ if(!state.marketListings.length) return '<p style="font-size:10px;color:#94a3b8;">Belum ada listing</p>'; return state.marketListings.map((l,idx)=>'<div class="battle-card"><div>'+l.emoji+' '+l.name+' Lv'+l.level+' ⭐'+(l.stars||0)+'</div><div>💎'+l.price+' <button class="btn btn-green" style="padding:4px 8px;font-size:10px;width:auto" onclick="buyMarket('+idx+')">Beli</button></div></div>').join(''); }
+function renderMarket(){ if(!state.marketListings.length) return '<p style="font-size:10px;color:#94a3b8;">Belum ada listing</p>'; return state.marketListings.map(function(l,idx){return '<div class="battle-card"><div>'+l.emoji+' '+l.name+' Lv'+l.level+' ⭐'+(l.stars||0)+'</div><div>💎'+l.price+' <button class="btn btn-green" style="padding:4px 8px;font-size:10px;width:auto" onclick="buyMarket('+idx+')">Beli</button></div></div>';}).join(''); }
 function listToMarket(){
   if(!state.selected.length) return toast('Pilih kartu!');
-  let price=parseInt(document.getElementById('marketPrice').value)||10;
-  let s=state.selected.slice().sort((a,b)=>b-a);
-  s.forEach(i=>{ state.marketListings.push({...state.cards[i],price}); state.cards.splice(i,1); });
+  var price=parseInt(document.getElementById('marketPrice').value)||10;
+  var s=state.selected.slice().sort(function(a,b){return b-a});
+  s.forEach(function(i){ state.marketListings.push({...state.cards[i],price:price}); state.cards.splice(i,1); });
   state.selected=[]; save(); switchTab('market',document.querySelector('.tab.active'));
   toast('📤 Terlisting!');
 }
 function buyMarket(idx){
-  let l=state.marketListings[idx]; if(!l||state.diamonds<l.price) return toast('💎 Kurang!');
+  var l=state.marketListings[idx]; if(!l||state.diamonds<l.price) return toast('💎 Kurang!');
   state.diamonds-=l.price; state.cards.push({...l}); state.marketListings.splice(idx,1); save();
   switchTab('market',document.querySelector('.tab.active')); toast('🛒 '+l.emoji+' '+l.name+'!');
 }
 
 // ===== SHOP =====
-function buyPack(){ if(state.diamonds<10) return toast('💎 Kurang'); state.diamonds-=10; let c=newCard(POOL[Math.floor(Math.random()*POOL.length)]); state.cards.push(c); document.getElementById('packRes').innerHTML='<div style="font-size:40px">'+c.emoji+'</div>'+c.name; save(); toast('🎁 '+c.name); }
-function buyDiamond(){
-  const code='EVO'+Math.floor(Math.random()*9000+1000);
-  document.getElementById('modal').innerHTML='<div class="modal"><div class="modal-box"><b>💰 Transfer Rp15.000</b><br>GoPay: '+GOPAY+'<br>Catatan: '+code+'<br><br><button class="btn btn-primary" onclick="window.open(\'https://wa.me/'+WA+'?text=Sudah%20transfer%20'+code+'\')">Chat WA Admin</button><button class="btn" onclick="document.getElementById(\'modal\').style.display=\'none\'">Tutup</button></div></div>';
-  document.getElementById('modal').style.display='block';
-}
-function redeem(){
-  const code=prompt('Masukkan kode redeem:'); if(!code) return;
-  try{
-    const raw=atob(code); const [diamonds,ts,hash]=raw.split('|');
-    const check=btoa(diamonds+'|'+ts+'|'+SECRET).replace(/=/g,'');
-    if(check!==code) return toast('❌ Kode salah');
-    const used=JSON.parse(localStorage.getItem('evoUsed')||'[]');
-    if(used.includes(code)) return toast('⚠️ Sudah dipakai');
-    state.diamonds+=parseInt(diamonds); used.push(code); localStorage.setItem('evoUsed',JSON.stringify(used)); save(); toast('🎉 +'+diamonds+'💎!');
-  }catch(e){ toast('❌ Kode tidak valid'); }
-}
-
-// ===== ADMIN =====
-function adminLogin(){
-  if(document.getElementById('adminPass').value===ADMIN_CODE){
-    document.getElementById('adminLogin').classList.add('hidden'); document.getElementById('adminPanel').classList.remove('hidden'); loadAdmin();
-  } else toast('❌ Kode salah');
-}
-function generateCode(){
-  const d=document.getElementById('genDiamonds').value||120, note=document.getElementById('genNote').value||'', ts=Date.now();
-  const code=btoa(d+'|'+ts+'|'+SECRET).replace(/=/g,'');
-  document.getElementById('genOut').innerHTML='<div class="codebox">'+code+'</div><button class="btn" onclick="navigator.clipboard.writeText(\''+code+'\')">📋 Copy</button>';
-  const hist=JSON.parse(localStorage.getItem('evoHist')||'[]');
-  hist.unshift({code,d,note,time:new Date().toLocaleString()}); localStorage.setItem('evoHist',JSON.stringify(hist.slice(0,50)));
-  const active=JSON.parse(localStorage.getItem('evoActive')||'[]'); active.push({code,d,note,ts}); localStorage.setItem('evoActive',JSON.stringify(active.slice(-20)));
-  loadAdmin();
-}
-function loadAdmin(){
-  const hist=JSON.parse(localStorage.getItem('evoHist')||'[]');
-  document.getElementById('history').innerHTML=hist.map(h=>'<div style="padding:4px 0;border-bottom:1px solid #334155">'+h.time+' - '+h.d+'💎 - '+h.note+'<br><span style="font-family:monospace;font-size:9px">'+h.code+'</span></div>').join('');
-  const active=JSON.parse(localStorage.getItem('evoActive')||'[]');
-  document.getElementById('activeList').innerHTML=active.length?active.map(a=>'<div style="padding:3px;border-bottom:1px solid #334155;">🎫 '+a.d+'💎 - '+a.note+'<br><span style="font-size:9px">'+a.code+'</span></div>').join(''):'<span style="color:#94a3b8">Tidak ada</span>';
-}
-
-// ===== INIT =====
-updateUI();
-switchTab('cards',document.querySelector('.tab'));
-</script></body></html>
+function buyPack(){ if(state.diamonds<10) return toast('💎 Kurang'); state.diamonds-=10; var c=newCard(POOL[Math.floor(Math.random()*POOL.length)]); state.cards.push(c); document.getElementById('packRes').innerHTML='<div style="font-size:4
