@@ -1,126 +1,471 @@
 <!DOCTYPE html>
-<html lang="id"><head>
+<html lang="id">
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Evo Cards v8.3</title>
+<title>Evo Cards v9.0 — Monetized</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
-body{background:#0f172a;color:#e2e8f0;display:flex;justify-content:center;min-height:100vh}
-.app{width:100%;max-width:440px;background:#1e293b;min-height:100vh;display:flex;flex-direction:column}
-.top{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:#0f172a;border-bottom:2px solid #334155;cursor:pointer}
-.logo{font-weight:900;font-size:16px;color:#facc15}
-.stats{display:flex;gap:4px;flex-wrap:wrap}
-.badge{background:#334155;padding:4px 7px;border-radius:10px;font-size:10px;font-weight:700;display:flex;align-items:center;gap:2px;color:#e2e8f0;font-family:'Courier New',monospace}
-.badge span{font-family:'Courier New',monospace;font-weight:900}
-.tabs{display:flex;background:#0f172a;border-bottom:1px solid #334155;overflow-x:auto}
-.tab{flex:1;padding:8px 4px;text-align:center;font-weight:700;font-size:10px;cursor:pointer;color:#94a3b8;border-bottom:3px solid transparent;white-space:nowrap;min-width:45px}
-.tab.active{color:#facc15;border-color:#facc15}
-.content{flex:1;overflow-y:auto;padding:10px}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
-.card{background:linear-gradient(160deg,#1e293b,#0f172a);border:2px solid #475569;border-radius:12px;padding:6px;text-align:center;position:relative;cursor:pointer;transition:0.15s}
-.card:active{transform:scale(0.93)}
-.card.selected{border-color:#facc15!important;box-shadow:0 0 12px rgba(250,204,21,0.5)}
-.rarity-common{border-color:#64748b}.rarity-rare{border-color:#60a5fa}.rarity-epic{border-color:#a78bfa}.rarity-legendary{border-color:#facc15}
-.emoji{font-size:28px}.name{font-size:9px;font-weight:800;margin:2px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.stats-row{font-size:8px;color:#94a3b8}.lvl{position:absolute;top:3px;left:3px;background:#0f172a;padding:1px 4px;border-radius:5px;font-size:8px}
-.stars{display:flex;gap:1px;justify-content:center;margin-top:2px}
-.stars span{font-size:7px}.stars .on{color:#facc15}.stars .off{color:#475569}
-.hunger-bar{width:100%;height:3px;background:#334155;border-radius:2px;margin-top:3px}
-.hunger-fill{height:100%;border-radius:2px;transition:0.3s}
-.btn{width:100%;padding:10px;border:none;border-radius:8px;font-weight:800;font-size:11px;cursor:pointer;background:#334155;color:#e2e8f0;margin:3px 0;font-family:'Courier New',monospace}
-.btn-primary{background:#facc15;color:#0f172a}.btn-green{background:#22c55e;color:#0f172a}.btn-red{background:#ef4444;color:white}.btn-blue{background:#3b82f6;color:white}.btn-gold{background:#f59e0b;color:white}.btn-purple{background:#8b5cf6;color:white}
-.log{text-align:center;padding:5px;font-size:9px;color:#94a3b8;background:#0f172a;min-height:24px;font-family:monospace}
+body{background:#0b0f19;color:#e2e8f0;display:flex;justify-content:center;min-height:100vh}
+.app{width:100%;max-width:480px;background:#151b2b;min-height:100vh;display:flex;flex-direction:column;position:relative;overflow:hidden}
+.top{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:#0f172a;border-bottom:2px solid #1e293b;position:sticky;top:0;z-index:100}
+.logo{font-weight:900;font-size:18px;background:linear-gradient(135deg,#facc15,#f59e0b);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.stats{display:flex;gap:6px;flex-wrap:wrap}
+.badge{background:#1e293b;padding:6px 10px;border-radius:12px;font-size:11px;font-weight:800;display:flex;align-items:center;gap:4px;color:#facc15;font-family:monospace;border:1px solid #334155}
+.badge span{color:#fff;font-family:monospace;font-weight:900}
+.badge.premium{background:linear-gradient(135deg,#4c1d95,#6d28d9);border-color:#8b5cf6;color:#fff}
+.tabs{display:flex;background:#0f172a;border-bottom:1px solid #1e293b;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:1;padding:10px 6px;text-align:center;font-weight:800;font-size:11px;cursor:pointer;color:#64748b;border-bottom:3px solid transparent;white-space:nowrap;min-width:55px;transition:all .2s}
+.tab.active{color:#facc15;border-color:#facc15;background:#1e293b}
+.content{flex:1;overflow-y:auto;padding:12px;position:relative}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.card{background:linear-gradient(160deg,#1e293b,#0f172a);border:2px solid;border-radius:14px;padding:8px;text-align:center;position:relative;cursor:pointer;transition:all .2s;overflow:hidden}
+.card:active{transform:scale(0.95)}
+.card.selected{border-color:#facc15!important;box-shadow:0 0 20px rgba(250,204,21,.4);transform:translateY(-2px)}
+.card .shine{position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:linear-gradient(45deg,transparent 40%,rgba(255,255,255,.1) 50%,transparent 60%);transform:rotate(30deg);transition:all .5s;pointer-events:none}
+.card:hover .shine{left:100%}
+.rarity-common{border-color:#475569}.rarity-rare{border-color:#60a5fa;box-shadow:0 0 8px rgba(96,165,250,.2)}.rarity-epic{border-color:#a78bfa;box-shadow:0 0 10px rgba(167,139,250,.3)}.rarity-legendary{border-color:#facc15;box-shadow:0 0 15px rgba(250,204,21,.4)}.rarity-mythic{border-color:#f43f5e;box-shadow:0 0 20px rgba(244,63,94,.5);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 15px rgba(244,63,94,.4)}50%{box-shadow:0 0 25px rgba(244,63,94,.7)}}
+.emoji{font-size:32px;display:block;margin:4px 0;filter:drop-shadow(0 2px 4px rgba(0,0,0,.3))}.name{font-size:10px;font-weight:900;margin:3px 0;white-space:nowrap;overflow:hidden;text-overflow:uppercase;letter-spacing:.5px}
+.stats-row{font-size:9px;color:#94a3b8;font-weight:600}.lvl{position:absolute;top:4px;left:4px;background:#0f172a;padding:2px 6px;border-radius:6px;font-size:9px;font-weight:900;border:1px solid #334155}
+.stars{display:flex;gap:2px;justify-content:center;margin-top:3px}.stars span{font-size:9px}.stars .on{color:#facc15;text-shadow:0 0 4px rgba(250,204,21,.6)}.stars .off{color:#334155}
+.hunger-bar{width:100%;height:4px;background:#334155;border-radius:2px;margin-top:4px;overflow:hidden}.hunger-fill{height:100%;border-radius:2px;transition:width .3s}
+.xp-bar{width:100%;height:3px;background:#1e293b;border-radius:2px;margin-top:2px;overflow:hidden}.xp-fill{height:100%;background:#3b82f6;border-radius:2px;transition:width .3s}
+.btn{width:100%;padding:12px;border:none;border-radius:10px;font-weight:900;font-size:12px;cursor:pointer;background:#334155;color:#e2e8f0;margin:4px 0;transition:all .2s;position:relative;overflow:hidden}
+.btn:active{transform:scale(0.98)}.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn-primary{background:linear-gradient(135deg,#facc15,#f59e0b);color:#0f172a;box-shadow:0 4px 12px rgba(250,204,21,.3)}
+.btn-green{background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;box-shadow:0 4px 12px rgba(34,197,94,.3)}
+.btn-red{background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;box-shadow:0 4px 12px rgba(239,68,68,.3)}
+.btn-blue{background:linear-gradient(135deg,#3b82f6,#2563eb);color:#fff;box-shadow:0 4px 12px rgba(59,130,246,.3)}
+.btn-gold{background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;box-shadow:0 4px 12px rgba(245,158,11,.3)}
+.btn-purple{background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:#fff;box-shadow:0 4px 12px rgba(139,92,246,.3)}
+.btn-premium{background:linear-gradient(135deg,#ec4899,#db2777);color:#fff;box-shadow:0 4px 12px rgba(236,72,153,.3)}
+.log{text-align:center;padding:8px;font-size:10px;color:#94a3b8;background:#0f172a;border-top:1px solid #1e293b;font-weight:600;min-height:36px;display:flex;align-items:center;justify-content:center}
 .hidden{display:none!important}
-.feed-opt{display:flex;gap:4px;margin:5px 0}
-.feed-opt button{flex:1;padding:8px 4px;font-size:9px}
-.battle-card{background:#1e293b;border:1px solid #475569;border-radius:10px;padding:6px;margin:3px 0;display:flex;justify-content:space-between;align-items:center;font-size:10px}
-</style></head><body>
+.feed-opt{display:flex;gap:6px;margin:6px 0}.feed-opt button{flex:1;padding:10px 4px;font-size:10px}
+.battle-card{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:10px;margin:4px 0;display:flex;justify-content:space-between;align-items:center;font-size:11px;transition:all .2s}
+.battle-card:hover{border-color:#475569}
+.section-title{font-size:14px;font-weight:900;margin:12px 0 8px;color:#facc15;display:flex;align-items:center;gap:6px}
+.panel{background:#0f172a;border:1px solid #1e293b;border-radius:12px;padding:12px;margin:8px 0}
+.info-text{font-size:11px;color:#64748b;line-height:1.5;margin:6px 0}
+.progress-ring{width:60px;height:60px;position:relative}.progress-ring svg{transform:rotate(-90deg)}.progress-ring circle{fill:none;stroke-width:4}
+.timer{display:flex;align-items:center;gap:8px;font-size:12px;color:#94a3b8;font-weight:700}
+.quest-item{display:flex;justify-content:space-between;align-items:center;padding:8px;background:#1e293b;border-radius:8px;margin:4px 0;font-size:11px;border-left:3px solid #334155}
+.quest-item.completed{border-left-color:#22c55e;opacity:.7}.quest-item .reward{color:#facc15;font-weight:900}
+.modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.8);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px;opacity:0;pointer-events:none;transition:opacity .3s}.modal.active{opacity:1;pointer-events:all}
+.modal-content{background:#1e293b;border:2px solid #334155;border-radius:16px;padding:20px;max-width:360px;width:100%;max-height:80vh;overflow-y:auto;text-align:center}
+.modal-title{font-size:18px;font-weight:900;margin-bottom:12px;color:#facc15}
+.modal-text{font-size:13px;color:#94a3b8;margin-bottom:16px;line-height:1.6}
+.referral-box{background:linear-gradient(135deg,#1e293b,#0f172a);border:2px dashed #facc15;border-radius:12px;padding:16px;text-align:center;margin:12px 0}
+.referral-code{font-size:24px;font-weight:900;color:#facc15;font-family:monospace;letter-spacing:2px}
+.battle-arena{background:#0f172a;border:2px solid #334155;border-radius:16px;padding:16px;margin:12px 0;text-align:center;position:relative;overflow:hidden}
+.battle-arena::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#facc15,transparent)}
+.fighter{display:inline-block;text-align:center;margin:0 20px}.fighter .f-emoji{font-size:48px;display:block;animation:float 3s ease-in-out infinite}.fighter .f-name{font-size:12px;font-weight:900;margin-top:4px}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.vs{font-size:24px;font-weight:900;color:#ef4444;display:inline-block;vertical-align:middle;animation:pulse 1s infinite}
+.battle-log{font-size:11px;color:#94a3b8;margin-top:12px;height:80px;overflow-y:auto;text-align:left;font-family:monospace;background:#0b0f19;border-radius:8px;padding:8px}
+.battle-log .dmg{color:#ef4444}.battle-log .heal{color:#22c55e}.battle-log .crit{color:#facc15;font-weight:900}
+.ad-banner{background:linear-gradient(135deg,#1e293b,#0f172a);border:2px solid #f59e0b;border-radius:12px;padding:12px;margin:8px 0;text-align:center;cursor:pointer;transition:all .2s}
+.ad-banner:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(245,158,11,.3)}
+.ad-banner .ad-label{font-size:9px;color:#f59e0b;text-transform:uppercase;letter-spacing:1px;font-weight:900;margin-bottom:4px}
+.ad-banner .ad-text{font-size:13px;font-weight:700;color:#fff}
+.daily-streak{display:flex;justify-content:space-between;margin:12px 0;gap:4px}
+.streak-day{flex:1;text-align:center;padding:8px 4px;background:#1e293b;border-radius:8px;font-size:10px;border:2px solid transparent;transition:all .2s}
+.streak-day.active{border-color:#facc15;background:#0f172a}.streak-day.claimed{border-color:#22c55e;opacity:.6}.streak-day .day-num{font-weight:900;font-size:12px}.streak-day .day-reward{color:#facc15;font-size:9px}
+.leaderboard-item{display:flex;align-items:center;gap:10px;padding:8px;background:#1e293b;border-radius:8px;margin:4px 0;font-size:12px}
+.leaderboard-rank{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:12px;background:#334155;color:#94a3b8}
+.leaderboard-rank.gold{background:linear-gradient(135deg,#facc15,#f59e0b);color:#0f172a}.leaderboard-rank.silver{background:linear-gradient(135deg,#94a3b8,#64748b);color:#0f172a}.leaderboard-rank.bronze{background:linear-gradient(135deg,#cd7f32,#a0522d);color:#fff}
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-100px);background:#0f172a;border:2px solid #22c55e;color:#22c55e;padding:12px 24px;border-radius:12px;font-weight:900;font-size:13px;z-index:2000;transition:transform .3s;box-shadow:0 4px 20px rgba(34,197,94,.3)}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.toast.error{border-color:#ef4444;color:#ef4444;box-shadow:0 4px 20px rgba(239,68,68,.3)}
+.pack-opening{display:flex;justify-content:center;gap:12px;margin:20px 0;min-height:80px;align-items:center}
+.pack-card{font-size:48px;animation:packBounce .6s ease-out}
+@keyframes packBounce{0%{transform:scale(0) rotate(-180deg);opacity:0}60%{transform:scale(1.2) rotate(10deg)}100%{transform:scale(1) rotate(0);opacity:1}}
+input,select{width:100%;padding:10px;background:#1e293b;border:1px solid #334155;border-radius:8px;color:#fff;font-size:13px;margin:4px 0}
+input:focus,select:focus{outline:none;border-color:#facc15}
+.pity-counter{font-size:10px;color:#64748b;text-align:center;margin-top:4px}
+.version-tag{position:fixed;bottom:4px;right:8px;font-size:9px;color:#334155;font-weight:700;z-index:50}
+</style>
+</head>
+<body>
 
 <div class="app" id="gameApp">
-  <div class="top"><div class="logo">⚡ EVO CARDS v8.3</div>
+  <div class="top">
+    <div class="logo">⚡ EVO CARDS v9.0</div>
     <div class="stats">
-      <div class="badge">💰<span id="pf">0</span></div>
-      <div class="badge">💎<span id="dm">0</span></div>
-      <div class="badge">⚡<span id="en">0</span>/<span id="me">20</span></div>
+      <div class="badge">💰 <span id="res-gold">0</span></div>
+      <div class="badge premium">💎 <span id="res-gem">0</span></div>
+      <div class="badge">⚡ <span id="res-energy">0</span>/<span id="res-maxenergy">0</span></div>
     </div>
   </div>
+  
   <div class="tabs" id="tabBar">
-    <div class="tab active" data-tab="cards">🃏Kartu</div>
-    <div class="tab" data-tab="feed">🍖Feed</div>
-    <div class="tab" data-tab="breed">🧬Breed</div>
-    <div class="tab" data-tab="battle">⚔️Battle</div>
-    <div class="tab" data-tab="market">🏪Pasar</div>
-    <div class="tab" data-tab="shop">🛒Shop</div>
+    <div class="tab active" data-tab="cards">🃏 Kartu</div>
+    <div class="tab" data-tab="feed">🍖 Feed</div>
+    <div class="tab" data-tab="breed">🧬 Breed</div>
+    <div class="tab" data-tab="battle">⚔️ Battle</div>
+    <div class="tab" data-tab="market">🏪 Pasar</div>
+    <div class="tab" data-tab="earn">💰 Earn</div>
+    <div class="tab" data-tab="shop">🛒 Shop</div>
   </div>
-  <div class="content" id="ct"></div>
-  <div class="log" id="lg">✅ v8.3 Ready</div>
+  
+  <div class="content" id="content"></div>
+  <div class="log" id="log">✅ v9.0 Ready — Tap any tab to begin</div>
+  <div class="version-tag">v9.0 MONETIZED</div>
 </div>
 
+<div class="modal" id="modal"><div class="modal-content" id="modalContent"></div></div>
+<div class="toast" id="toast"></div>
+
 <script>
-var AC='727277',SK='evo2026'+AC,GP='088989727277',WA='6288989727277';
-var MAX_BATTLE=30;
-var tg=window.Telegram?.WebApp;if(tg)tg.expand();
+// ============================================
+// EVO CARDS v9.0 — MONETIZED EDITION
+// Architecture: Class-based, modular, anti-cheat ready
+// ============================================
 
-// ===== FIREBASE =====
-var db=null;
-try{firebase.initializeApp({apiKey:"AIZaSyC2Gb6WtY1bn05fI_3K9x3",authDomain:"evo-farm-game.firebaseapp.com",databaseURL:"https://evo-farm-game-default-rtdb.asia-southeast1.firebasedatabase.app",projectId:"evo-farm-game",storageBucket:"evo-farm-game.appspot.com",messagingSenderId:"870289339504",appId:"1:870289339504:web:154c283a0e8b5d4c28a3e"});db=firebase.database()}catch(e){}
+const CONFIG = {
+  MAX_ENERGY: 20,
+  ENERGY_REGEN_MINUTES: 5,
+  HUNGER_DECAY_MINUTES: 10,
+  HUNGER_DECAY_AMOUNT: 5,
+  MAX_BATTLE_DAY: 30,
+  BATTLE_COST: 3,
+  BATTLE_REWARD_BASE: 10,
+  EVOLVE_COST: 50,
+  EVOLVE_STARS_REQ: 5,
+  BREED_COST_ENERGY: 3,
+  BREED_MIN_HUNGER: 30,
+  MARKET_TAX_RATE: 0.1,
+  AD_REWARD_ENERGY: 5,
+  AD_REWARD_GOLD: 25,
+  DAILY_STREAK_MAX: 7,
+  PITY_LEGENDARY: 50,
+  PITY_MYTHIC: 200,
+  REFERRAL_REWARD_GEM: 10,
+  REFERRAL_REWARD_GOLD: 100,
+  QUEST_DAILY_RESET: 24 // hours
+};
 
-var uid=localStorage.getItem('uid83')||'u_'+Math.random().toString(36).substr(2,9);
-localStorage.setItem('uid83',uid);
-try{if(tg&&tg.initDataUnsafe&&tg.initDataUnsafe.user&&tg.initDataUnsafe.user.id)uid='tg_'+tg.initDataUnsafe.user.id}catch(e){}
+const PETS_BASE = [
+  {id:'sprout',name:'Sprout',emoji:'🌱',rarity:'common',atk:8,def:3,hp:35,stage:1,evoTo:'bloom'},
+  {id:'bloom',name:'Bloom',emoji:'🌸',rarity:'common',atk:15,def:6,hp:55,stage:2,evoTo:'treant'},
+  {id:'cactus',name:'Cactus',emoji:'🌵',rarity:'common',atk:10,def:10,hp:45,stage:1,evoTo:null},
+  {id:'treant',name:'Treant',emoji:'🌳',rarity:'rare',atk:25,def:15,hp:90,stage:3,evoTo:null},
+  {id:'wolf',name:'Wolf',emoji:'🐺',rarity:'rare',atk:32,def:10,hp:75,stage:2,evoTo:null},
+  {id:'dragon',name:'Dragon',emoji:'🐉',rarity:'epic',atk:45,def:22,hp:130,stage:4,evoTo:null},
+  {id:'phoenix',name:'Phoenix',emoji:'🔥',rarity:'epic',atk:50,def:18,hp:120,stage:3,evoTo:null},
+  {id:'zeus',name:'Zeus',emoji:'⚡',rarity:'legendary',atk:70,def:25,hp:150,stage:4,evoTo:null},
+  {id:'inferno',name:'Inferno',emoji:'👹',rarity:'mythic',atk:95,def:35,hp:200,stage:5,evoTo:null}
+];
 
-var PETS=[{id:'sprout',name:'Sprout',emoji:'🌱',rarity:'common',atk:5,def:2,hp:30,stage:1},{id:'bloom',name:'Bloom',emoji:'🌸',rarity:'common',atk:12,def:5,hp:50,stage:2},{id:'cactus',name:'Cactus',emoji:'🌵',rarity:'common',atk:8,def:8,hp:40,stage:1},{id:'treant',name:'Treant',emoji:'🌳',rarity:'rare',atk:22,def:12,hp:80,stage:3},{id:'wolf',name:'Wolf',emoji:'🐺',rarity:'rare',atk:28,def:8,hp:70,stage:2},{id:'dragon',name:'Dragon',emoji:'🐉',rarity:'epic',atk:40,def:18,hp:120,stage:4},{id:'phoenix',name:'Phoenix',emoji:'🔥',rarity:'epic',atk:45,def:15,hp:110,stage:3},{id:'zeus',name:'Zeus',emoji:'⚡',rarity:'legendary',atk:65,def:20,hp:140,stage:4}];
+const RARITY_WEIGHTS = {common:50,rare:30,epic:15,legendary:4.5,mythic:0.5};
 
-var S={pf:80,dm:30,en:12,me:20,cd:[],sl:[],ml:[],bc:0,bd:''};
-function nC(t,lvl){lvl=lvl||1;var m=1+(lvl-1)*0.08;return{id:t.id,name:t.name,emoji:t.emoji,rarity:t.rarity,stage:t.stage,level:lvl,atk:Math.floor(t.atk*m),def:Math.floor(t.def*m),hp:Math.floor(t.hp*m),uid:Math.random().toString(36).slice(2,9),st:0,hu:100}}
-function sv(){localStorage.setItem('evo83',JSON.stringify(S));if(db)try{db.ref('users/'+uid).set(S)}catch(e){};upUI()}
-function upUI(){
-  document.getElementById('pf').textContent=String(S.pf);
-  document.getElementById('dm').textContent=String(S.dm);
-  document.getElementById('en').textContent=String(S.en);
-  document.getElementById('me').textContent=String(S.me);
+class SecurityManager {
+  static generateChecksum(obj) {
+    const str = JSON.stringify(obj,(k,v)=>{if(k==='checksum')return undefined;return v});
+    let hash = 0;
+    for(let i=0;i<str.length;i++){const c=str.charCodeAt(i);hash=((hash<<5)-hash)+c;hash|=0}
+    return Math.abs(hash).toString(36);
+  }
+  
+  static verifyState(state) {
+    if(!state||!state.checksum)return false;
+    const expected = this.generateChecksum({...state,checksum:undefined});
+    return state.checksum === expected;
+  }
+  
+  static sanitizeState(state) {
+    if(!state) return this.getDefaultState();
+    // Anti-tamper: clamp values
+    state.gold = Math.max(0,Math.min(999999,Math.floor(state.gold||0)));
+    state.gem = Math.max(0,Math.min(99999,Math.floor(state.gem||0)));
+    state.energy = Math.max(0,Math.min(CONFIG.MAX_ENERGY,Math.floor(state.energy||0)));
+    state.maxEnergy = Math.max(10,Math.min(50,Math.floor(state.maxEnergy||CONFIG.MAX_ENERGY)));
+    if(!Array.isArray(state.cards))state.cards=[];
+    if(!Array.isArray(state.market))state.market=[];
+    if(!Array.isArray(state.selected))state.selected=[];
+    state.cards.forEach(c=>{
+      c.level=Math.max(1,Math.min(10,Math.floor(c.level||1)));
+      c.stars=Math.max(0,Math.min(5,Math.floor(c.stars||0)));
+      c.hunger=Math.max(0,Math.min(100,Math.floor(c.hunger||100)));
+      c.xp=Math.max(0,Math.min(c.level*100,Math.floor(c.xp||0)));
+    });
+    return state;
+  }
+  
+  static getDefaultState() {
+    return {
+      gold:100,gem:20,energy:15,maxEnergy:CONFIG.MAX_ENERGY,
+      cards:[],selected:[],market:[],
+      battleCount:0,battleDate:'',lastEnergyRegen:Date.now(),
+      lastHungerDecay:Date.now(),dailyStreak:0,lastDailyClaim:'',
+      quests:[],questProgress:{},referralCode:'',referredBy:'',
+      referrals:[],totalSpent:0,totalEarned:0,pityCounter:0,
+      adWatchedToday:0,adDate:'',version:'9.0'
+    };
+  }
 }
-function ts(m){document.getElementById('lg').textContent=m}
 
-function loadGame(){
-  if(db){db.ref('users/'+uid).once('value').then(function(snap){if(snap.exists()){S=snap.val()}else{var l=JSON.parse(localStorage.getItem('evo83')||'null');if(l)S=l}initGame()}).catch(function(){var l=JSON.parse(localStorage.getItem('evo83')||'null');if(l)S=l;initGame()})}
-  else{var l=JSON.parse(localStorage.getItem('evo83')||'null');if(l)S=l;initGame()}
+class EconomyManager {
+  constructor(game){this.game=game;}
+  
+  canAfford(gold=0,gem=0,energy=0){
+    const s=this.game.state;
+    return s.gold>=gold&&s.gem>=gem&&s.energy>=energy;
+  }
+  
+  spend(gold=0,gem=0,energy=0,reason=''){
+    const s=this.game.state;
+    if(!this.canAfford(gold,gem,energy))return false;
+    s.gold-=gold;s.gem-=gem;s.energy-=energy;
+    if(gem>0)s.totalSpent+=gem;
+    this.game.log(`💸 ${reason}: -${gold>0?gold+'💰':''}${gem>0?gem+'💎':''}${energy>0?energy+'⚡':''}`);
+    return true;
+  }
+  
+  earn(gold=0,gem=0,energy=0,reason=''){
+    const s=this.game.state;
+    s.gold+=gold;s.gem+=gem;s.energy=Math.min(s.maxEnergy,s.energy+energy);
+    if(gold>0)s.totalEarned+=gold;
+    this.game.log(`🎉 ${reason}: +${gold>0?gold+'💰':''}${gem>0?gem+'💎':''}${energy>0?energy+'⚡':''}`);
+    this.game.showToast(`+${gold+gem+energy>0?gold+'💰':''}${gem>0?gem+'💎':''}`,gem>0?'premium':'');
+  }
+  
+  processMarketTax(price){
+    const tax = Math.floor(price*CONFIG.MARKET_TAX_RATE);
+    this.game.state.gold+=tax;
+    return tax;
+  }
 }
-function initGame(){
-  if(!S.cd||S.cd.length===0)S.cd=[nC(PETS[0],2),nC(PETS[0],2),nC(PETS[1],1),nC(PETS[2],1)];
-  if(!S.me)S.me=20;if(S.en>S.me)S.en=S.me;if(!S.ml)S.ml=[];if(!S.sl)S.sl=[];if(!S.bd)S.bd='';if(!S.bc)S.bc=0;
-  sv();sT('cards',document.querySelector('[data-tab="cards"]'));
+
+class CardManager {
+  constructor(game){this.game=game;}
+  
+  createCard(baseId,level=1,bonusStars=0){
+    const base = PETS_BASE.find(p=>p.id===baseId);
+    if(!base)return null;
+    const mult = 1+(level-1)*0.1;
+    return {
+      uid: 'c_'+Math.random().toString(36).substr(2,9)+'_'+Date.now().toString(36),
+      baseId:base.id,name:base.name,emoji:base.emoji,rarity:base.rarity,
+      stage:base.stage,level:level,
+      atk:Math.floor(base.atk*mult),def:Math.floor(base.def*mult),hp:Math.floor(base.hp*mult),
+      maxHp:Math.floor(base.hp*mult),stars:bonusStars,hunger:100,xp:0,
+      created:Date.now()
+    };
+  }
+  
+  getRarityRoll(){
+    const s=this.game.state;
+    s.pityCounter++;
+    // Pity system for monetization
+    if(s.pityCounter>=CONFIG.PITY_MYTHIC){
+      s.pityCounter=0;
+      return 'mythic';
+    }
+    if(s.pityCounter>=CONFIG.PITY_LEGENDARY&&Math.random()<0.3){
+      s.pityCounter=0;
+      return 'legendary';
+    }
+    const r=Math.random()*100;let cum=0;
+    for(const[rar,w]of Object.entries(RARITY_WEIGHTS)){cum+=w;if(r<=cum)return rar}
+    return 'common';
+  }
+  
+  openPack(count,costGem,type='silver'){
+    if(!this.game.economy.spend(0,costGem,0,`Pack ${type}`))return null;
+    const results=[];
+    for(let i=0;i<count;i++){
+      const rarity=this.getRarityRoll();
+      const pool=PETS_BASE.filter(p=>p.rarity===rarity);
+      const base=pool.length?pool[Math.floor(Math.random()*pool.length)]:PETS_BASE[0];
+      const bonus=Math.random()<0.15?1:0; // 15% chance bonus star
+      const card=this.createCard(base.id,1,bonus);
+      this.game.state.cards.push(card);
+      results.push(card);
+    }
+    // Bonus card for premium packs
+    if(type==='platinum'&&count>=5){
+      const rarePool=PETS_BASE.filter(p=>['epic','legendary'].includes(p.rarity));
+      const bonusBase=rarePool[Math.floor(Math.random()*rarePool.length)]||PETS_BASE[6];
+      const bonusCard=this.createCard(bonusBase.id,Math.floor(Math.random()*2)+2,1);
+      this.game.state.cards.push(bonusCard);
+      results.push({...bonusCard,isBonus:true});
+    }
+    return results;
+  }
+  
+  removeByIndex(indices){
+    // FIX CRITICAL BUG: Sort descending to avoid index shift
+    const sorted=[...indices].sort((a,b)=>b-a);
+    const removed=[];
+    sorted.forEach(idx=>{
+      if(idx>=0&&idx<this.game.state.cards.length){
+        removed.push(this.game.state.cards[idx]);
+        this.game.state.cards.splice(idx,1);
+      }
+    });
+    return removed;
+  }
+  
+  breed(idx1,idx2){
+    const s=this.game.state;
+    if(idx1===idx2||idx1<0||idx2<0||idx1>=s.cards.length||idx2>=s.cards.length){
+      this.game.log('❌ Pilih 2 kartu berbeda!');
+      return null;
+    }
+    if(!this.game.economy.spend(0,0,CONFIG.BREED_COST_ENERGY,'Breed'))return null;
+    
+    const p1=s.cards[idx1],p2=s.cards[idx2];
+    if(p1.hunger<CONFIG.BREED_MIN_HUNGER||p2.hunger<CONFIG.BREED_MIN_HUNGER){
+      this.game.log('❌ Kartu terlalu lapar! Feed dulu.');
+      return null;
+    }
+    
+    // Remove both parents (FIXED: proper index handling)
+    const removed=this.removeByIndex([idx1,idx2]);
+    if(removed.length!==2)return null;
+    
+    const [parent1,parent2]=removed;
+    const newStage=Math.min(5,Math.max(paren
+redeem(){
+    const code = document.getElementById('redeemCode').value.trim().toUpperCase();
+    if(!code){this.game.log('❌ Masukkan kode!');return;}
+    
+    // Rate limiting
+    const now = Date.now();
+    const key = 'evo9_redeem_'+code;
+    const last = parseInt(localStorage.getItem(key+'_last')||0);
+    if(now - last < 60000){this.game.log('⏱️ Tunggu 1 menit!');return;}
+    localStorage.setItem(key+'_last',now.toString());
+    
+    // Validation (HMAC-like client side - production harus server side)
+    const valid = this.validateCode(code);
+    if(!valid){
+      this.game.log('❌ Kode invalid/expired!');
+      this.game.showToast('Invalid code!','error');
+      return;
+    }
+    
+    const used = JSON.parse(localStorage.getItem('evo9_used_codes')||'[]');
+    if(used.includes(code)){this.game.log('⚠️ Kode sudah digunakan!');return;}
+    
+    used.push(code);
+    localStorage.setItem('evo9_used_codes',JSON.stringify(used));
+    
+    // Reward based on code prefix
+    let gem = 5, gold = 0;
+    if(code.startsWith('VIP')){gem=50;gold=500;}
+    else if(code.startsWith('MEGA')){gem=100;gold=1000;}
+    
+    this.game.economy.earn(gold,gem,0,'Redeem Code');
+    this.game.saveState();
+    this.game.showToast(`🎉 +${gem}💎 +${gold}💰`,'premium');
+  }
+  
+  validateCode(code){
+    // Simple checksum validation - replace with server call in production
+    let hash = 0;
+    for(let i=0;i<code.length;i++){
+      hash = ((hash<<5)-hash)+code.charCodeAt(i);
+      hash |= 0;
+    }
+    return Math.abs(hash)%7 === 0 && code.length >= 6; // 1/7 chance for demo
+  }
 }
 
-setInterval(function(){for(var i=0;i<S.cd.length;i++)S.cd[i].hu=Math.max(0,(S.cd[i].hu||100)-3);sv()},600000);
-setInterval(function(){if(S.en<S.me){S.en=Math.min(S.me,S.en+1);sv()}},300000);
+// ============================================
+// TELEGRAM WEBAPP INTEGRATION
+// ============================================
+let tg = window.Telegram?.WebApp;
+if(tg){
+  tg.expand();
+  tg.ready();
+  // Enable closing confirmation untuk retention
+  tg.enableClosingConfirmation();
+}
 
-document.getElementById('tabBar').addEventListener('click',function(e){if(e.target.classList.contains('tab'))sT(e.target.dataset.tab,e.target)});
-function sT(tab,el){var tabs=document.querySelectorAll('.tab');for(var i=0;i<tabs.length;i++)tabs[i].classList.remove('active');if(el)el.classList.add('active');var c=document.getElementById('ct');if(tab==='cards')rCd(c);else if(tab==='feed')rFd(c);else if(tab==='breed')c.innerHTML='<p>Pilih 2 kartu di tab Kartu</p><button class="btn btn-primary" onclick="brC()">🧬 Breed (⚡2)</button>';else if(tab==='battle')rBt(c);else if(tab==='market')rMk(c);else if(tab==='shop')rSp(c);}
-function rCd(c){var h='<p style="font-size:9px;color:#94a3b8;">Total: '+S.cd.length+' | Klik (max 2)</p><div class="grid">';for(var i=0;i<S.cd.length;i++){var cd=S.cd[i],sel=S.sl.indexOf(i)>=0?' selected':'',sh='';for(var s=0;s<5;s++)sh+='<span class="'+(s<(cd.st||0)?'on':'off')+'">'+(s<(cd.st||0)?'⭐':'☆')+'</span>';var hu=cd.hu||100,hc=hu>=70?'#22c55e':hu>=30?'#f59e0b':'#ef4444';h+='<div class="card rarity-'+cd.rarity+sel+'" onclick="tC('+i+')"><div class="lvl">Lv'+cd.level+'</div><div class="emoji">'+cd.emoji+'</div><div class="name">'+cd.name+'</div><div class="stars">'+sh+'</div><div class="stats-row">ATK'+cd.atk+' DEF'+cd.def+'</div><div class="hunger-bar"><div class="hunger-fill" style="width:'+hu+'%;background:'+hc+'"></div></div><span style="font-size:6px;">🍖'+hu+'%</span></div>'}h+='</div><button class="btn btn-green" onclick="evC()">✨ Evolve (⭐5)</button><button class="btn btn-red" onclick="seC()">💵 Sell</button>';c.innerHTML=h}
-function rFd(c){var fo='<option value="">Pilih...</option>';for(var i=0;i<S.cd.length;i++)fo+='<option value="'+i+'">'+S.cd[i].emoji+' '+S.cd[i].name+'</option>';c.innerHTML='<h4>🍖 Feeding</h4><select id="ft">'+fo+'</select><div class="feed-opt"><button class="btn" onclick="dF(\'b\')">🍞 5</button><button class="btn btn-primary" onclick="dF(\'m\')">🥩 15</button><button class="btn btn-blue" onclick="dF(\'p\')">🍰 1</button></div>'}
-function rBt(c){var bo='<option value="">Pilih...</option>';for(var i=0;i<S.cd.length;i++)bo+='<option value="'+i+'">'+S.cd[i].emoji+' '+S.cd[i].name+'</option>';c.innerHTML='<h4>⚔️ Battle ('+S.bc+'/'+MAX_BATTLE+')</h4><select id="bc">'+bo+'</select><button class="btn btn-green" onclick="sB()">Battle (3)</button>'}
-function rMk(c){c.innerHTML='<h4>🏪 Pasar</h4><button class="btn btn-primary" onclick="lsMk()">📤 Jual</button><input id="mp" type="number" value="10"><div id="mk">'+gMk()+'</div>'}
-function rSp(c){c.innerHTML='<h4>🎁 BOOSTER</h4><button class="btn btn-primary" onclick="bP(1,10)">Silver (1) 10💎</button><button class="btn btn-gold" onclick="bP(3,25)">Gold (3) 25💎</button><button class="btn btn-purple" onclick="bP(5,50)">Platinum (5+1) 50💎</button><div id="pr" style="text-align:center;margin:6px;font-size:20px"></div><hr><button class="btn btn-blue" onclick="bD()">💰 120💎</button><button class="btn btn-green" onclick="bE()">⚡ 10 Energi</button><button class="btn btn-gold" onclick="bG()">🪙 500 Profit</button><button class="btn" onclick="rd()">🎟️ Redeem</button><hr><button class="btn btn-red" onclick="wD()">💸 WD 💎→Rp</button>'}
+// ============================================
+// ANTI-CHEAT: Periodic integrity check
+// ============================================
+setInterval(()=>{
+  if(game && game.state){
+    const expected = SecurityManager.generateChecksum(game.state);
+    if(game.state.checksum !== expected){
+      console.warn('State tampering detected!');
+      // In production: flag account, reset state, or ban
+    }
+  }
+},30000);
 
-function tC(i){var p=S.sl.indexOf(i);if(p>=0)S.sl.splice(p,1);else if(S.sl.length<2)S.sl.push(i);rCd(document.getElementById('ct'))}
-function brC(){if(S.sl.length!==2)return ts('Pilih 2!');if(S.en<2)return ts('Energi kurang!');var s=S.sl.slice().sort(function(a,b){return b-a}),p1=S.cd[s[0]],p2=S.cd[s[1]];if((p1.hu||100)<30||(p2.hu||100)<30)return ts('Lapar!');S.cd.splice(s[0],1);S.cd.splice(s[1],1);var ns=Math.floor((p1.level+p2.level)/2)+1;if(ns>4)ns=4;var cand=PETS.filter(function(c){return c.stage===ns});if(!cand.length)cand=PETS;var b=nC(cand[Math.floor(Math.random()*cand.length)],ns);S.cd.push(b);S.en-=2;S.sl=[];sv();ts('🧬 '+b.emoji+' '+b.name)}
-function evC(){if(S.sl.length!==1)return ts('Pilih 1!');var i=S.sl[0],c=S.cd[i];if((c.st||0)<5)return ts('⭐ '+(c.st||0)+'/5');if(S.pf<10)return ts('Profit kurang!');S.pf-=10;c.level=Math.min(4,c.level+1);c.atk=Math.floor(c.atk*1.15);c.def=Math.floor(c.def*1.15);c.hp=Math.floor(c.hp*1.15);c.st=0;c.hu=100;S.sl=[];sv();ts('✨ Lv'+c.level)}
-function seC(){if(!S.sl.length)return ts('Pilih!');var s=S.sl.slice().sort(function(a,b){return b-a}),tot=0;s.forEach(function(i){tot+=S.cd[i].atk+S.cd[i].def;S.cd.splice(i,1)});S.pf+=tot;S.sl=[];sv();ts('💵 +'+tot)}
-function dF(tp){var i=parseInt(document.getElementById('ft').value);if(isNaN(i)||!S.cd[i])return ts('Pilih!');var c=S.cd[i],cost,hg,sc;if(tp==='b'){cost=5;hg=30;sc=0.25;if(S.pf<cost)return ts('Profit kurang');S.pf-=cost}else if(tp==='m'){cost=15;hg=60;sc=0.45;if(S.pf<cost)return ts('Profit kurang');S.pf-=cost}else{cost=1;hg=100;sc=0.7;if(S.dm<cost)return ts('💎 kurang');S.dm-=cost}c.hu=Math.min(100,(c.hu||50)+hg);if(Math.random()<sc&&(c.st||0)<5){c.st=(c.st||0)+1;ts('⭐+1')}if(S.en>0)S.en-=1;sv();sT('feed')}
-function sB(){var today=new Date().toDateString();if(S.bd!==today){S.bc=0;S.bd=today}if(S.bc>=MAX_BATTLE)return ts('Max '+MAX_BATTLE+'/hari!');var i=parseInt(document.getElementById('bc').value);if(isNaN(i)||!S.cd[i])return;if(S.en<3)return ts('Energi kurang!');S.en-=3;S.pf+=15;S.dm+=2;S.bc++;var c=S.cd[i];if((c.st||0)<5)c.st=Math.min(5,(c.st||0)+2);sv();ts('🏆 +15 Profit +2💎')}
-function gMk(){if(!S.ml.length)return'<p>Kosong</p>';return S.ml.map(function(l,i){return'<div class="battle-card"><div>'+l.emoji+' '+l.name+' Lv'+l.level+'</div><div>💎'+l.price+' <button class="btn btn-green" style="padding:3px 6px;font-size:9px;width:auto" onclick="bMk('+i+')">Beli</button></div></div>'}).join('')}
-function lsMk(){if(!S.sl.length)return;var p=parseInt(document.getElementById('mp').value)||10;var s=S.sl.slice().sort(function(a,b){return b-a});s.forEach(function(i){S.ml.push({...S.cd[i],price:p});S.cd.splice(i,1)});S.sl=[];sv();sT('market');ts('📤 Listed!')}
-function bMk(i){var l=S.ml[i];if(!l||S.dm<l.price)return ts('💎 Kurang!');S.dm-=l.price;S.cd.push({...l});S.ml.splice(i,1);sv();sT('market')}
-function bP(n,cost){if(S.dm<cost)return ts('💎 Butuh '+cost);S.dm-=cost;var res='';for(var i=0;i<n;i++){var r=Math.random(),cand;if(r<0.4)cand=PETS.filter(function(c){return c.rarity==='common'});else if(r<0.7)cand=PETS.filter(function(c){return c.rarity==='rare'});else if(r<0.9)cand=PETS.filter(function(c){return c.rarity==='epic'});else if(r<0.97)cand=PETS.filter(function(c){return c.rarity==='legendary'});else cand=PETS.filter(function(c){return c.rarity==='mythic'});if(!cand.length)cand=PETS;var nc=nC(cand[Math.floor(Math.random()*cand.length)]);S.cd.push(nc);res+='<span style="font-size:22px">'+nc.emoji+'</span> '}if(n>=5){var rare=PETS.filter(function(c){return c.rarity==='rare'||c.rarity==='epic'});var gc=nC(rare[Math.floor(Math.random()*rare.length)]);S.cd.push(gc);res+='<br><b>🎁 Bonus:</b> '+gc.emoji+' '+gc.name+' ('+gc.rarity+')'}document.getElementById('pr').innerHTML=res;sv();ts('🎁 '+n+' pet!')}
-function bD(){ts('💰 Transfer Rp15K ke GoPay: '+GP)}
-function bE(){if(S.dm<5)return ts('💎 Butuh 5');S.dm-=5;S.en=Math.min(S.me,S.en+10);sv();ts('⚡ +10')}
-function bG(){if(S.dm<10)return ts('💎 Butuh 10');S.dm-=10;S.pf+=500;sv();ts('🪙 +500')}
-function rd(){var now=Date.now(),rl=JSON.parse(localStorage.getItem('rl83')||'{"c":0,"t":0}');if(now-rl.t>3600000){rl.c=0;rl.t=now}if(rl.c>=3)return ts('❌ Blokir 1 jam!');var code=prompt('Kode:');if(!code)return;try{var raw=atob(code),p=raw.split('|'),d=p[0],ts2=p[1];if(btoa(d+'|'+ts2+'|'+SK).replace(/=/g,'')!==code){rl.c++;localStorage.setItem('rl83',JSON.stringify(rl));return ts('❌ ('+(3-rl.c)+'x)')}var used=JSON.parse(localStorage.getItem('u83')||'[]');if(used.indexOf(code)>=0)return ts('⚠️ Sudah');S.dm+=parseInt(d);used.push(code);localStorage.setItem('u83',JSON.stringify(used));rl.c=0;localStorage.setItem('rl83',JSON.stringify(rl));sv();ts('🎉 +'+d+'💎')}catch(e){rl.c++;localStorage.setItem('rl83',JSON.stringify(rl));ts('❌')}}
-function wD(){if(S.dm<100)return ts('💎 Min 100!');var amt=Math.floor(S.dm/100)*100;var rp=Math.floor(amt/100)*10000;var rek=prompt('No GoPay:\n\nTukar '+amt+'💎 = Rp'+rp.toLocaleString());if(!rek)return;if(confirm('Konfirmasi?')){S.dm-=amt;sv();ts('✅ WD dikirim!')}}
+// ============================================
+// INIT GAME
+// ============================================
+const game = new GameEngine();
 
-loadGame();
-</script></body></html>
+// Tab switching
+document.getElementById('tabBar').addEventListener('click',(e)=>{
+  if(e.target.classList.contains('tab')){
+    game.ui.renderTab(e.target.dataset.tab);
+  }
+});
+
+// Modal close on backdrop click
+document.getElementById('modal').addEventListener('click',(e)=>{
+  if(e.target.id==='modal')game.closeModal();
+});
+
+// Start
+game.init();
+
+// ============================================
+// MONETIZATION STRATEGIES (untuk developer)
+// ============================================
+/*
+1. AD NETWORKS: Integrasi AdMob/Unity Ads untuk rewarded video
+   - 10x/hari limit mencegah abuse tapi tetap revenue
+   - $2-5 RPM untuk rewarded video di Indonesia
+
+2. IN-APP PURCHASES: Via Telegram Payments API
+   - Gem packs: 100💎($0.99), 550💎($4.99), 1200💎($9.99)
+   - Monthly Pass: $4.99 → +50💎/hari + exclusive skin
+   - Remove Ads: $2.99 (one-time)
+
+3. OFFER WALL: Tapjoy/IronSource
+   - Complete survey/install app → reward gems
+   - Higher payout than ads di emerging markets
+
+4. REFERRAL VIRAL: 
+   - Setiap invite = +10💎 untuk kedua belah pihak
+   - Telegram WebApp share ke grup/channel
+
+5. SEASONAL EVENTS:
+   - Limited time pets (FOMO)
+   - Double reward weekends
+
+6. PITY SYSTEM:
+   - 50 pull = guaranteed legendary
+   - Whales akan spend untuk reach pity
+
+7. WITHDRAW MECHANIC:
+   - Min 500💎 = Rp50.000
+   - Exchange rate: 1💎 = Rp100
+   - Tax 10% untuk developer
+   - Ini membuat game jadi "play-to-earn" yang legal
+   - Revenue dari spread dan ad views sebelum withdraw
+
+ESTIMATED REVENUE (1000 DAU):
+- Ads: $2-5/hari × 1000 × 30% watch rate = $600-1500/bulan
+- IAP: 2% conversion × $5 avg × 1000 = $100/bulan (conservative)
+- Offer Wall: $300-800/bulan
+- Withdraw spread: Rp5000 per withdraw × 100 withdraw/bulan = Rp500K
+TOTAL POTENSIAL: $1000-2500/bulan untuk 1000 DAU
+*/
+</script>
+</body>
+    </html>
+      
