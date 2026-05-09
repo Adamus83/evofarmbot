@@ -1,277 +1,156 @@
 <!DOCTYPE html>
 <html lang="id"><head>
-<!-- Playables SDK -->
 <script>// Playables SDK v1.0.0
-(function() {
-  'use strict';
-  if (window.playablesSDK) return;
-  var HANDLER_NAME = 'playablesGameEventHandler';
-  var ANDROID_BRIDGE_NAME = '_MetaPlayablesBridge';
-  var RAF_FRAME_THRESHOLD = 3;
-  var gameReadySent = false, firstInteractionSent = false, errorSent = false, frameCount = 0, originalRAF = window.requestAnimationFrame;
-  function hasIOSBridge() { return !!(window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers[HANDLER_NAME]); }
-  function hasAndroidBridge() { return !!(window[ANDROID_BRIDGE_NAME] && typeof window[ANDROID_BRIDGE_NAME].postEvent === 'function'); }
-  function isInIframe() { return !!(window.parent && window.parent !== window); }
-  function sendEvent(eventName, payload) {
-    var message = { type: eventName, payload: payload || {}, timestamp: Date.now() };
-    if (hasIOSBridge()) { try { window.webkit.messageHandlers[HANDLER_NAME].postMessage(message); } catch (e) {} return; }
-    if (hasAndroidBridge()) { try { var p = payload || {}; p.__secureToken = window.__fbAndroidBridgeAuthToken || ''; p.timestamp = message.timestamp; window[ANDROID_BRIDGE_NAME].postEvent(eventName, JSON.stringify(p)); } catch (e) {} return; }
-    if (isInIframe()) { try { window.parent.postMessage(message, '*'); } catch (e) {} return; }
-  }
-  function onFrame() { if (gameReadySent) return; frameCount++; if (frameCount >= RAF_FRAME_THRESHOLD) { gameReadySent = true; sendEvent('game_ready', { frame_count: frameCount, detected_at: Date.now() }); return; } originalRAF.call(window, onFrame); }
-  if (originalRAF) { window.requestAnimationFrame = function(callback) { if (!gameReadySent) { return originalRAF.call(window, function(timestamp) { frameCount++; if (frameCount >= RAF_FRAME_THRESHOLD && !gameReadySent) { gameReadySent = true; sendEvent('game_ready', { frame_count: frameCount, detected_at: Date.now() }); } callback(timestamp); }); } return originalRAF.call(window, callback); }; }
-  function setupFirstInteractionDetection() { var events = ['touchstart', 'mousedown', 'keydown']; function onFirstInteraction() { if (firstInteractionSent) return; firstInteractionSent = true; sendEvent('user_interaction_start', null); for (var i = 0; i < events.length; i++) { document.removeEventListener(events[i], onFirstInteraction, true); } } for (var i = 0; i < events.length; i++) { document.addEventListener(events[i], onFirstInteraction, true); } }
-  if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', setupFirstInteractionDetection); } else { setupFirstInteractionDetection(); }
-  window.addEventListener('error', function(event) { if (errorSent) return; errorSent = true; sendEvent('error', { message: event.message || 'Unknown error', source: event.filename || '', lineno: event.lineno || 0, colno: event.colno || 0, auto_captured: true }); });
-  window.addEventListener('unhandledrejection', function(event) { if (errorSent) return; errorSent = true; var reason = event.reason; sendEvent('error', { message: (reason instanceof Error) ? reason.message : String(reason), type: 'unhandled_promise_rejection', auto_captured: true }); });
-  window.playablesSDK = { complete: function(score) { sendEvent('game_ended', { score: score, completed: true }); }, error: function(message) { if (errorSent) return; errorSent = true; sendEvent('error', { message: message || 'Unknown error', auto_captured: false }); }, sendEvent: function(eventName, payload) { if (!eventName || typeof eventName !== 'string') return; sendEvent(eventName, payload); } };
-  if (originalRAF) { originalRAF.call(window, onFrame); }
-})();</script>
+(function(){'use strict';if(window.playablesSDK)return;var HANDLER_NAME='playablesGameEventHandler';var ANDROID_BRIDGE_NAME='_MetaPlayablesBridge';var RAF_FRAME_THRESHOLD=3;var gameReadySent=false,firstInteractionSent=false,errorSent=false,frameCount=0,originalRAF=window.requestAnimationFrame;function hasIOSBridge(){return!!(window.webkit&&window.webkit.messageHandlers&&window.webkit.messageHandlers[HANDLER_NAME])}function hasAndroidBridge(){return!!(window[ANDROID_BRIDGE_NAME]&&typeof window[ANDROID_BRIDGE_NAME].postEvent==='function')}function isInIframe(){return!!(window.parent&&window.parent!==window)}function sendEvent(eventName,payload){var message={type:eventName,payload:payload||{},timestamp:Date.now()};if(hasIOSBridge()){try{window.webkit.messageHandlers[HANDLER_NAME].postMessage(message)}catch(e){}}return;if(hasAndroidBridge()){try{var p=payload||{};p.__secureToken=window.__fbAndroidBridgeAuthToken||'';p.timestamp=message.timestamp;window[ANDROID_BRIDGE_NAME].postEvent(eventName,JSON.stringify(p))}catch(e){}}return;if(isInIframe()){try{window.parent.postMessage(message,'*')}catch(e){}}return}function onFrame(){if(gameReadySent)return;frameCount++;if(frameCount>=RAF_FRAME_THRESHOLD){gameReadySent=true;sendEvent('game_ready',{frame_count:frameCount,detected_at:Date.now()});return}originalRAF.call(window,onFrame)}if(originalRAF){window.requestAnimationFrame=function(callback){if(!gameReadySent){return originalRAF.call(window,function(timestamp){frameCount++;if(frameCount>=RAF_FRAME_THRESHOLD&&!gameReadySent){gameReadySent=true;sendEvent('game_ready',{frame_count:frameCount,detected_at:Date.now()})}callback(timestamp)})}return originalRAF.call(window,callback)}}function setupFirstInteractionDetection(){var events=['touchstart','mousedown','keydown'];function onFirstInteraction(){if(firstInteractionSent)return;firstInteractionSent=true;sendEvent('user_interaction_start',null);for(var i=0;i<events.length;i++){document.removeEventListener(events[i],onFirstInteraction,true)}}for(var i=0;i<events.length;i++){document.addEventListener(events[i],onFirstInteraction,true)}}if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',setupFirstInteractionDetection)}else{setupFirstInteractionDetection()}window.addEventListener('error',function(event){if(errorSent)return;errorSent=true;sendEvent('error',{message:event.message||'Unknown error',source:event.filename||'',lineno:event.lineno||0,colno:event.colno||0,auto_captured:true})});window.addEventListener('unhandledrejection',function(event){if(errorSent)return;errorSent=true;var reason=event.reason;sendEvent('error',{message:(reason instanceof Error)?reason.message:String(reason),type:'unhandled_promise_rejection',auto_captured:true})});window.playablesSDK={complete:function(score){sendEvent('game_ended',{score:score,completed:true})},error:function(message){if(errorSent)return;errorSent=true;sendEvent('error',{message:message||'Unknown error',auto_captured:false})},sendEvent:function(eventName,payload){if(!eventName||typeof eventName!=='string')return;sendEvent(eventName,payload)}};if(originalRAF){originalRAF.call(window,onFrame)}})();</script>
 <script>window.Intl=window.Intl||{};Intl.t=function(s){return(Intl._locale&&Intl._locale[s])||s;};</script><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Evo Cards v5.5 - Energy Recharge</title>
+<title>Evo Cards v6.0 - Pack Berjenjang + WD</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
 body{background:#0f172a;color:#e2e8f0;display:flex;justify-content:center;min-height:100vh}
 .app{width:100%;max-width:440px;background:#1e293b;min-height:100vh;display:flex;flex-direction:column}
-.top{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;background:#0f172a;border-bottom:2px solid #334155;cursor:pointer}
-.logo{font-weight:900;font-size:18px}
-.stats{display:flex;gap:5px;flex-wrap:wrap}
-.badge{background:#334155;padding:5px 8px;border-radius:10px;font-size:11px;font-weight:700;display:flex;align-items:center;gap:3px}
+.top{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:#0f172a;border-bottom:2px solid #334155;cursor:pointer}
+.logo{font-weight:900;font-size:17px}
+.stats{display:flex;gap:4px;flex-wrap:wrap}
+.badge{background:#334155;padding:4px 7px;border-radius:10px;font-size:10px;font-weight:700;display:flex;align-items:center;gap:2px}
 .tabs{display:flex;background:#0f172a;border-bottom:1px solid #334155;overflow-x:auto}
-.tab{flex:1;padding:9px 6px;text-align:center;font-weight:700;font-size:11px;cursor:pointer;color:#94a3b8;border-bottom:3px solid transparent;white-space:nowrap;min-width:50px}
+.tab{flex:1;padding:8px 5px;text-align:center;font-weight:700;font-size:10px;cursor:pointer;color:#94a3b8;border-bottom:3px solid transparent;white-space:nowrap;min-width:48px}
 .tab.active{color:#facc15;border-color:#facc15}
-.content{flex:1;overflow-y:auto;padding:12px}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.card{background:linear-gradient(160deg,#1e293b,#0f172a);border:2px solid #475569;border-radius:14px;padding:8px;text-align:center;position:relative;cursor:pointer;transition:0.15s}
+.content{flex:1;overflow-y:auto;padding:10px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.card{background:linear-gradient(160deg,#1e293b,#0f172a);border:2px solid #475569;border-radius:12px;padding:7px;text-align:center;position:relative;cursor:pointer;transition:0.15s}
 .card:active{transform:scale(0.93)}
 .card.selected{border-color:#facc15!important;box-shadow:0 0 15px rgba(250,204,21,0.5)}
 .rarity-common{border-color:#64748b}.rarity-rare{border-color:#60a5fa}.rarity-epic{border-color:#a78bfa}.rarity-legendary{border-color:#facc15}
-.emoji{font-size:32px}.name{font-size:10px;font-weight:800;margin:2px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.stats-row{font-size:9px;color:#94a3b8}.lvl{position:absolute;top:5px;left:5px;background:#0f172a;padding:1px 5px;border-radius:6px;font-size:9px}
-.stars{display:flex;gap:1px;justify-content:center;margin-top:3px}
-.stars span{font-size:8px}.stars .on{color:#facc15}.stars .off{color:#475569}
-.btn{width:100%;padding:12px;border:none;border-radius:10px;font-weight:800;font-size:13px;cursor:pointer;background:#334155;color:#e2e8f0;margin:4px 0}
-.btn-primary{background:#facc15;color:#0f172a}.btn-green{background:#22c55e;color:#0f172a}.btn-red{background:#ef4444;color:white}.btn-blue{background:#3b82f6;color:white}.btn-gold{background:#f59e0b;color:white}
-.log{text-align:center;padding:7px;font-size:11px;color:#94a3b8;background:#0f172a;min-height:28px}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;z-index:2000;padding:20px}
-.modal-box{background:#1e293b;border:2px solid #475569;border-radius:16px;padding:18px;max-width:340px;width:100%;text-align:center}
-input,select{width:100%;padding:12px;margin:6px 0;border-radius:8px;border:none;background:#0f172a;color:#e2e8f0;font-size:14px}
-.codebox{background:#0f172a;padding:10px;border-radius:8px;font-family:monospace;word-break:break-all;margin:8px 0;text-align:center;font-size:16px}
+.emoji{font-size:28px}.name{font-size:9px;font-weight:800;margin:2px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stats-row{font-size:8px;color:#94a3b8}.lvl{position:absolute;top:4px;left:4px;background:#0f172a;padding:1px 4px;border-radius:5px;font-size:8px}
+.stars{display:flex;gap:1px;justify-content:center;margin-top:2px}
+.stars span{font-size:7px}.stars .on{color:#facc15}.stars .off{color:#475569}
+.btn{width:100%;padding:10px;border:none;border-radius:10px;font-weight:800;font-size:12px;cursor:pointer;background:#334155;color:#e2e8f0;margin:3px 0}
+.btn-primary{background:#facc15;color:#0f172a}.btn-green{background:#22c55e;color:#0f172a}.btn-red{background:#ef4444;color:white}.btn-blue{background:#3b82f6;color:white}.btn-gold{background:#f59e0b;color:white}.btn-purple{background:#8b5cf6;color:white}
+.log{text-align:center;padding:6px;font-size:10px;color:#94a3b8;background:#0f172a;min-height:26px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;z-index:2000;padding:16px}
+.modal-box{background:#1e293b;border:2px solid #475569;border-radius:16px;padding:16px;max-width:330px;width:100%;text-align:center}
+input,select{width:100%;padding:10px;margin:5px 0;border-radius:8px;border:none;background:#0f172a;color:#e2e8f0;font-size:13px}
+.codebox{background:#0f172a;padding:8px;border-radius:8px;font-family:monospace;word-break:break-all;margin:6px 0;text-align:center;font-size:15px}
 .hidden{display:none!important}
-.feed-opt{display:flex;gap:6px;margin:8px 0}
-.feed-opt button{flex:1;padding:10px 6px;font-size:10px}
-.battle-card{background:#1e293b;border:1px solid #475569;border-radius:10px;padding:8px;margin:4px 0;display:flex;justify-content:space-between;align-items:center;font-size:11px}
+.feed-opt{display:flex;gap:5px;margin:6px 0}
+.feed-opt button{flex:1;padding:8px 5px;font-size:9px}
+.battle-card{background:#1e293b;border:1px solid #475569;border-radius:10px;padding:7px;margin:3px 0;display:flex;justify-content:space-between;align-items:center;font-size:10px}
+.pack-title{color:#facc15;font-weight:bold;margin:8px 0 4px;text-align:center;font-size:12px}
 </style></head><body>
 <div class="app" id="gameApp">
-  <div class="top" onclick="tapLogo()"><div class="logo">⚡ EVO CARDS v5.5</div>
+  <div class="top" onclick="tapLogo()"><div class="logo">⚡ EVO CARDS v6.0</div>
     <div class="stats">
-      <div class="badge">💰<span id="profit">80</span></div>
-      <div class="badge">💎<span id="diamonds">30</span></div>
-      <div class="badge">⚡<span id="energy">12</span>/<span id="maxEnergy">20</span></div>
+      <div class="badge">💰<span id="pf">80</span></div>
+      <div class="badge">💎<span id="dm">30</span></div>
+      <div class="badge">⚡<span id="en">12</span>/<span id="me">20</span></div>
     </div>
   </div>
   <div class="tabs">
-    <div class="tab active" onclick="switchTab('cards',this)">🃏Kartu</div>
-    <div class="tab" onclick="switchTab('breed',this)">🧬Breed</div>
-    <div class="tab" onclick="switchTab('feed',this)">🍖Feed</div>
-    <div class="tab" onclick="switchTab('battle',this)">⚔️Battle</div>
-    <div class="tab" onclick="switchTab('market',this)">🏪Pasar</div>
-    <div class="tab" onclick="switchTab('shop',this)">🛒Shop</div>
+    <div class="tab active" onclick="st('cards',this)">🃏Kartu</div>
+    <div class="tab" onclick="st('breed',this)">🧬Breed</div>
+    <div class="tab" onclick="st('feed',this)">🍖Feed</div>
+    <div class="tab" onclick="st('battle',this)">⚔️Battle</div>
+    <div class="tab" onclick="st('market',this)">🏪Pasar</div>
+    <div class="tab" onclick="st('shop',this)">🛒Shop</div>
   </div>
-  <div class="content" id="content"></div>
-  <div class="log" id="log">⚡ v5.5 Energy Recharge Ready</div>
+  <div class="content" id="ct"></div>
+  <div class="log" id="lg">⚡ v6.0 Pack Berjenjang + WD Ready</div>
 </div>
 
-<!-- ADMIN PANEL -->
-<div class="app hidden" id="adminApp">
-  <div class="top"><div class="logo">🔐 ADMIN</div><div class="badge" onclick="closeAdmin()" style="cursor:pointer">❌Tutup</div></div>
+<!-- ADMIN -->
+<div class="app hidden" id="adApp">
+  <div class="top"><div class="logo">🔐 ADMIN</div><div class="badge" onclick="clAd()" style="cursor:pointer">❌</div></div>
   <div class="content">
-    <div id="adminLogin">
-      <h3>🔑 Masuk Admin</h3>
-      <input id="adminPass" type="password" placeholder="Kode autentikasi">
-      <button class="btn btn-primary" onclick="adminLogin()">Login</button>
-      <p style="font-size:11px;color:#94a3b8;margin-top:10px">Kode default: 727277</p>
-    </div>
-    <div id="adminPanel" class="hidden">
-      <h3>🎟️ Generator Kode Redeem</h3>
-      <input id="genDiamonds" type="number" value="120">
-      <input id="genNote" placeholder="Catatan (nama pembeli)">
-      <button class="btn btn-primary" onclick="generateCode()">Generate</button>
-      <div id="genOut"></div>
-      <h4 style="margin-top:20px">📜 Riwayat</h4>
-      <div id="history" style="font-size:11px"></div>
+    <div id="adLog"><h3>🔑 Login</h3><input id="adPass" type="password" placeholder="Kode"><button class="btn btn-primary" onclick="adLogFn()">Login</button></div>
+    <div id="adPan" class="hidden">
+      <h3>🎟️ Generate Kode</h3><input id="gD" type="number" value="120"><input id="gN" placeholder="Nama"><button class="btn btn-primary" onclick="genCode()">Generate</button><div id="gO"></div>
+      <h4 style="margin-top:15px">📜 Riwayat Kode</h4><div id="hist" style="font-size:9px"></div>
+      <h4 style="margin-top:15px">💸 Permintaan WD</h4><div id="wdList" style="font-size:9px"></div>
     </div>
   </div>
 </div>
-
-<div id="modal" style="display:none"></div>
+<div id="mod" style="display:none"></div>
 
 <script>
 // ===== CONFIG =====
-var ADMIN_CODE = '727277';
-var SECRET = 'evo2026'+ADMIN_CODE;
-var GOPAY = '088989727277';
-var WA = '6288989727277';
+var AC='727277',SK='evo2026'+AC,GP='088989727277',WA='6288989727277';
 
 // ===== INIT =====
-var tg = window.Telegram ? window.Telegram.WebApp : null;
-if(tg) tg.expand();
-var tapCount=0;
-function tapLogo(){ tapCount++; if(tapCount>=5){ document.getElementById('gameApp').classList.add('hidden'); document.getElementById('adminApp').classList.remove('hidden'); tapCount=0; } setTimeout(function(){tapCount=0},2000); }
-function closeAdmin(){ document.getElementById('adminApp').classList.add('hidden'); document.getElementById('gameApp').classList.remove('hidden'); updateUI(); }
+var tg=window.Telegram?.WebApp;if(tg)tg.expand();
+var tc=0;
+function tapLogo(){tc++;if(tc>=5){document.getElementById('gameApp').classList.add('hidden');document.getElementById('adApp').classList.remove('hidden');tc=0;ldWd()}setTimeout(function(){tc=0},2000)}
+function clAd(){document.getElementById('adApp').classList.add('hidden');document.getElementById('gameApp').classList.remove('hidden');upUI()}
 
-// ===== GAME STATE =====
-var state = JSON.parse(localStorage.getItem('evoV55')||'null') || {profit:80,diamonds:30,energy:12,maxEnergy:20,cards:[],selected:[],marketListings:[]};
-var POOL = [
-  {id:'sprout',name:'Sprout',emoji:'🌱',rarity:'common',atk:5,def:2,hp:30,stage:1},
-  {id:'bloom',name:'Bloom',emoji:'🌸',rarity:'common',atk:12,def:5,hp:50,stage:2},
-  {id:'cactus',name:'Cactus',emoji:'🌵',rarity:'common',atk:8,def:8,hp:40,stage:1},
-  {id:'treant',name:'Treant',emoji:'🌳',rarity:'rare',atk:22,def:12,hp:80,stage:3},
-  {id:'wolf',name:'Wolf',emoji:'🐺',rarity:'rare',atk:28,def:8,hp:70,stage:2},
-  {id:'dragon',name:'Dragon',emoji:'🐉',rarity:'epic',atk:40,def:18,hp:120,stage:4},
-  {id:'phoenix',name:'Phoenix',emoji:'🔥',rarity:'epic',atk:45,def:15,hp:110,stage:3},
-  {id:'zeus',name:'Zeus',emoji:'⚡',rarity:'legendary',atk:65,def:20,hp:140,stage:4}
-];
+// ===== STATE =====
+var S=JSON.parse(localStorage.getItem('evoV6')||'null')||{pf:80,dm:30,en:12,me:20,cd:[],sl:[],ml:[]};
+var POOL=[{id:'sprout',name:'Sprout',emoji:'🌱',rarity:'common',atk:5,def:2,hp:30,stage:1},{id:'bloom',name:'Bloom',emoji:'🌸',rarity:'common',atk:12,def:5,hp:50,stage:2},{id:'cactus',name:'Cactus',emoji:'🌵',rarity:'common',atk:8,def:8,hp:40,stage:1},{id:'treant',name:'Treant',emoji:'🌳',rarity:'rare',atk:22,def:12,hp:80,stage:3},{id:'wolf',name:'Wolf',emoji:'🐺',rarity:'rare',atk:28,def:8,hp:70,stage:2},{id:'dragon',name:'Dragon',emoji:'🐉',rarity:'epic',atk:40,def:18,hp:120,stage:4},{id:'phoenix',name:'Phoenix',emoji:'🔥',rarity:'epic',atk:45,def:15,hp:110,stage:3},{id:'zeus',name:'Zeus',emoji:'⚡',rarity:'legendary',atk:65,def:20,hp:140,stage:4}];
 
-function save(){ localStorage.setItem('evoV55', JSON.stringify(state)); updateUI(); }
-function newCard(t,lvl){ lvl=lvl||1; var m=1+(lvl-1)*0.08; return {id:t.id,name:t.name,emoji:t.emoji,rarity:t.rarity,stage:t.stage,level:lvl,atk:Math.floor(t.atk*m),def:Math.floor(t.def*m),hp:Math.floor(t.hp*m),uid:Math.random().toString(36).slice(2,9),stars:0,hunger:80}; }
-if(!state.cards || state.cards.length===0){ state.cards=[newCard(POOL[0],2),newCard(POOL[0],2),newCard(POOL[1],1),newCard(POOL[2],1)]; }
-if(!state.maxEnergy) state.maxEnergy=20;
-if(state.energy > state.maxEnergy) state.energy = state.maxEnergy;
-save();
+function sv(){localStorage.setItem('evoV6',JSON.stringify(S));upUI()}
+function nC(t,l){l=l||1;var m=1+(l-1)*0.08;return{id:t.id,name:t.name,emoji:t.emoji,rarity:t.rarity,stage:t.stage,level:l,atk:Math.floor(t.atk*m),def:Math.floor(t.def*m),hp:Math.floor(t.hp*m),uid:Math.random().toString(36).slice(2,9),st:0,hu:80}}
+if(!S.cd||S.cd.length===0){S.cd=[nC(POOL[0],2),nC(POOL[0],2),nC(POOL[1],1),nC(POOL[2],1)];sv()}
+if(!S.me)S.me=20;if(S.en>S.me)S.en=S.me;
 
-function updateUI(){ document.getElementById('profit').textContent=state.profit; document.getElementById('diamonds').textContent=state.diamonds; document.getElementById('energy').textContent=state.energy; document.getElementById('maxEnergy').textContent=state.maxEnergy; }
-function toast(m){ document.getElementById('log').textContent=m; }
+function upUI(){document.getElementById('pf').textContent=S.pf;document.getElementById('dm').textContent=S.dm;document.getElementById('en').textContent=S.en;document.getElementById('me').textContent=S.me}
+function ts(m){document.getElementById('lg').textContent=m}
 
-// ===== ENERGI RECHARGE OTOMATIS =====
-setInterval(function(){
-  if(state.energy < state.maxEnergy){
-    state.energy++;
-    save();
-  }
-}, 300000); // 5 menit +1 energi
+// ===== ENERGI RECHARGE =====
+setInterval(function(){if(S.en<S.me){S.en++;sv()}},300000);
 
 // ===== TABS =====
-function switchTab(t,el){
-  var tabs = document.querySelectorAll('.tab');
-  for(var i=0;i<tabs.length;i++) tabs[i].classList.remove('active');
-  el.classList.add('active');
-  var c=document.getElementById('content');
-  
+function st(t,el){
+  var tabs=document.querySelectorAll('.tab');for(var i=0;i<tabs.length;i++)tabs[i].classList.remove('active');el.classList.add('active');
+  var c=document.getElementById('ct');
   if(t==='cards'){
-    var h='<p style="font-size:11px;color:#94a3b8;margin-bottom:6px;">🖱️ Klik kartu (max 2)</p><div class="grid">';
-    for(var i=0;i<state.cards.length;i++){
-      var card=state.cards[i], sel=state.selected.indexOf(i)>=0?' selected':'', sh='';
-      for(var s=0;s<5;s++) sh+='<span class="'+(s<(card.stars||0)?'on':'off')+'">'+(s<(card.stars||0)?'⭐':'☆')+'</span>';
-      h+='<div class="card rarity-'+card.rarity+sel+'" onclick="tapCard('+i+')"><div class="lvl">Lv'+card.level+'</div><div class="emoji">'+card.emoji+'</div><div class="name">'+card.name+'</div><div class="stars">'+sh+'</div><div class="stats-row">⚔'+card.atk+' 🛡'+card.def+' 🍖'+(card.hunger||80)+'%</div></div>';
-    }
-    h+='</div><button class="btn btn-green" onclick="evolveCard()">✨ Evolve (⭐5)</button><button class="btn btn-red" onclick="sellCard()">💵 Sell</button>';
-    c.innerHTML=h;
+    var h='<p style="font-size:10px;color:#94a3b8;">🖱️ Klik (max 2) | Total: '+S.cd.length+'</p><div class="grid">';
+    for(var i=0;i<S.cd.length;i++){var cd=S.cd[i],sel=S.sl.indexOf(i)>=0?' selected':'',sh='';for(var s=0;s<5;s++)sh+='<span class="'+(s<(cd.st||0)?'on':'off')+'">'+(s<(cd.st||0)?'⭐':'☆')+'</span>';h+='<div class="card rarity-'+cd.rarity+sel+'" onclick="tC('+i+')"><div class="lvl">Lv'+cd.level+'</div><div class="emoji">'+cd.emoji+'</div><div class="name">'+cd.name+'</div><div class="stars">'+sh+'</div><div class="stats-row">⚔'+cd.atk+' 🛡'+cd.def+' 🍖'+(cd.hu||80)+'%</div></div>'}
+    h+='</div><button class="btn btn-green" onclick="evC()">✨ Evolve (⭐5)</button><button class="btn btn-red" onclick="seC()">💵 Sell</button>';c.innerHTML=h
   }
-  
-  if(t==='breed'){
-    c.innerHTML='<p style="font-size:11px;color:#94a3b8;">Pilih 2 kartu di tab Kartu</p><button class="btn btn-primary" onclick="breedCards()">🧬 Breed (⚡2)</button><p style="font-size:10px;color:#94a3b8;">Stage anak = rata-rata + 1</p>';
-  }
-  
-  if(t==='feed'){
-    var fo='<option value="">Pilih makhluk...</option>';
-    for(var i=0;i<state.cards.length;i++) fo+='<option value="'+i+'">'+state.cards[i].emoji+' '+state.cards[i].name+' Lv'+state.cards[i].level+' 🍖'+(state.cards[i].hunger||80)+'%</option>';
-    c.innerHTML='<h4 style="margin-bottom:8px;">🍖 Feeding</h4><select id="feedTarget">'+fo+'</select><div class="feed-opt"><button class="btn" onclick="doFeed(\'basic\')">🍞Roti 💰5</button><button class="btn btn-primary" onclick="doFeed(\'meat\')">🥩Daging 💰15</button><button class="btn btn-blue" onclick="doFeed(\'premium\')">🍰Premium 💎1</button></div>';
-  }
-  
-  if(t==='battle'){
-    var bo='<option value="">Pilih kartumu...</option>';
-    for(var i=0;i<state.cards.length;i++) bo+='<option value="'+i+'">'+state.cards[i].emoji+' '+state.cards[i].name+' ⚔'+state.cards[i].atk+'</option>';
-    c.innerHTML='<h4 style="margin-bottom:8px;">⚔️ Battle</h4><select id="battleCard">'+bo+'</select><button class="btn btn-green" onclick="startBattle()">Battle (⚡3)</button><p style="font-size:10px;color:#94a3b8;">Menang: +15💰 +2💎 +2⭐</p>';
-  }
-  
-  if(t==='market'){
-    c.innerHTML='<h4 style="margin-bottom:8px;">🏪 Pasar</h4><button class="btn btn-primary" onclick="listToMarket()">📤 Jual ke Pasar</button><input id="marketPrice" type="number" value="10" placeholder="Harga 💎"><div id="marketList" style="margin-top:8px;">'+renderMarket()+'</div>';
-  }
-  
+  if(t==='breed')c.innerHTML='<p style="font-size:10px;color:#94a3b8;">Pilih 2 kartu di tab Kartu</p><button class="btn btn-primary" onclick="brC()">🧬 Breed (⚡2)</button>';
+  if(t==='feed'){var fo='<option value="">Pilih...</option>';for(var i=0;i<S.cd.length;i++)fo+='<option value="'+i+'">'+S.cd[i].emoji+' '+S.cd[i].name+' 🍖'+(S.cd[i].hu||80)+'%</option>';c.innerHTML='<h4>🍖 Feeding</h4><select id="ft">'+fo+'</select><div class="feed-opt"><button class="btn" onclick="dF(\'b\')">🍞💰5</button><button class="btn btn-primary" onclick="dF(\'m\')">🥩💰15</button><button class="btn btn-blue" onclick="dF(\'p\')">🍰💎1</button></div>'}
+  if(t==='battle'){var bo='<option value="">Pilih...</option>';for(var i=0;i<S.cd.length;i++)bo+='<option value="'+i+'">'+S.cd[i].emoji+' '+S.cd[i].name+' ⚔'+S.cd[i].atk+'</option>';c.innerHTML='<h4>⚔️ Battle</h4><select id="bc">'+bo+'</select><button class="btn btn-green" onclick="sB()">Battle (⚡3)</button><p style="font-size:9px;color:#94a3b8;">Menang: +15💰 +2💎 +2⭐</p>'}
+  if(t==='market'){c.innerHTML='<h4>🏪 Pasar</h4><button class="btn btn-primary" onclick="lsMk()">📤 Jual</button><input id="mp" type="number" value="10" placeholder="Harga 💎"><div id="mk">'+rMk()+'</div>'}
   if(t==='shop'){
-    c.innerHTML='<button class="btn btn-primary" onclick="buyPack()">🎁 Buka Pack - 10💎</button><div id="packRes" style="text-align:center;margin:10px"></div>'+
-      '<button class="btn btn-blue" onclick="buyDiamond()">💰 Beli 120💎 (Rp15.000)</button>'+
-      '<button class="btn btn-green" onclick="buyEnergy()">⚡ Beli 10 Energi (5💎)</button>'+
-      '<button class="btn btn-gold" onclick="buyGold()">🪙 Beli 500 Profit (10💎)</button>'+
-      '<button class="btn" onclick="redeem()">🎟️ Redeem Kode</button>'+
-      '<p style="font-size:10px;color:#94a3b8;margin-top:6px;">Transfer GoPay '+GOPAY+' lalu minta kode ke admin</p>';
+    c.innerHTML='<div class="pack-title">🎁 BOOSTER PACK</div>'+
+      '<button class="btn btn-primary" onclick="bP(1,10)">🥉 Silver Pack - 10💎<br><small>1 Pet Random</small></button>'+
+      '<button class="btn btn-gold" onclick="bP(3,25)">🥈 Gold Pack - 25💎<br><small>3 Pet (Hemat 5💎!)</small></button>'+
+      '<button class="btn btn-purple" onclick="bP(5,50)">🥇 Platinum Pack - 50💎<br><small>5 Pet + 1 Rare Bonus!</small></button>'+
+      '<div id="pr" style="text-align:center;margin:6px;font-size:20px"></div>'+
+      '<hr style="border-color:#334155;margin:8px 0">'+
+      '<button class="btn btn-blue" onclick="bD()">💰 Beli 120💎 (Rp15K)</button>'+
+      '<button class="btn btn-green" onclick="bE()">⚡ 10 Energi (5💎)</button>'+
+      '<button class="btn btn-gold" onclick="bG()">🪙 500 Profit (10💎)</button>'+
+      '<button class="btn" onclick="rd()">🎟️ Redeem</button>'+
+      '<hr style="border-color:#334155;margin:8px 0">'+
+      '<button class="btn btn-red" onclick="wd()">💸 Tukar 💎 → Rupiah<br><small>100💎 = Rp10.000</small></button>';
   }
 }
 
 // ===== CARD ACTIONS =====
-function tapCard(i){
-  var pos=state.selected.indexOf(i);
-  if(pos>=0) state.selected.splice(pos,1); else if(state.selected.length<2) state.selected.push(i); else toast('⚠️ Maks 2!');
-  switchTab('cards',document.querySelector('.tab.active'));
-}
-function breedCards(){
-  if(state.selected.length!==2) return toast('⚠️ Pilih 2 kartu!');
-  if(state.energy<2) return toast('⚡ Energi kurang!');
-  var s=state.selected.slice().sort(function(a,b){return b-a}), p1=state.cards[s[0]], p2=state.cards[s[1]];
-  state.cards.splice(s[0],1); state.cards.splice(s[1],1);
-  var ns=Math.floor((p1.level+p2.level)/2)+1; if(ns>4)ns=4;
-  var cand=POOL.filter(function(c){return c.stage===ns||c.level===ns}); if(!cand.length) cand=POOL;
-  var baby=newCard(cand[Math.floor(Math.random()*cand.length)],ns);
-  state.cards.push(baby); state.energy-=2; state.selected=[]; save();
-  toast('🧬 '+baby.emoji+' '+baby.name+' Lv'+baby.level+'!');
-}
-function evolveCard(){
-  if(state.selected.length!==1) return toast('⚠️ Pilih 1 kartu!');
-  var i=state.selected[0], c=state.cards[i];
-  if((c.stars||0)<5) return toast('⭐ Butuh 5 bintang! ('+(c.stars||0)+'/5)');
-  if(state.profit<10) return toast('💰 Profit kurang!');
-  state.profit-=10; c.level=Math.min(4,c.level+1); c.atk=Math.floor(c.atk*1.15); c.def=Math.floor(c.def*1.15); c.hp=Math.floor(c.hp*1.15); c.stars=0; c.hunger=100; state.selected=[]; save();
-  toast('✨ '+c.emoji+' naik ke Lv'+c.level+'!');
-}
-function sellCard(){
-  if(!state.selected.length) return toast('⚠️ Pilih kartu!');
-  var s=state.selected.slice().sort(function(a,b){return b-a}), tot=0;
-  s.forEach(function(i){ tot+=state.cards[i].atk+state.cards[i].def; state.cards.splice(i,1); });
-  state.profit+=tot; state.selected=[]; save(); toast('💵 Terjual +💰'+tot);
-}
-
-// ===== FEEDING =====
-function doFeed(type){
-  var i=parseInt(document.getElementById('feedTarget').value);
-  if(isNaN(i)||!state.cards[i]) return toast('Pilih makhluk!');
-  var c=state.cards[i], cost, hg, sc;
-  if(type==='basic'){ cost=5; hg=30; sc=.25; if(state.profit<cost)return toast('💰Kurang'); state.profit-=cost; }
-  else if(type==='meat'){ cost=15; hg=60; sc=.45; if(state.profit<cost)return toast('💰Kurang'); state.profit-=cost; }
-  else{ cost=1; hg=100; sc=.7; if(state.diamonds<cost)return toast('💎Kurang'); state.diamonds-=cost; }
-  c.hunger=Math.min(100,(c.hunger||50)+hg);
-  if(Math.random()<sc&&(c.stars||0)<5){ c.stars=(c.stars||0)+1; toast('⭐ +1! ('+c.stars+'/5)'); }
-  if(state.energy>0) state.energy--; save(); switchTab('feed',document.querySelector('.tab.active'));
-  toast('🍖 Kenyang +'+hg+'%');
-}
-
-// ===== BATTLE =====
-function startBattle(){
-  var i=parseInt(document.getElementById('battleCard').value);
-  if(isNaN(i)||!state.cards[i]) return toast('Pilih kartumu!');
-  if(state.energy<3) return toast('⚡ Energi kurang!');
-  state.energy-=3; state.profit+=15; state.diamonds+=2;
-  var c=state.cards[i]; if((c.stars||0)<5) c.stars=(c.stars||0)+2; if(c.stars>5)c.stars=5;
-  save(); toast('🏆 Menang! +15💰 +2💎 +2⭐');
-}
+function tC(i){var p=S.sl.indexOf(i);if(p>=0)S.sl.splice(p,1);else if(S.sl.length<2)S.sl.push(i);st('cards',document.querySelector('.tab.active'))}
+function brC(){if(S.sl.length!==2)return ts('⚠️ Pilih 2!');if(S.en<2)return ts('⚡ Kurang!');var s=S.sl.slice().sort(function(a,b){return b-a}),p1=S.cd[s[0]],p2=S.cd[s[1]];S.cd.splice(s[0],1);S.cd.splice(s[1],1);var ns=Math.floor((p1.level+p2.level)/2)+1;if(ns>4)ns=4;var cand=POOL.filter(function(c){return c.stage===ns});if(!cand.length)cand=POOL;var b=nC(cand[Math.floor(Math.random()*cand.length)],ns);S.cd.push(b);S.en-=2;S.sl=[];sv();ts('🧬 '+b.emoji+' '+b.name)}
+function evC(){if(S.sl.length!==1)return ts('⚠️ Pilih 1!');var i=S.sl[0],c=S.cd[i];if((c.st||0)<5)return ts('⭐ '+(c.st||0)+'/5');if(S.pf<10)return ts('💰 Kurang!');S.pf-=10;c.level=Math.min(4,c.level+1);c.atk=Math.floor(c.atk*1.15);c.def=Math.floor(c.def*1.15);c.hp=Math.floor(c.hp*1.15);c.st=0;c.hu=100;S.sl=[];sv();ts('✨ Lv'+c.level+'!')}
+function seC(){if(!S.sl.length)return ts('⚠️ Pilih!');var s=S.sl.slice().sort(function(a,b){return b-a}),tot=0;s.forEach(function(i){tot+=S.cd[i].atk+S.cd[i].def;S.cd.splice(i,1)});S.pf+=tot;S.sl=[];sv();ts('💵 +'+tot)}
+function dF(tp){var i=parseInt(document.getElementById('ft').value);if(isNaN(i)||!S.cd[i])return;var c=S.cd[i],cost,hg,sc;if(tp==='b'){cost=5;hg=30;sc=.25;if(S.pf<cost)return ts('💰Kurang');S.pf-=cost}else if(tp==='m'){cost=15;hg=60;sc=.45;if(S.pf<cost)return ts('💰Kurang');S.pf-=cost}else{cost=1;hg=100;sc=.7;if(S.dm<cost)return ts('💎Kurang');S.dm-=cost}c.hu=Math.min(100,(c.hu||50)+hg);if(Math.random()<sc&&(c.st||0)<5){c.st=(c.st||0)+1;ts('⭐ +1')}if(S.en>0)S.en-=2;sv();st('feed',document.querySelector('.tab.active'))}
+function sB(){var i=parseInt(document.getElementById('bc').value);if(isNaN(i)||!S.cd[i])return;if(S.en<3)return ts('⚡ Kurang!');S.en-=3;S.pf+=15;S.dm+=2;var c=S.cd[i];if((c.st||0)<5)c.st=Math.min(5,(c.st||0)+2);sv();ts('🏆 +15💰 +2💎')}
 
 // ===== MARKET =====
-function renderMarket(){ if(!state.marketListings.length) return '<p style="font-size:10px;color:#94a3b8;">Belum ada listing</p>'; return state.marketListings.map(function(l,idx){return '<div class="battle-card"><div>'+l.emoji+' '+l.name+' Lv'+l.level+' ⭐'+(l.stars||0)+'</div><div>💎'+l.price+' <button class="btn btn-green" style="padding:4px 8px;font-size:10px;width:auto" onclick="buyMarket('+idx+')">Beli</button></div></div>';}).join(''); }
-function listToMarket(){
-  if(!state.selected.length) return toast('Pilih kartu!');
-  var price=parseInt(document.getElementById('marketPrice').value)||10;
-  var s=state.selected.slice().sort(function(a,b){return b-a});
-  s.forEach(function(i){ state.marketListings.push({...state.cards[i],price:price}); state.cards.splice(i,1); });
-  state.selected=[]; save(); switchTab('market',document.querySelector('.tab.active'));
-  toast('📤 Terlisting!');
-}
-function buyMarket(idx){
-  var l=state.marketListings[idx]; if(!l||state.diamonds<l.price) return toast('💎 Kurang!');
-  state.diamonds-=l.price; state.cards.push({...l}); state.marketListings.splice(idx,1); save();
-  switchTab('market',document.querySelector('.tab.active')); toast('🛒 '+l.emoji+' '+l.name+'!');
-}
+function rMk(){if(!S.ml.length)return'<p style="font-size:9px;color:#94a3b8;">Kosong</p>';return S.ml.map(function(l,i){return'<div class="battle-card"><div>'+l.emoji+' '+l.name+' Lv'+l.level+'</div><div>💎'+l.price+' <button class="btn btn-green" style="padding:3px 6px;font-size:9px;width:auto" onclick="bMk('+i+')">Beli</button></div></div>'}).join('')}
+function lsMk(){if(!S.sl.length)return;var p=parseInt(document.getElementById('mp').value)||10;var s=S.sl.slice().sort(function(a,b){return b-a});s.forEach(function(i){S.ml.push({...S.cd[i],price:p});S.cd.splice(i,1)});S.sl=[];sv();st('market',document.querySelector('.tab.active'));ts('📤 Terlisting!')}
+function bMk(i){var l=S.ml[i];if(!l||S.dm<l.price)return ts('💎 Kurang!');S.dm-=l.price;S.cd.push({...l});S.ml.splice(i,1);sv();st('market',document.querySelector('.tab.active'))}
 
 // ===== SHOP =====
-function buyPack(){ if(state.diamonds<10) return toast('💎 Kurang'); state.diamonds-=10; var c=newCard(POOL[Math.floor(Math.random()*POOL.length)]); state.cards.push(c); document.getElementById('packRes').innerHTML='<div style="font-size:4
+function bP(n,cost){if(S.dm<cost)return ts('💎 Butuh '+cost);S.dm-=cost;var res='';for(var i=0;i<n;i++){var r=Math.random(),cand;if(r<0.4)cand=POOL.filter(function(c){return c.rarity==='common'});else if(r<0.7)cand=POOL.filter(function(c){return c.rarity==='rare'});else if(r<0.9)cand=POOL.filter(function(c){return c.rarity==='epic'});else if(r<0.97)cand=POOL.filter(function(c){return c.rarity==='legendary'});else cand=POOL.filter(function(c){return c.rarity==='mythic'});if(!cand.length)cand=POOL;var nc=nC(cand[Math.floor(Math.random()*cand.length)]);S.cd.push(nc);res+='<span style="font-size:24px">'+nc.emoji+'</span> '}if(n>=5){var rare=POOL.filter(function(c){return c.rarity==='rare'||c.rarity==='epic'});var gc=nC(rare[Math.floor(Math.random()*rare.length)]);S.cd.push(gc);res+='<br><b>🎁 Bonus:</b> '+gc.emoji+' '+gc.name+' ('+gc.rarity+')'}document.getElementById('pr').innerHTML=res;sv();ts('🎁 '+n+' pet!')}
+function bD(){var code='EVO'+Math.floor(Math.random()*9000+1000);document.getElementById('mod').innerHTML='<div class="modal"><div class="modal-box"><b>💰 Rp15.000</b><br>GoPay: '+GP+'<br>Ref: '+code+'<br><button class="btn btn-primary" onclick="window.open(\'https://wa.me/'+WA+'?text=Pay%20'+code+'\')">WA Admin</button><button class="btn" onclick="document.getElementById(\'mod\').style.display=\'none\'">Close</button></div></div>';document.getElementById('mod').style.display='block'}
+function bE(){if(S.dm<5)return ts('💎 Butuh 5');S.dm-=5;S.en=Math.min(S.me,S.en+10);sv();ts('⚡ +10 Energi!')}
+function bG(){if(S.dm<10)return ts('💎 Butuh 10');S.dm-=10;S.pf+=500;sv();ts('🪙 +500 Profit!')}
+function rd(){var code=prompt('Kode:');if(!code)return;try{var raw=atob(code),p=raw.split('|'),d=p[0],ts2=p[1];if(btoa(d+'|'+ts2+'|'+SK).replace(/=/g,'')!==code)return ts('❌');var used=JSON.parse(localStorage.getItem('evoU')||'[]');if(used.indexOf(code)>=0)return ts('⚠️ Sudah');S.dm+=parseInt(d);used.push(code);localStorage.setItem('evoU',JSON.stringify(used));sv();ts('🎉 +'+d+'💎')}catch(e){ts('❌')}}
+
+// ===== WITHDRAW =====
+function wd(){if(S.dm<100)return ts('💎 Min 100!');var amt=Math.floor(S.dm/100)*100;var rp=Math.floor(amt/100)*10000;var rek=prompt('Nomor GoPay/BCA:\n\nTukar '+amt+'💎 = Rp'+rp.toLocaleString()+'\n\nAdmin transfer 1x24 jam');if(!rek)return;if(confirm('Konfirmasi tukar '+amt+'💎?')){S.dm-=amt;sv();var w=JSON.parse(localStorage.getItem('evoWD')||'[]');w.push({amt:amt,rp:rp,rek:rek,time:new Date().toLocaleString(),status:'Pending'});localStorage.setItem('evoWD',JSON.stringify(w));ts('✅ Permintaan dikirim!')}}
+
+// ===== ADMIN =====
+function adLogFn(){if(document.getElementById('adPass').value===AC){document.getElementById('adLog').classList.add('hidden');document.getElementById('adPan').classList.remove('hidden');ldAd();ldWd()}}
+function genCode(){var d=document.getElementById('gD').value||120,n=document.getElementById('gN').value||'',ts2=Date.now(),code=btoa(d
