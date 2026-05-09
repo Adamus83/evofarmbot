@@ -2,7 +2,7 @@
 <html lang="id"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Evo Cards v8.1 Secure</title>
+<title>Evo Cards v8.2 Fix</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -13,7 +13,7 @@ body{background:#0f172a;color:#e2e8f0;display:flex;justify-content:center;min-he
 .top{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:#0f172a;border-bottom:2px solid #334155;cursor:pointer}
 .logo{font-weight:900;font-size:16px}
 .stats{display:flex;gap:4px;flex-wrap:wrap}
-.badge{background:#334155;padding:4px 7px;border-radius:10px;font-size:10px;font-weight:700;display:flex;align-items:center;gap:2px}
+.badge{background:#334155;padding:4px 7px;border-radius:10px;font-size:10px;font-weight:700;display:flex;align-items:center;gap:2px;color:#e2e8f0}
 .tabs{display:flex;background:#0f172a;border-bottom:1px solid #334155;overflow-x:auto}
 .tab{flex:1;padding:8px 4px;text-align:center;font-weight:700;font-size:10px;cursor:pointer;color:#94a3b8;border-bottom:3px solid transparent;white-space:nowrap;min-width:45px}
 .tab.active{color:#facc15;border-color:#facc15}
@@ -32,35 +32,22 @@ body{background:#0f172a;color:#e2e8f0;display:flex;justify-content:center;min-he
 .btn{width:100%;padding:10px;border:none;border-radius:8px;font-weight:800;font-size:11px;cursor:pointer;background:#334155;color:#e2e8f0;margin:3px 0}
 .btn-primary{background:#facc15;color:#0f172a}.btn-green{background:#22c55e;color:#0f172a}.btn-red{background:#ef4444;color:white}.btn-blue{background:#3b82f6;color:white}.btn-gold{background:#f59e0b;color:white}.btn-purple{background:#8b5cf6;color:white}
 .log{text-align:center;padding:5px;font-size:9px;color:#94a3b8;background:#0f172a;min-height:24px}
-input,select{width:100%;padding:10px;margin:4px 0;border-radius:8px;border:none;background:#0f172a;color:#e2e8f0;font-size:13px}
-.codebox{background:#0f172a;padding:8px;border-radius:8px;font-family:monospace;word-break:break-all;margin:5px 0;text-align:center;font-size:14px}
 .hidden{display:none!important}
 .feed-opt{display:flex;gap:4px;margin:5px 0}
 .feed-opt button{flex:1;padding:8px 4px;font-size:9px}
 .battle-card{background:#1e293b;border:1px solid #475569;border-radius:10px;padding:6px;margin:3px 0;display:flex;justify-content:space-between;align-items:center;font-size:10px}
-.pack-title{color:#facc15;font-weight:bold;margin:6px 0 3px;text-align:center;font-size:11px}
-.feeding-info{background:#1e3a2e;border:1px solid #22c55e;border-radius:8px;padding:8px;margin:6px 0;font-size:9px;text-align:center}
 </style></head><body>
 
 <div class="app" id="gameApp">
-  <div class="top" onclick="tapLogo()"><div class="logo">🛡️ EVO CARDS v8.1</div>
-    <div class="stats"><div class="badge">💰<span id="pf">80</span></div><div class="badge">💎<span id="dm">30</span></div><div class="badge">⚡<span id="en">12</span>/<span id="me">20</span></div></div>
+  <div class="top"><div class="logo">⚡ EVO CARDS v8.2</div>
+    <div class="stats"><div class="badge">💰<span id="pf">0</span></div><div class="badge">💎<span id="dm">0</span></div><div class="badge">⚡<span id="en">0</span>/<span id="me">20</span></div></div>
   </div>
   <div class="tabs" id="tabBar">
     <div class="tab active" data-tab="cards">🃏Kartu</div><div class="tab" data-tab="feed">🍖Feed</div><div class="tab" data-tab="breed">🧬Breed</div><div class="tab" data-tab="battle">⚔️Battle</div><div class="tab" data-tab="market">🏪Pasar</div><div class="tab" data-tab="shop">🛒Shop</div>
   </div>
   <div class="content" id="ct"></div>
-  <div class="log" id="lg">🛡️ v8.1 Secure Ready</div>
+  <div class="log" id="lg">✅ v8.2 Ready</div>
 </div>
-
-<div class="app hidden" id="adminApp">
-  <div class="top"><div class="logo">🔐 ADMIN</div><div class="badge" onclick="closeAdmin()" style="cursor:pointer">❌</div></div>
-  <div class="content">
-    <div id="adminLogin"><h3>🔑 Login</h3><input id="adminPass" type="password" placeholder="Kode"><button class="btn btn-primary" onclick="adminLogin()">Masuk</button></div>
-    <div id="adminPanel" class="hidden"><h3>🎟️ Generate</h3><input id="genDia" type="number" value="120"><input id="genNote" placeholder="Nama"><button class="btn btn-primary" onclick="genCode()">Generate</button><div id="genOut"></div><h4>📜 Riwayat</h4><div id="histList" style="font-size:9px"></div><h4>👥 Pemain</h4><div id="userCount" style="font-size:12px;color:#facc15">0</div></div>
-  </div>
-</div>
-<div id="mod" style="display:none"></div>
 
 <script>
 var AC='727277',SK='evo2026'+AC,GP='088989727277',WA='6288989727277';
@@ -71,86 +58,53 @@ var tg=window.Telegram?.WebApp;if(tg)tg.expand();
 var db=null;
 try{firebase.initializeApp({apiKey:"AIZaSyC2Gb6WtY1bn05fI_3K9x3",authDomain:"evo-farm-game.firebaseapp.com",databaseURL:"https://evo-farm-game-default-rtdb.asia-southeast1.firebasedatabase.app",projectId:"evo-farm-game",storageBucket:"evo-farm-game.appspot.com",messagingSenderId:"870289339504",appId:"1:870289339504:web:154c283a0e8b5d4c28a3e"});db=firebase.database()}catch(e){}
 
-var uid=localStorage.getItem('evo_uid81')||'u_'+Math.random().toString(36).substr(2,9);
-localStorage.setItem('evo_uid81',uid);
+var uid=localStorage.getItem('uid82')||'u_'+Math.random().toString(36).substr(2,9);
+localStorage.setItem('uid82',uid);
 try{if(tg&&tg.initDataUnsafe&&tg.initDataUnsafe.user&&tg.initDataUnsafe.user.id)uid='tg_'+tg.initDataUnsafe.user.id}catch(e){}
 
 var PETS=[{id:'sprout',name:'Sprout',emoji:'🌱',rarity:'common',atk:5,def:2,hp:30,stage:1},{id:'bloom',name:'Bloom',emoji:'🌸',rarity:'common',atk:12,def:5,hp:50,stage:2},{id:'cactus',name:'Cactus',emoji:'🌵',rarity:'common',atk:8,def:8,hp:40,stage:1},{id:'treant',name:'Treant',emoji:'🌳',rarity:'rare',atk:22,def:12,hp:80,stage:3},{id:'wolf',name:'Wolf',emoji:'🐺',rarity:'rare',atk:28,def:8,hp:70,stage:2},{id:'dragon',name:'Dragon',emoji:'🐉',rarity:'epic',atk:40,def:18,hp:120,stage:4},{id:'phoenix',name:'Phoenix',emoji:'🔥',rarity:'epic',atk:45,def:15,hp:110,stage:3},{id:'zeus',name:'Zeus',emoji:'⚡',rarity:'legendary',atk:65,def:20,hp:140,stage:4}];
 
 var S={pf:80,dm:30,en:12,me:20,cd:[],sl:[],ml:[],bc:0,bd:''};
 function nC(t,lvl){lvl=lvl||1;var m=1+(lvl-1)*0.08;return{id:t.id,name:t.name,emoji:t.emoji,rarity:t.rarity,stage:t.stage,level:lvl,atk:Math.floor(t.atk*m),def:Math.floor(t.def*m),hp:Math.floor(t.hp*m),uid:Math.random().toString(36).slice(2,9),st:0,hu:100}}
-function sv(){localStorage.setItem('evo81',JSON.stringify(S));if(db)try{db.ref('users/'+uid).set(S)}catch(e){}upUI()}
+function sv(){localStorage.setItem('evo82',JSON.stringify(S));if(db)try{db.ref('users/'+uid).set(S)}catch(e){}upUI()}
 function upUI(){document.getElementById('pf').textContent=S.pf;document.getElementById('dm').textContent=S.dm;document.getElementById('en').textContent=S.en;document.getElementById('me').textContent=S.me}
 function ts(m){document.getElementById('lg').textContent=m}
 
 function loadGame(){
-  if(db){db.ref('users/'+uid).once('value').then(function(snap){if(snap.exists()){S=snap.val()}else{var l=JSON.parse(localStorage.getItem('evo81')||'null');if(l)S=l}initGame()}).catch(function(){var l=JSON.parse(localStorage.getItem('evo81')||'null');if(l)S=l;initGame()})}
-  else{var l=JSON.parse(localStorage.getItem('evo81')||'null');if(l)S=l;initGame()}
+  if(db){db.ref('users/'+uid).once('value').then(function(snap){if(snap.exists()){S=snap.val()}else{var l=JSON.parse(localStorage.getItem('evo82')||'null');if(l)S=l}initGame()}).catch(function(){var l=JSON.parse(localStorage.getItem('evo82')||'null');if(l)S=l;initGame()})}
+  else{var l=JSON.parse(localStorage.getItem('evo82')||'null');if(l)S=l;initGame()}
 }
 function initGame(){if(!S.cd||S.cd.length===0)S.cd=[nC(PETS[0],2),nC(PETS[0],2),nC(PETS[1],1),nC(PETS[2],1)];if(!S.me)S.me=20;if(S.en>S.me)S.en=S.me;if(!S.ml)S.ml=[];if(!S.sl)S.sl=[];if(!S.bd)S.bd='';if(!S.bc)S.bc=0;sv();sT('cards',document.querySelector('[data-tab="cards"]'))}
 
+// HANYA 1 SETINTERVAL UNTUK DECAY
 setInterval(function(){for(var i=0;i<S.cd.length;i++)S.cd[i].hu=Math.max(0,(S.cd[i].hu||100)-3);sv()},600000);
-setInterval(function(){if(S.en<S.me){S.en++;sv()}},300000);
 
-var tc=0;
-function tapLogo(){tc++;if(tc>=5){document.getElementById('gameApp').classList.add('hidden');document.getElementById('adminApp').classList.remove('hidden');tc=0;loadUserCount()}setTimeout(function(){tc=0},2000)}
-function closeAdmin(){document.getElementById('adminApp').classList.add('hidden');document.getElementById('gameApp').classList.remove('hidden');upUI()}
+// HANYA 1 SETINTERVAL UNTUK RECHARGE
+setInterval(function(){if(S.en<S.me){S.en++;sv()}},300000);
 
 document.getElementById('tabBar').addEventListener('click',function(e){if(e.target.classList.contains('tab'))sT(e.target.dataset.tab,e.target)});
 function sT(tab,el){var tabs=document.querySelectorAll('.tab');for(var i=0;i<tabs.length;i++)tabs[i].classList.remove('active');if(el)el.classList.add('active');var c=document.getElementById('ct');if(tab==='cards')rCd(c);else if(tab==='feed')rFd(c);else if(tab==='breed')c.innerHTML='<p style="color:#94a3b8;font-size:10px;">Pilih 2 kartu di tab Kartu</p><button class="btn btn-primary" onclick="brC()">🧬 Breed (⚡2)</button>';else if(tab==='battle')rBt(c);else if(tab==='market')rMk(c);else if(tab==='shop')rSp(c);}
 function rCd(c){var h='<p style="font-size:9px;color:#94a3b8;">Total: '+S.cd.length+' | Klik (max 2)</p><div class="grid">';for(var i=0;i<S.cd.length;i++){var cd=S.cd[i],sel=S.sl.indexOf(i)>=0?' selected':'',sh='';for(var s=0;s<5;s++)sh+='<span class="'+(s<(cd.st||0)?'on':'off')+'">'+(s<(cd.st||0)?'⭐':'☆')+'</span>';var hu=cd.hu||100,hc=hu>=70?'#22c55e':hu>=30?'#f59e0b':'#ef4444';h+='<div class="card rarity-'+cd.rarity+sel+'" onclick="tC('+i+')"><div class="lvl">Lv'+cd.level+'</div><div class="emoji">'+cd.emoji+'</div><div class="name">'+cd.name+'</div><div class="stars">'+sh+'</div><div class="stats-row">⚔'+cd.atk+' 🛡'+cd.def+'</div><div class="hunger-bar"><div class="hunger-fill" style="width:'+hu+'%;background:'+hc+'"></div></div><span style="font-size:6px;color:#94a3b8;">🍖'+hu+'%</span></div>'}h+='</div><button class="btn btn-green" onclick="evC()">✨ Evolve (⭐5)</button><button class="btn btn-red" onclick="seC()">💵 Sell</button>';c.innerHTML=h}
-function rFd(c){var fo='<option value="">Pilih...</option>';for(var i=0;i<S.cd.length;i++)fo+='<option value="'+i+'">'+S.cd[i].emoji+' '+S.cd[i].name+' 🍖'+(S.cd[i].hu||100)+'%</option>';c.innerHTML='<div class="feeding-info">🍖 Kartu lapar -3/10 menit</div><h4>🍖 Feeding</h4><select id="ft">'+fo+'</select><div class="feed-opt"><button class="btn" onclick="dF(\'b\')">🍞 💰5</button><button class="btn btn-primary" onclick="dF(\'m\')">🥩 💰15</button><button class="btn btn-blue" onclick="dF(\'p\')">🍰 💎1</button></div>'}
+function rFd(c){var fo='<option value="">Pilih...</option>';for(var i=0;i<S.cd.length;i++)fo+='<option value="'+i+'">'+S.cd[i].emoji+' '+S.cd[i].name+' 🍖'+(S.cd[i].hu||100)+'%</option>';c.innerHTML='<h4>🍖 Feeding</h4><select id="ft">'+fo+'</select><div class="feed-opt"><button class="btn" onclick="dF(\'b\')">🍞 💰5</button><button class="btn btn-primary" onclick="dF(\'m\')">🥩 💰15</button><button class="btn btn-blue" onclick="dF(\'p\')">🍰 💎1</button></div>'}
 function rBt(c){var bo='<option value="">Pilih...</option>';for(var i=0;i<S.cd.length;i++)bo+='<option value="'+i+'">'+S.cd[i].emoji+' '+S.cd[i].name+'</option>';c.innerHTML='<h4>⚔️ Battle ('+S.bc+'/'+MAX_BATTLE+')</h4><select id="bc">'+bo+'</select><button class="btn btn-green" onclick="sB()">Battle (⚡3)</button><p style="font-size:9px;">Menang +15💰 +2💎 +2⭐</p>'}
 function rMk(c){c.innerHTML='<h4>🏪 Pasar</h4><button class="btn btn-primary" onclick="lsMk()">📤 Jual</button><input id="mp" type="number" value="10"><div id="mk">'+gMk()+'</div>'}
-function rSp(c){c.innerHTML='<div class="pack-title">🎁 BOOSTER</div><button class="btn btn-primary" onclick="bP(1,10)">🥉 Silver (1) - 10💎</button><button class="btn btn-gold" onclick="bP(3,25)">🥈 Gold (3) - 25💎</button><button class="btn btn-purple" onclick="bP(5,50)">🥇 Platinum (5+1) - 50💎</button><div id="pr" style="text-align:center;margin:6px;font-size:20px"></div><hr><button class="btn btn-blue" onclick="bD()">💰 120💎 (Rp15K)</button><button class="btn btn-green" onclick="bE()">⚡ 10 Energi (5💎)</button><button class="btn btn-gold" onclick="bG()">🪙 500 Profit (10💎)</button><button class="btn" onclick="rd()">🎟️ Redeem</button><hr><button class="btn btn-red" onclick="wD()">💸 WD 💎→Rp<br><small>100💎=Rp10K</small></button>'}
+function rSp(c){c.innerHTML='<div class="pack-title">🎁 BOOSTER</div><button class="btn btn-primary" onclick="bP(1,10)">🥉 Silver (1) - 10💎</button><button class="btn btn-gold" onclick="bP(3,25)">🥈 Gold (3) - 25💎</button><button class="btn btn-purple" onclick="bP(5,50)">🥇 Platinum (5+1) - 50💎</button><div id="pr" style="text-align:center;margin:6px;font-size:20px"></div><hr><button class="btn btn-blue" onclick="bD()">💰 120💎</button><button class="btn btn-green" onclick="bE()">⚡ 10 Energi</button><button class="btn btn-gold" onclick="bG()">🪙 500 Profit</button><button class="btn" onclick="rd()">🎟️ Redeem</button><hr><button class="btn btn-red" onclick="wD()">💸 WD 💎→Rp</button>'}
 
 function tC(i){var p=S.sl.indexOf(i);if(p>=0)S.sl.splice(p,1);else if(S.sl.length<2)S.sl.push(i);rCd(document.getElementById('ct'))}
 function brC(){if(S.sl.length!==2)return ts('⚠️ Pilih 2!');if(S.en<2)return ts('⚡ Kurang!');var s=S.sl.slice().sort(function(a,b){return b-a}),p1=S.cd[s[0]],p2=S.cd[s[1]];if((p1.hu||100)<30||(p2.hu||100)<30)return ts('😰 Lapar!');S.cd.splice(s[0],1);S.cd.splice(s[1],1);var ns=Math.floor((p1.level+p2.level)/2)+1;if(ns>4)ns=4;var cand=PETS.filter(function(c){return c.stage===ns});if(!cand.length)cand=PETS;var b=nC(cand[Math.floor(Math.random()*cand.length)],ns);S.cd.push(b);S.en-=2;S.sl=[];sv();ts('🧬 '+b.emoji+' '+b.name)}
 function evC(){if(S.sl.length!==1)return ts('⚠️ Pilih 1!');var i=S.sl[0],c=S.cd[i];if((c.st||0)<5)return ts('⭐ '+(c.st||0)+'/5');if(S.pf<10)return ts('💰 Kurang!');S.pf-=10;c.level=Math.min(4,c.level+1);c.atk=Math.floor(c.atk*1.15);c.def=Math.floor(c.def*1.15);c.hp=Math.floor(c.hp*1.15);c.st=0;c.hu=100;S.sl=[];sv();ts('✨ Lv'+c.level+'!')}
 function seC(){if(!S.sl.length)return ts('⚠️ Pilih!');var s=S.sl.slice().sort(function(a,b){return b-a}),tot=0;s.forEach(function(i){tot+=S.cd[i].atk+S.cd[i].def;S.cd.splice(i,1)});S.pf+=tot;S.sl=[];sv();ts('💵 +'+tot)}
 function dF(tp){var i=parseInt(document.getElementById('ft').value);if(isNaN(i)||!S.cd[i])return ts('⚠️ Pilih!');var c=S.cd[i],cost,hg,sc;if(tp==='b'){cost=5;hg=30;sc=0.25;if(S.pf<cost)return ts('💰');S.pf-=cost}else if(tp==='m'){cost=15;hg=60;sc=0.45;if(S.pf<cost)return ts('💰');S.pf-=cost}else{cost=1;hg=100;sc=0.7;if(S.dm<cost)return ts('💎');S.dm-=cost}c.hu=Math.min(100,(c.hu||50)+hg);if(Math.random()<sc&&(c.st||0)<5){c.st=(c.st||0)+1;ts('⭐+1')}if(S.en>0)S.en-=1;sv();sT('feed')}
-
-// ===== BATTLE (MAX 30/HARI) =====
-function sB(){
-  var today=new Date().toDateString();
-  if(S.bd!==today){S.bc=0;S.bd=today}
-  if(S.bc>=MAX_BATTLE)return ts('❌ Max '+MAX_BATTLE+' battle/hari!');
-  var i=parseInt(document.getElementById('bc').value);
-  if(isNaN(i)||!S.cd[i])return;
-  if(S.en<3)return ts('⚡ Kurang!');
-  S.en-=3;S.pf+=15;S.dm+=2;S.bc++;
-  var c=S.cd[i];if((c.st||0)<5)c.st=Math.min(5,(c.st||0)+2);
-  sv();ts('🏆 +15💰 +2💎 ('+S.bc+'/'+MAX_BATTLE+')');
-  rBt(document.getElementById('ct'));
-}
-
+function sB(){var today=new Date().toDateString();if(S.bd!==today){S.bc=0;S.bd=today}if(S.bc>=MAX_BATTLE)return ts('❌ Max '+MAX_BATTLE+'/hari!');var i=parseInt(document.getElementById('bc').value);if(isNaN(i)||!S.cd[i])return;if(S.en<3)return ts('⚡ Kurang!');S.en-=3;S.pf+=15;S.dm+=2;S.bc++;var c=S.cd[i];if((c.st||0)<5)c.st=Math.min(5,(c.st||0)+2);sv();ts('🏆 +15💰 +2💎')}
 function gMk(){if(!S.ml.length)return'<p style="font-size:9px;color:#94a3b8;">Kosong</p>';return S.ml.map(function(l,i){return'<div class="battle-card"><div>'+l.emoji+' '+l.name+' Lv'+l.level+'</div><div>💎'+l.price+' <button class="btn btn-green" style="padding:3px 6px;font-size:9px;width:auto" onclick="bMk('+i+')">Beli</button></div></div>'}).join('')}
 function lsMk(){if(!S.sl.length)return;var p=parseInt(document.getElementById('mp').value)||10;var s=S.sl.slice().sort(function(a,b){return b-a});s.forEach(function(i){S.ml.push({...S.cd[i],price:p});S.cd.splice(i,1)});S.sl=[];sv();sT('market');ts('📤 Listed!')}
 function bMk(i){var l=S.ml[i];if(!l||S.dm<l.price)return ts('💎 Kurang!');S.dm-=l.price;S.cd.push({...l});S.ml.splice(i,1);sv();sT('market')}
 function bP(n,cost){if(S.dm<cost)return ts('💎 Butuh '+cost);S.dm-=cost;var res='';for(var i=0;i<n;i++){var r=Math.random(),cand;if(r<0.4)cand=PETS.filter(function(c){return c.rarity==='common'});else if(r<0.7)cand=PETS.filter(function(c){return c.rarity==='rare'});else if(r<0.9)cand=PETS.filter(function(c){return c.rarity==='epic'});else if(r<0.97)cand=PETS.filter(function(c){return c.rarity==='legendary'});else cand=PETS.filter(function(c){return c.rarity==='mythic'});if(!cand.length)cand=PETS;var nc=nC(cand[Math.floor(Math.random()*cand.length)]);S.cd.push(nc);res+='<span style="font-size:22px">'+nc.emoji+'</span> '}if(n>=5){var rare=PETS.filter(function(c){return c.rarity==='rare'||c.rarity==='epic'});var gc=nC(rare[Math.floor(Math.random()*rare.length)]);S.cd.push(gc);res+='<br><b>🎁 Bonus:</b> '+gc.emoji+' '+gc.name+' ('+gc.rarity+')'}document.getElementById('pr').innerHTML=res;sv();ts('🎁 '+n+' pet!')}
-function bD(){var code='EVO'+Math.floor(Math.random()*9000+1000);var modal=document.createElement('div');modal.innerHTML='<div style="position:fixed;inset:0;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;z-index:2000"><div style="background:#1e293b;border:2px solid #475569;border-radius:14px;padding:14px;max-width:320px;text-align:center"><b>💰 Rp15.000</b><br>GoPay: '+GP+'<br>Ref: '+code+'<br><button class="btn btn-primary" onclick="window.open(\'https://wa.me/'+WA+'?text=Bayar%20'+code+'\')">WA Admin</button><button class="btn" onclick="this.parentElement.parentElement.parentElement.remove()">Close</button></div></div>';document.body.appendChild(modal.firstChild)}
+function bD(){var code='EVO'+Math.floor(Math.random()*9000+1000);ts('💰 Transfer Rp15K ke GoPay: '+GP+' Ref:'+code)}
 function bE(){if(S.dm<5)return ts('💎 Butuh 5');S.dm-=5;S.en=Math.min(S.me,S.en+10);sv();ts('⚡ +10')}
 function bG(){if(S.dm<10)return ts('💎 Butuh 10');S.dm-=10;S.pf+=500;sv();ts('🪙 +500')}
-
-// ===== REDEEM (RATE LIMIT 3X/JAM) =====
-function rd(){
-  var now=Date.now(),rl=JSON.parse(localStorage.getItem('evoRL81')||'{"c":0,"t":0}');
-  if(now-rl.t>3600000){rl.c=0;rl.t=now}
-  if(rl.c>=3)return ts('❌ Blokir 1 jam!');
-  var code=prompt('Kode redeem:');if(!code||code.length<8)return ts('❌ Min 8 karakter!');
-  try{
-    var raw=atob(code),p=raw.split('|'),d=p[0],ts2=p[1];
-    if(btoa(d+'|'+ts2+'|'+SK).replace(/=/g,'')!==code){rl.c++;localStorage.setItem('evoRL81',JSON.stringify(rl));return ts('❌ Salah! ('+(3-rl.c)+'x)')}
-    var used=JSON.parse(localStorage.getItem('evoU81')||'[]');if(used.indexOf(code)>=0)return ts('⚠️ Sudah');
-    S.dm+=parseInt(d);used.push(code);localStorage.setItem('evoU81',JSON.stringify(used));rl.c=0;localStorage.setItem('evoRL81',JSON.stringify(rl));sv();ts('🎉 +'+d+'💎')
-  }catch(e){rl.c++;localStorage.setItem('evoRL81',JSON.stringify(rl));ts('❌ Error')}
-}
-function wD(){if(S.dm<100)return ts('💎 Min 100!');var amt=Math.floor(S.dm/100)*100;var rp=Math.floor(amt/100)*10000;var rek=prompt('No GoPay/BCA:\n\nTukar '+amt+'💎 = Rp'+rp.toLocaleString());if(!rek)return;if(confirm('Konfirmasi?')){S.dm-=amt;sv();var w=JSON.parse(localStorage.getItem('evoWD')||'[]');w.push({amt:amt,rp:rp,rek:rek,time:new Date().toLocaleString(),status:'Pending'});localStorage.setItem('evoWD',JSON.stringify(w));ts('✅ WD dikirim!')}}
-
-function adminLogin(){if(document.getElementById('adminPass').value===AC){document.getElementById('adminLogin').classList.add('hidden');document.getElementById('adminPanel').classList.remove('hidden');loadAd();loadUserCount()}}
-function genCode(){var d=document.getElementById('genDia').value||120,n=document.getElementById('genNote').value||'',ts2=Date.now(),code=btoa(d+'|'+ts2+'|'+SK).replace(/=/g,'');document.getElementById('genOut').innerHTML='<div class="codebox">'+code+'</div><button class="btn" onclick="navigator.clipboard.writeText(\''+code+'\')">📋 Copy</button>';var h=JSON.parse(localStorage.getItem('evoH')||'[]');h.unshift({code,d,note:n,time:new Date().toLocaleString()});localStorage.setItem('evoH',JSON.stringify(h.slice(0,50)));loadAd()}
-function loadAd(){document.getElementById('histList').innerHTML=JSON.parse(localStorage.getItem('evoH')||'[]').map(function(h){return'<div style="padding:3px;border-bottom:1px solid #334155">'+h.time+' - '+h.d+'💎<br><span style="font-size:8px">'+h.code+'</span></div>'}).join('')}
-function loadUserCount(){if(db){db.ref('users').once('value').then(function(snap){document.getElementById('userCount').textContent=snap.numChildren()+' pemain'})}}
+function rd(){var now=Date.now(),rl=JSON.parse(localStorage.getItem('rl82')||'{"c":0,"t":0}');if(now-rl.t>3600000){rl.c=0;rl.t=now}if(rl.c>=3)return ts('❌ Blokir 1 jam!');var code=prompt('Kode:');if(!code)return;try{var raw=atob(code),p=raw.split('|'),d=p[0],ts2=p[1];if(btoa(d+'|'+ts2+'|'+SK).replace(/=/g,'')!==code){rl.c++;localStorage.setItem('rl82',JSON.stringify(rl));return ts('❌ ('+(3-rl.c)+'x)')}var used=JSON.parse(localStorage.getItem('u82')||'[]');if(used.indexOf(code)>=0)return ts('⚠️ Sudah');S.dm+=parseInt(d);used.push(code);localStorage.setItem('u82',JSON.stringify(used));rl.c=0;localStorage.setItem('rl82',JSON.stringify(rl));sv();ts('🎉 +'+d+'💎')}catch(e){rl.c++;localStorage.setItem('rl82',JSON.stringify(rl));ts('❌')}}
+function wD(){if(S.dm<100)return ts('💎 Min 100!');var amt=Math.floor(S.dm/100)*100;var rp=Math.floor(amt/100)*10000;var rek=prompt('No GoPay:\n\nTukar '+amt+'💎 = Rp'+rp.toLocaleString());if(!rek)return;if(confirm('Konfirmasi?')){S.dm-=amt;sv();ts('✅ WD dikirim!')}}
 
 loadGame();
 </script></body></html>
