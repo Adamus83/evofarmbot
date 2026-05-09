@@ -2,8 +2,10 @@
 <html lang="id"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Evo Cards v7.5</title>
+<title>Evo Cards v8.0 Cloud</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,sans-serif}
 body{background:#0f172a;color:#e2e8f0;display:flex;justify-content:center;min-height:100vh}
@@ -41,36 +43,94 @@ input,select{width:100%;padding:10px;margin:4px 0;border-radius:8px;border:none;
 </style></head><body>
 
 <div class="app" id="gameApp">
-  <div class="top" onclick="tapLogo()"><div class="logo">⚡ EVO CARDS v7.5</div>
+  <div class="top" onclick="tapLogo()"><div class="logo">☁️ EVO CARDS v8.0</div>
     <div class="stats"><div class="badge">💰<span id="pf">80</span></div><div class="badge">💎<span id="dm">30</span></div><div class="badge">⚡<span id="en">12</span>/<span id="me">20</span></div></div>
   </div>
   <div class="tabs" id="tabBar">
     <div class="tab active" data-tab="cards">🃏Kartu</div><div class="tab" data-tab="feed">🍖Feed</div><div class="tab" data-tab="breed">🧬Breed</div><div class="tab" data-tab="battle">⚔️Battle</div><div class="tab" data-tab="market">🏪Pasar</div><div class="tab" data-tab="shop">🛒Shop</div>
   </div>
   <div class="content" id="ct"></div>
-  <div class="log" id="lg">✅ v7.5 Ready</div>
+  <div class="log" id="lg">☁️ Cloud Save Ready</div>
 </div>
+
+<div class="app hidden" id="adminApp">
+  <div class="top"><div class="logo">🔐 ADMIN</div><div class="badge" onclick="closeAdmin()" style="cursor:pointer">❌</div></div>
+  <div class="content">
+    <div id="adminLogin"><h3>🔑 Login</h3><input id="adminPass" type="password" placeholder="Kode"><button class="btn btn-primary" onclick="adminLogin()">Masuk</button></div>
+    <div id="adminPanel" class="hidden"><h3>🎟️ Generate</h3><input id="genDia" type="number" value="120"><input id="genNote" placeholder="Nama"><button class="btn btn-primary" onclick="genCode()">Generate</button><div id="genOut"></div><h4>📜 Riwayat</h4><div id="histList" style="font-size:9px"></div><h4>👥 Pemain</h4><div id="userCount" style="font-size:12px;color:#facc15">0</div></div>
+  </div>
+</div>
+<div id="mod" style="display:none"></div>
 
 <script>
 var AC='727277',SK='evo2026'+AC,GP='088989727277',WA='6288989727277';
 var tg=window.Telegram?.WebApp;if(tg)tg.expand();
 
+// ===== FIREBASE CLOUD =====
+var db=null;
+try{
+  firebase.initializeApp({
+    apiKey:"AIZaSyC2Gb6WtY1bn05fI_3K9x3",
+    authDomain:"evo-farm-game.firebaseapp.com",
+    databaseURL:"https://evo-farm-game-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId:"evo-farm-game",
+    storageBucket:"evo-farm-game.appspot.com",
+    messagingSenderId:"870289339504",
+    appId:"1:870289339504:web:154c283a0e8b5d4c28a3e"
+  });
+  db=firebase.database();
+}catch(e){}
+
+// ===== USER ID =====
+var uid=localStorage.getItem('evo_uid8')||'u_'+Math.random().toString(36).substr(2,9);
+localStorage.setItem('evo_uid8',uid);
+try{if(tg&&tg.initDataUnsafe&&tg.initDataUnsafe.user&&tg.initDataUnsafe.user.id)uid='tg_'+tg.initDataUnsafe.user.id}catch(e){}
+
+// ===== PETS =====
 var PETS=[{id:'sprout',name:'Sprout',emoji:'🌱',rarity:'common',atk:5,def:2,hp:30,stage:1},{id:'bloom',name:'Bloom',emoji:'🌸',rarity:'common',atk:12,def:5,hp:50,stage:2},{id:'cactus',name:'Cactus',emoji:'🌵',rarity:'common',atk:8,def:8,hp:40,stage:1},{id:'treant',name:'Treant',emoji:'🌳',rarity:'rare',atk:22,def:12,hp:80,stage:3},{id:'wolf',name:'Wolf',emoji:'🐺',rarity:'rare',atk:28,def:8,hp:70,stage:2},{id:'dragon',name:'Dragon',emoji:'🐉',rarity:'epic',atk:40,def:18,hp:120,stage:4},{id:'phoenix',name:'Phoenix',emoji:'🔥',rarity:'epic',atk:45,def:15,hp:110,stage:3},{id:'zeus',name:'Zeus',emoji:'⚡',rarity:'legendary',atk:65,def:20,hp:140,stage:4}];
 
-var S=JSON.parse(localStorage.getItem('evo75')||'null')||{pf:80,dm:30,en:12,me:20,cd:[],sl:[],ml:[]};
+// ===== STATE =====
+var S={pf:80,dm:30,en:12,me:20,cd:[],sl:[],ml:[]};
+
 function nC(t,lvl){lvl=lvl||1;var m=1+(lvl-1)*0.08;return{id:t.id,name:t.name,emoji:t.emoji,rarity:t.rarity,stage:t.stage,level:lvl,atk:Math.floor(t.atk*m),def:Math.floor(t.def*m),hp:Math.floor(t.hp*m),uid:Math.random().toString(36).slice(2,9),st:0,hu:100}}
-function sv(){localStorage.setItem('evo75',JSON.stringify(S));upUI()}
+
+// ===== SAVE (CLOUD + LOCAL) =====
+function sv(){
+  localStorage.setItem('evo8',JSON.stringify(S));
+  if(db)try{db.ref('users/'+uid).set(S)}catch(e){}
+  upUI();
+}
+
 function upUI(){document.getElementById('pf').textContent=S.pf;document.getElementById('dm').textContent=S.dm;document.getElementById('en').textContent=S.en;document.getElementById('me').textContent=S.me}
 function ts(m){document.getElementById('lg').textContent=m}
-function fx(){if(!S.cd||S.cd.length===0)S.cd=[nC(PETS[0],2),nC(PETS[0],2),nC(PETS[1],1),nC(PETS[2],1)];if(!S.me)S.me=20;if(S.en>S.me)S.en=S.me;if(!S.ml)S.ml=[];if(!S.sl)S.sl=[]}
 
+// ===== LOAD DATA =====
+function loadGame(){
+  if(db){
+    db.ref('users/'+uid).once('value').then(function(snap){
+      if(snap.exists()){S=snap.val();console.log('☁️ Cloud loaded')}
+      else{var l=JSON.parse(localStorage.getItem('evo8')||'null');if(l)S=l;console.log('💾 Local loaded')}
+      initGame();
+    }).catch(function(){var l=JSON.parse(localStorage.getItem('evo8')||'null');if(l)S=l;initGame()});
+  }else{var l=JSON.parse(localStorage.getItem('evo8')||'null');if(l)S=l;initGame()}
+}
+
+function initGame(){
+  if(!S.cd||S.cd.length===0)S.cd=[nC(PETS[0],2),nC(PETS[0],2),nC(PETS[1],1),nC(PETS[2],1)];
+  if(!S.me)S.me=20;if(S.en>S.me)S.en=S.me;if(!S.ml)S.ml=[];if(!S.sl)S.sl=[];
+  sv();sT('cards',document.querySelector('[data-tab="cards"]'));
+}
+
+// ===== DECAY & RECHARGE =====
 setInterval(function(){for(var i=0;i<S.cd.length;i++)S.cd[i].hu=Math.max(0,(S.cd[i].hu||100)-3);sv()},600000);
 setInterval(function(){if(S.en<S.me){S.en++;sv()}},300000);
 
+// ===== ADMIN TAP =====
 var tc=0;
-function tapLogo(){tc++;if(tc>=5){document.getElementById('gameApp').classList.add('hidden');document.getElementById('adminApp').classList.remove('hidden');tc=0}setTimeout(function(){tc=0},2000)}
+function tapLogo(){tc++;if(tc>=5){document.getElementById('gameApp').classList.add('hidden');document.getElementById('adminApp').classList.remove('hidden');tc=0;loadUserCount()}setTimeout(function(){tc=0},2000)}
 function closeAdmin(){document.getElementById('adminApp').classList.add('hidden');document.getElementById('gameApp').classList.remove('hidden');upUI()}
 
+// ===== TABS =====
 document.getElementById('tabBar').addEventListener('click',function(e){if(e.target.classList.contains('tab'))sT(e.target.dataset.tab,e.target)});
 function sT(tab,el){var tabs=document.querySelectorAll('.tab');for(var i=0;i<tabs.length;i++)tabs[i].classList.remove('active');if(el)el.classList.add('active');var c=document.getElementById('ct');if(tab==='cards')rCd(c);else if(tab==='feed')rFd(c);else if(tab==='breed')c.innerHTML='<p style="color:#94a3b8;font-size:10px;">Pilih 2 kartu di tab Kartu</p><button class="btn btn-primary" onclick="brC()">🧬 Breed (⚡2)</button>';else if(tab==='battle')rBt(c);else if(tab==='market')rMk(c);else if(tab==='shop')rSp(c);}
 function rCd(c){var h='<p style="font-size:9px;color:#94a3b8;">Total: '+S.cd.length+' | Klik (max 2)</p><div class="grid">';for(var i=0;i<S.cd.length;i++){var cd=S.cd[i],sel=S.sl.indexOf(i)>=0?' selected':'',sh='';for(var s=0;s<5;s++)sh+='<span class="'+(s<(cd.st||0)?'on':'off')+'">'+(s<(cd.st||0)?'⭐':'☆')+'</span>';var hu=cd.hu||100,hc=hu>=70?'#22c55e':hu>=30?'#f59e0b':'#ef4444';h+='<div class="card rarity-'+cd.rarity+sel+'" onclick="tC('+i+')"><div class="lvl">Lv'+cd.level+'</div><div class="emoji">'+cd.emoji+'</div><div class="name">'+cd.name+'</div><div class="stars">'+sh+'</div><div class="stats-row">⚔'+cd.atk+' 🛡'+cd.def+'</div><div class="hunger-bar"><div class="hunger-fill" style="width:'+hu+'%;background:'+hc+'"></div></div><span style="font-size:6px;color:#94a3b8;">🍖'+hu+'%</span></div>'}h+='</div><button class="btn btn-green" onclick="evC()">✨ Evolve (⭐5)</button><button class="btn btn-red" onclick="seC()">💵 Sell</button>';c.innerHTML=h}
@@ -95,5 +155,11 @@ function bG(){if(S.dm<10)return ts('💎 Butuh 10');S.dm-=10;S.pf+=500;sv();ts('
 function rd(){var code=prompt('Kode:');if(!code)return;try{var raw=atob(code),p=raw.split('|'),d=p[0],ts2=p[1];if(btoa(d+'|'+ts2+'|'+SK).replace(/=/g,'')!==code)return ts('❌');var used=JSON.parse(localStorage.getItem('evoU')||'[]');if(used.indexOf(code)>=0)return ts('⚠️ Sudah');S.dm+=parseInt(d);used.push(code);localStorage.setItem('evoU',JSON.stringify(used));sv();ts('🎉 +'+d+'💎')}catch(e){ts('❌')}}
 function wD(){if(S.dm<100)return ts('💎 Min 100!');var amt=Math.floor(S.dm/100)*100;var rp=Math.floor(amt/100)*10000;var rek=prompt('No GoPay/BCA:\n\nTukar '+amt+'💎 = Rp'+rp.toLocaleString());if(!rek)return;if(confirm('Konfirmasi?')){S.dm-=amt;sv();var w=JSON.parse(localStorage.getItem('evoWD')||'[]');w.push({amt:amt,rp:rp,rek:rek,time:new Date().toLocaleString(),status:'Pending'});localStorage.setItem('evoWD',JSON.stringify(w));ts('✅ WD dikirim!')}}
 
-fx();sv();sT('cards',document.querySelector('[data-tab="cards"]'));
+function adminLogin(){if(document.getElementById('adminPass').value===AC){document.getElementById('adminLogin').classList.add('hidden');document.getElementById('adminPanel').classList.remove('hidden');loadAd();loadUserCount()}}
+function genCode(){var d=document.getElementById('genDia').value||120,n=document.getElementById('genNote').value||'',ts2=Date.now(),code=btoa(d+'|'+ts2+'|'+SK).replace(/=/g,'');document.getElementById('genOut').innerHTML='<div class="codebox">'+code+'</div><button class="btn" onclick="navigator.clipboard.writeText(\''+code+'\')">📋 Copy</button>';var h=JSON.parse(localStorage.getItem('evoH')||'[]');h.unshift({code,d,note:n,time:new Date().toLocaleString()});localStorage.setItem('evoH',JSON.stringify(h.slice(0,50)));loadAd()}
+function loadAd(){document.getElementById('histList').innerHTML=JSON.parse(localStorage.getItem('evoH')||'[]').map(function(h){return'<div style="padding:3px;border-bottom:1px solid #334155">'+h.time+' - '+h.d+'💎<br><span style="font-size:8px">'+h.code+'</span></div>'}).join('')}
+function loadUserCount(){if(db){db.ref('users').once('value').then(function(snap){document.getElementById('userCount').textContent=snap.numChildren()+' pemain'})}}
+
+// ===== START =====
+loadGame();
 </script></body></html>
