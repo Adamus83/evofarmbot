@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="id"><head>
-<script>// Playables SDK v1.0.0
-(function(){'use strict';if(window.playablesSDK)return;var HANDLER_NAME='playablesGameEventHandler';var ANDROID_BRIDGE_NAME='_MetaPlayablesBridge';var RAF_FRAME_THRESHOLD=3;var gameReadySent=false,firstInteractionSent=false,errorSent=false,frameCount=0,originalRAF=window.requestAnimationFrame;function hasIOSBridge(){return!!(window.webkit&&window.webkit.messageHandlers&&window.webkit.messageHandlers[HANDLER_NAME])}function hasAndroidBridge(){return!!(window[ANDROID_BRIDGE_NAME]&&typeof window[ANDROID_BRIDGE_NAME].postEvent==='function')}function isInIframe(){return!!(window.parent&&window.parent!==window)}function sendEvent(eventName,payload){var message={type:eventName,payload:payload||{},timestamp:Date.now()};if(hasIOSBridge()){try{window.webkit.messageHandlers[HANDLER_NAME].postMessage(message)}catch(e){}}return;if(hasAndroidBridge()){try{var p=payload||{};p.__secureToken=window.__fbAndroidBridgeAuthToken||'';p.timestamp=message.timestamp;window[ANDROID_BRIDGE_NAME].postEvent(eventName,JSON.stringify(p))}catch(e){}}return;if(isInIframe()){try{window.parent.postMessage(message,'*')}catch(e){}}return}function onFrame(){if(gameReadySent)return;frameCount++;if(frameCount>=RAF_FRAME_THRESHOLD){gameReadySent=true;sendEvent('game_ready',{frame_count:frameCount,detected_at:Date.now()});return}originalRAF.call(window,onFrame)}if(originalRAF){window.requestAnimationFrame=function(callback){if(!gameReadySent){return originalRAF.call(window,function(timestamp){frameCount++;if(frameCount>=RAF_FRAME_THRESHOLD&&!gameReadySent){gameReadySent=true;sendEvent('game_ready',{frame_count:frameCount,detected_at:Date.now()})}callback(timestamp)})}return originalRAF.call(window,callback)}}function setupFirstInteractionDetection(){var events=['touchstart','mousedown','keydown'];function onFirstInteraction(){if(firstInteractionSent)return;firstInteractionSent=true;sendEvent('user_interaction_start',null);for(var i=0;i<events.length;i++){document.removeEventListener(events[i],onFirstInteraction,true)}}for(var i=0;i<events.length;i++){document.addEventListener(events[i],onFirstInteraction,true)}}if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',setupFirstInteractionDetection)}else{setupFirstInteractionDetection()}window.addEventListener('error',function(event){if(errorSent)return;errorSent=true;sendEvent('error',{message:event.message||'Unknown error',source:event.filename||'',lineno:event.lineno||0,colno:event.colno||0,auto_captured:true})});window.addEventListener('unhandledrejection',function(event){if(errorSent)return;errorSent=true;var reason=event.reason;sendEvent('error',{message:(reason instanceof Error)?reason.message:String(reason),type:'unhandled_promise_rejection',auto_captured:true})});window.playablesSDK={complete:function(score){sendEvent('game_ended',{score:score,completed:true})},error:function(message){if(errorSent)return;errorSent=true;sendEvent('error',{message:message||'Unknown error',auto_captured:false})},sendEvent:function(eventName,payload){if(!eventName||typeof eventName!=='string')return;sendEvent(eventName,payload)}};if(originalRAF){originalRAF.call(window,onFrame)}})();</script>
+<script>// Playables SDK
+(function(){'use strict';if(window.playablesSDK)return;var HANDLER_NAME='playablesGameEventHandler';var ANDROID_BRIDGE_NAME='_MetaPlayablesBridge';var RAF_FRAME_THRESHOLD=3;var gameReadySent=false,firstInteractionSent=false,errorSent=false,frameCount=0,originalRAF=window.requestAnimationFrame;function hasIOSBridge(){return!!(window.webkit&&window.webkit.messageHandlers&&window.webkit.messageHandlers[HANDLER_NAME])}function hasAndroidBridge(){return!!(window[ANDROID_BRIDGE_NAME]&&typeof window[ANDROID_BRIDGE_NAME].postEvent==='function')}function isInIframe(){return!!(window.parent&&window.parent!==window)}function sendEvent(eventName,payload){var message={type:eventName,payload:payload||{},timestamp:Date.now()};if(hasIOSBridge()){try{window.webkit.messageHandlers[HANDLER_NAME].postMessage(message)}catch(e){}return}if(hasAndroidBridge()){try{var p=payload||{};p.__secureToken=window.__fbAndroidBridgeAuthToken||'';p.timestamp=message.timestamp;window[ANDROID_BRIDGE_NAME].postEvent(eventName,JSON.stringify(p))}catch(e){}return}if(isInIframe()){try{window.parent.postMessage(message,'*')}catch(e){}return}}function onFrame(){if(gameReadySent)return;frameCount++;if(frameCount>=RAF_FRAME_THRESHOLD){gameReadySent=true;sendEvent('game_ready',{frame_count:frameCount,detected_at:Date.now()});return}originalRAF.call(window,onFrame)}if(originalRAF){window.requestAnimationFrame=function(callback){if(!gameReadySent){return originalRAF.call(window,function(timestamp){frameCount++;if(frameCount>=RAF_FRAME_THRESHOLD&&!gameReadySent){gameReadySent=true;sendEvent('game_ready',{frame_count:frameCount,detected_at:Date.now()})}callback(timestamp)})}return originalRAF.call(window,callback)}}function setupFirstInteractionDetection(){var events=['touchstart','mousedown','keydown'];function onFirstInteraction(){if(firstInteractionSent)return;firstInteractionSent=true;sendEvent('user_interaction_start',null);for(var i=0;i<events.length;i++){document.removeEventListener(events[i],onFirstInteraction,true)}}for(var i=0;i<events.length;i++){document.addEventListener(events[i],onFirstInteraction,true)}}if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',setupFirstInteractionDetection)}else{setupFirstInteractionDetection()}window.addEventListener('error',function(event){if(errorSent)return;errorSent=true;sendEvent('error',{message:event.message||'Unknown error',source:event.filename||'',lineno:event.lineno||0,colno:event.colno||0,auto_captured:true})});window.addEventListener('unhandledrejection',function(event){if(errorSent)return;errorSent=true;var reason=event.reason;sendEvent('error',{message:(reason instanceof Error)?reason.message:String(reason),type:'unhandled_promise_rejection',auto_captured:true})});window.playablesSDK={complete:function(score){sendEvent('game_ended',{score:score,completed:true})},error:function(message){if(errorSent)return;errorSent=true;sendEvent('error',{message:message||'Unknown error',auto_captured:false})},sendEvent:function(eventName,payload){if(!eventName||typeof eventName!=='string')return;sendEvent(eventName,payload)}};if(originalRAF){originalRAF.call(window,onFrame)}})();</script>
 <script>window.Intl=window.Intl||{};Intl.t=function(s){return(Intl._locale&&Intl._locale[s])||s;};</script><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Evo Cards v7.0 - Cloud Secure</title>
+<title>Evo Cards v7.1</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,sans-serif}
 body{background:#0f172a;color:#e2e8f0;display:flex;justify-content:center;min-height:100vh}
 .app{width:100%;max-width:440px;background:#1e293b;min-height:100vh;display:flex;flex-direction:column}
 .top{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:#0f172a;border-bottom:2px solid #334155;cursor:pointer}
@@ -44,11 +44,11 @@ input,select{width:100%;padding:10px;margin:4px 0;border-radius:8px;border:none;
 </style></head><body>
 
 <div class="app" id="gameApp">
-  <div class="top" onclick="tapLogo()"><div class="logo">⚡ EVO CARDS v7.0</div>
+  <div class="top" onclick="tapLogo()"><div class="logo">⚡ EVO CARDS v7.1</div>
     <div class="stats">
-      <div class="badge">💰<span id="pf">80</span></div>
-      <div class="badge">💎<span id="dm">30</span></div>
-      <div class="badge">⚡<span id="en">12</span>/<span id="me">20</span></div>
+      <div class="badge">💰<span id="pf">0</span></div>
+      <div class="badge">💎<span id="dm">0</span></div>
+      <div class="badge">⚡<span id="en">0</span>/<span id="me">20</span></div>
     </div>
   </div>
   <div class="tabs" id="tabBar">
@@ -59,117 +59,311 @@ input,select{width:100%;padding:10px;margin:4px 0;border-radius:8px;border:none;
     <div class="tab" data-tab="market">🏪Pasar</div>
     <div class="tab" data-tab="shop">🛒Shop</div>
   </div>
-  <div class="content" id="ct"></div>
-  <div class="log" id="lg">☁️ Cloud Secure Ready</div>
+  <div class="content" id="ct"><p style="text-align:center;padding:40px;color:#facc15">⏳ Sinkronisasi Cloud...</p></div>
+  <div class="log" id="lg">☁️ v7.1 Cloud Secure</div>
 </div>
 
 <!-- ADMIN -->
 <div class="app hidden" id="adminApp">
-  <div class="top"><div class="logo">🔐 ADMIN</div><div class="badge" onclick="closeAdmin()" style="cursor:pointer">❌</div></div>
+  <div class="top"><div class="logo">🔐 ADMIN</div><div class="badge" onclick="closeAdmin()" style="cursor:pointer">❌ Tutup</div></div>
   <div class="content">
-    <div id="adminLogin"><h3>🔑 Login</h3><input id="adminPass" type="password" placeholder="Kode"><button class="btn btn-primary" onclick="adminLogin()">Login</button></div>
+    <div id="adminLogin"><h3>🔑 Login Admin</h3><input id="adminPass" type="password" placeholder="Kode autentikasi"><button class="btn btn-primary" onclick="adminLogin()">Masuk</button></div>
     <div id="adminPanel" class="hidden">
-      <h3>🎟️ Generate</h3><input id="genDia" type="number" value="120"><input id="genNote" placeholder="Nama"><button class="btn btn-primary" onclick="genCode()">Generate</button><div id="genOut"></div>
-      <h4>📜 Riwayat</h4><div id="histList" style="font-size:9px"></div>
-      <h4>💸 Withdraw</h4><div id="wdList" style="font-size:9px"></div>
-      <h4>👥 Pemain</h4><div id="userCount" style="font-size:9px"></div>
+      <h3>🎟️ Generate Kode</h3><input id="genDia" type="number" value="120"><input id="genNote" placeholder="Nama pembeli"><button class="btn btn-primary" onclick="genCode()">Generate</button><div id="genOut"></div>
+      <h4 style="margin-top:14px">📜 Riwayat Kode</h4><div id="histList" style="font-size:9px"></div>
+      <h4 style="margin-top:14px">💸 Permintaan Withdraw</h4><div id="wdList" style="font-size:9px"></div>
     </div>
   </div>
 </div>
 <div id="mod" style="display:none"></div>
 
 <script>
-// ===== CONFIG =====
-var AC='727277',SK='evo2026'+AC,GP='088989727277',WA='6288989727277';
-var tg=window.Telegram?.WebApp;if(tg)tg.expand();
+// ==================== CONFIG ====================
+var ADMIN_CODE = '727277';
+var SECRET = 'evo2026' + ADMIN_CODE;
+var GOPAY = '088989727277';
+var WA = '6288989727277';
+var MAX_BATTLE_PER_DAY = 30;
+var MAX_WD_PER_DAY = 500;
 
-// ===== FIREBASE =====
-var db=null;
-try{
+// ==================== TELEGRAM ====================
+var tg = window.Telegram ? window.Telegram.WebApp : null;
+if(tg) { tg.expand(); tg.ready(); }
+
+// ==================== FIREBASE ====================
+var db = null;
+try {
   firebase.initializeApp({
-    apiKey:"AIZaSyC2Gb6WtY1bn05fI_3K9x3",
-    authDomain:"evo-farm-game.firebaseapp.com",
-    databaseURL:"https://evo-farm-game-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId:"evo-farm-game",
-    storageBucket:"evo-farm-game.appspot.com",
-    messagingSenderId:"870289339504",
-    appId:"1:870289339504:web:154c283a0e8b5d4c28a3e"
+    apiKey: "AIZaSyC2Gb6WtY1bn05fI_3K9x3",
+    authDomain: "evo-farm-game.firebaseapp.com",
+    databaseURL: "https://evo-farm-game-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "evo-farm-game",
+    storageBucket: "evo-farm-game.appspot.com",
+    messagingSenderId: "870289339504",
+    appId: "1:870289339504:web:154c283a0e8b5d4c28a3e"
   });
-  db=firebase.database();
-}catch(e){}
-
-// ===== USER ID =====
-var uid=localStorage.getItem('evo_cuid')||'u_'+Math.random().toString(36).substr(2,9);
-localStorage.setItem('evo_cuid',uid);
-try{if(tg&&tg.initDataUnsafe&&tg.initDataUnsafe.user&&tg.initDataUnsafe.user.id)uid='tg_'+tg.initDataUnsafe.user.id}catch(e){}
-
-// ===== ADMIN TAP =====
-var tapCount=0;
-function tapLogo(){tapCount++;if(tapCount>=5){document.getElementById('gameApp').classList.add('hidden');document.getElementById('adminApp').classList.remove('hidden');tapCount=0;loadWithdrawList();loadUserCount()}setTimeout(function(){tapCount=0},2000)}
-function closeAdmin(){document.getElementById('adminApp').classList.add('hidden');document.getElementById('gameApp').classList.remove('hidden');upUI()}
-
-// ===== STATE =====
-var S={pf:80,dm:30,en:12,me:20,cd:[],sl:[],ml:[],lb:0,lbt:0,lwd:0,lwdt:0};
-var PETS=[{id:'sprout',name:'Sprout',emoji:'🌱',rarity:'common',atk:5,def:2,hp:30,stage:1},{id:'bloom',name:'Bloom',emoji:'🌸',rarity:'common',atk:12,def:5,hp:50,stage:2},{id:'cactus',name:'Cactus',emoji:'🌵',rarity:'common',atk:8,def:8,hp:40,stage:1},{id:'treant',name:'Treant',emoji:'🌳',rarity:'rare',atk:22,def:12,hp:80,stage:3},{id:'wolf',name:'Wolf',emoji:'🐺',rarity:'rare',atk:28,def:8,hp:70,stage:2},{id:'dragon',name:'Dragon',emoji:'🐉',rarity:'epic',atk:40,def:18,hp:120,stage:4},{id:'phoenix',name:'Phoenix',emoji:'🔥',rarity:'epic',atk:45,def:15,hp:110,stage:3},{id:'zeus',name:'Zeus',emoji:'⚡',rarity:'legendary',atk:65,def:20,hp:140,stage:4}];
-
-function sv(){localStorage.setItem('evoV7',JSON.stringify(S));if(db)try{db.ref('users/'+uid).set(S)}catch(e){};upUI()}
-function nC(t,lvl){lvl=lvl||1;var m=1+(lvl-1)*0.08;return{id:t.id,name:t.name,emoji:t.emoji,rarity:t.rarity,stage:t.stage,level:lvl,atk:Math.floor(t.atk*m),def:Math.floor(t.def*m),hp:Math.floor(t.hp*m),uid:Math.random().toString(36).slice(2,9),st:0,hu:80}}
-
-// ===== LOAD DATA =====
-function ld(){
-  if(db){db.ref('users/'+uid).once('value').then(function(snap){if(snap.exists())S=snap.val();else ll();fx();sv();rf()}).catch(function(){ll();fx();rf()})}
-  else{ll();fx();rf()}
+  db = firebase.database();
+  console.log('✅ Firebase connected');
+} catch(e) {
+  console.log('⚠️ Firebase offline');
 }
-function ll(){var l=JSON.parse(localStorage.getItem('evoV7')||'null');if(l)S=l}
-function fx(){if(!S.cd||S.cd.length===0)S.cd=[nC(PETS[0],2),nC(PETS[0],2),nC(PETS[1],1),nC(PETS[2],1)];if(!S.me)S.me=20;if(S.en>S.me)S.en=S.me;if(!S.ml)S.ml=[];if(!S.sl)S.sl=[];if(!S.lb)S.lb=0;if(!S.lbt)S.lbt=0;if(!S.lwd)S.lwd=0;if(!S.lwdt)S.lwdt=0}
-function rf(){upUI();sT('cards',document.querySelector('[data-tab="cards"]'))}
 
-function upUI(){document.getElementById('pf').textContent=S.pf;document.getElementById('dm').textContent=S.dm;document.getElementById('en').textContent=S.en;document.getElementById('me').textContent=S.me}
-function ts(m){document.getElementById('lg').textContent=m}
-
-// ===== ENERGY RECHARGE (CLOUD) =====
-setInterval(function(){if(S.en<S.me){S.en++;sv()}},300000);
-
-// ===== RATE LIMIT CHECK =====
-function canBattle(){
-  var today=new Date().toDateString();
-  if(S.lbt!==today){S.lb=0;S.lbt=today;}
-  if(S.lb>=30)return false;
-  S.lb++;sv();return true;
+// ==================== USER ID ====================
+var uid = localStorage.getItem('evo_uid_v7');
+if (!uid) {
+  uid = 'user_' + Math.random().toString(36).substr(2, 9);
+  localStorage.setItem('evo_uid_v7', uid);
 }
-function canWithdraw(){
-  var today=new Date().toDateString();
-  if(S.lwdt!==today){S.lwd=0;S.lwdt=today;}
-  if(S.lwd>=500)return false;
+try {
+  if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.id) {
+    uid = 'tg_' + tg.initDataUnsafe.user.id;
+    localStorage.setItem('evo_uid_v7', uid);
+  }
+} catch(e) {}
+
+// ==================== ADMIN TAP ====================
+var tapCount = 0;
+function tapLogo() {
+  tapCount++;
+  if (tapCount >= 5) {
+    document.getElementById('gameApp').classList.add('hidden');
+    document.getElementById('adminApp').classList.remove('hidden');
+    tapCount = 0;
+    loadWithdrawList();
+  }
+  setTimeout(function() { tapCount = 0; }, 2000);
+}
+function closeAdmin() {
+  document.getElementById('adminApp').classList.add('hidden');
+  document.getElementById('gameApp').classList.remove('hidden');
+  updateUI();
+}
+
+// ==================== GAME DATA ====================
+var PETS = [
+  { id: 'sprout', name: 'Sprout', emoji: '🌱', rarity: 'common', atk: 5, def: 2, hp: 30, stage: 1 },
+  { id: 'bloom', name: 'Bloom', emoji: '🌸', rarity: 'common', atk: 12, def: 5, hp: 50, stage: 2 },
+  { id: 'cactus', name: 'Cactus', emoji: '🌵', rarity: 'common', atk: 8, def: 8, hp: 40, stage: 1 },
+  { id: 'treant', name: 'Treant', emoji: '🌳', rarity: 'rare', atk: 22, def: 12, hp: 80, stage: 3 },
+  { id: 'wolf', name: 'Wolf', emoji: '🐺', rarity: 'rare', atk: 28, def: 8, hp: 70, stage: 2 },
+  { id: 'dragon', name: 'Dragon', emoji: '🐉', rarity: 'epic', atk: 40, def: 18, hp: 120, stage: 4 },
+  { id: 'phoenix', name: 'Phoenix', emoji: '🔥', rarity: 'epic', atk: 45, def: 15, hp: 110, stage: 3 },
+  { id: 'zeus', name: 'Zeus', emoji: '⚡', rarity: 'legendary', atk: 65, def: 20, hp: 140, stage: 4 }
+];
+
+// ==================== STATE ====================
+var state = {
+  profit: 80,
+  diamonds: 30,
+  energy: 12,
+  maxEnergy: 20,
+  cards: [],
+  selected: [],
+  marketListings: [],
+  battleCount: 0,
+  battleDate: '',
+  wdAmount: 0,
+  wdDate: ''
+};
+
+function createCard(t, lvl) {
+  lvl = lvl || 1;
+  var m = 1 + (lvl - 1) * 0.08;
+  return {
+    id: t.id,
+    name: t.name,
+    emoji: t.emoji,
+    rarity: t.rarity,
+    stage: t.stage,
+    level: lvl,
+    atk: Math.floor(t.atk * m),
+    def: Math.floor(t.def * m),
+    hp: Math.floor(t.hp * m),
+    uid: Math.random().toString(36).slice(2, 9),
+    stars: 0,
+    hunger: 80
+  };
+}
+
+// ==================== SAVE / LOAD ====================
+function saveData() {
+  localStorage.setItem('evoV7', JSON.stringify(state));
+  if (db) {
+    try { db.ref('users/' + uid).set(state); } catch(e) {}
+  }
+  updateUI();
+}
+
+function loadFromLocal() {
+  var local = JSON.parse(localStorage.getItem('evoV7') || 'null');
+  if (local) state = local;
+}
+
+function fixState() {
+  if (!state.cards || state.cards.length === 0) {
+    state.cards = [createCard(PETS[0], 2), createCard(PETS[0], 2), createCard(PETS[1], 1), createCard(PETS[2], 1)];
+  }
+  if (!state.maxEnergy) state.maxEnergy = 20;
+  if (state.energy > state.maxEnergy) state.energy = state.maxEnergy;
+  if (!state.marketListings) state.marketListings = [];
+  if (!state.selected) state.selected = [];
+  if (!state.battleDate) state.battleDate = '';
+  if (!state.wdDate) state.wdDate = '';
+  if (!state.battleCount) state.battleCount = 0;
+  if (!state.wdAmount) state.wdAmount = 0;
+}
+
+function loadData() {
+  if (db) {
+    db.ref('users/' + uid).once('value').then(function(snap) {
+      if (snap.exists()) {
+        state = snap.val();
+      } else {
+        loadFromLocal();
+      }
+      fixState();
+      saveData();
+      finishLoad();
+    }).catch(function() {
+      loadFromLocal();
+      fixState();
+      saveData();
+      finishLoad();
+    });
+  } else {
+    loadFromLocal();
+    fixState();
+    saveData();
+    finishLoad();
+  }
+}
+
+function finishLoad() {
+  updateUI();
+  switchTab('cards', document.querySelector('[data-tab="cards"]'));
+  document.getElementById('ct').style.padding = '10px';
+}
+
+// ==================== UI ====================
+function updateUI() {
+  document.getElementById('pf').textContent = state.profit;
+  document.getElementById('dm').textContent = state.diamonds;
+  document.getElementById('en').textContent = state.energy;
+  document.getElementById('me').textContent = state.maxEnergy;
+}
+
+function toast(msg) {
+  document.getElementById('lg').textContent = msg;
+}
+
+// ==================== ENERGY RECHARGE ====================
+setInterval(function() {
+  if (state.energy < state.maxEnergy) {
+    state.energy++;
+    saveData();
+  }
+}, 300000);
+
+// ==================== RATE LIMIT ====================
+function canBattle() {
+  var today = new Date().toDateString();
+  if (state.battleDate !== today) {
+    state.battleCount = 0;
+    state.battleDate = today;
+  }
+  if (state.battleCount >= MAX_BATTLE_PER_DAY) return false;
   return true;
 }
 
-// ===== TABS =====
-document.getElementById('tabBar').addEventListener('click',function(e){if(e.target.classList.contains('tab')){sT(e.target.dataset.tab,e.target)}});
-
-function sT(tab,el){
-  var tabs=document.querySelectorAll('.tab');for(var i=0;i<tabs.length;i++)tabs[i].classList.remove('active');
-  if(el)el.classList.add('active');else{var t=document.querySelector('[data-tab="'+tab+'"]');if(t)t.classList.add('active')}
-  var c=document.getElementById('ct');
-  if(tab==='cards')rCd(c);else if(tab==='breed')c.innerHTML='<p style="color:#94a3b8;font-size:10px;">Pilih 2 kartu di tab Kartu</p><button class="btn btn-primary" onclick="brC()">🧬 Breed (⚡2)</button>';
-  else if(tab==='feed')rFd(c);else if(tab==='battle')rBt(c);else if(tab==='market')rMk(c);else if(tab==='shop')rSp(c);
+function canWithdraw() {
+  var today = new Date().toDateString();
+  if (state.wdDate !== today) {
+    state.wdAmount = 0;
+    state.wdDate = today;
+  }
+  if (state.wdAmount >= MAX_WD_PER_DAY) return false;
+  return true;
 }
 
-function rCd(c){var h='<p style="font-size:9px;color:#94a3b8;">Total: '+S.cd.length+' | Klik (max 2)</p><div class="grid">';for(var i=0;i<S.cd.length;i++){var cd=S.cd[i],sel=S.sl.indexOf(i)>=0?' selected':'',sh='';for(var s=0;s<5;s++)sh+='<span class="'+(s<(cd.st||0)?'on':'off')+'">'+(s<(cd.st||0)?'⭐':'☆')+'</span>';h+='<div class="card rarity-'+cd.rarity+sel+'" onclick="tC('+i+')"><div class="lvl">Lv'+cd.level+'</div><div class="emoji">'+cd.emoji+'</div><div class="name">'+cd.name+'</div><div class="stars">'+sh+'</div><div class="stats-row">⚔'+cd.atk+' 🛡'+cd.def+'</div></div>'}h+='</div><button class="btn btn-green" onclick="evC()">✨ Evolve (⭐5)</button><button class="btn btn-red" onclick="seC()">💵 Sell</button>';c.innerHTML=h}
-function rFd(c){var fo='<option value="">Pilih...</option>';for(var i=0;i<S.cd.length;i++)fo+='<option value="'+i+'">'+S.cd[i].emoji+' '+S.cd[i].name+'</option>';c.innerHTML='<h4>🍖 Feeding</h4><select id="ft">'+fo+'</select><div class="feed-opt"><button class="btn" onclick="dF(\'b\')">🍞💰5</button><button class="btn btn-primary" onclick="dF(\'m\')">🥩💰15</button><button class="btn btn-blue" onclick="dF(\'p\')">🍰💎1</button></div>'}
-function rBt(c){var bo='<option value="">Pilih...</option>';for(var i=0;i<S.cd.length;i++)bo+='<option value="'+i+'">'+S.cd[i].emoji+' '+S.cd[i].name+'</option>';c.innerHTML='<h4>⚔️ Battle ('+S.lb+'/30)</h4><select id="bc">'+bo+'</select><button class="btn btn-green" onclick="sB()">Battle (⚡3)</button><p style="font-size:9px;color:#94a3b8;">Menang +15💰 +2💎 +2⭐</p>'}
-function rMk(c){c.innerHTML='<h4>🏪 Pasar</h4><button class="btn btn-primary" onclick="lsMk()">📤 Jual</button><input id="mp" type="number" value="10" placeholder="Harga 💎"><div id="mk">'+gMk()+'</div>'}
-function rSp(c){c.innerHTML='<div class="pack-title">🎁 BOOSTER PACK</div><button class="btn btn-primary" onclick="bP(1,10)">🥉 Silver - 10💎 (1 Pet)</button><button class="btn btn-gold" onclick="bP(3,25)">🥈 Gold - 25💎 (3 Pet)</button><button class="btn btn-purple" onclick="bP(5,50)">🥇 Platinum - 50💎 (5+1 Bonus)</button><div id="pr" style="text-align:center;margin:6px;font-size:20px"></div><hr style="border-color:#334155;margin:6px 0"><button class="btn btn-blue" onclick="bD()">💰 Beli 120💎 (Rp15K)</button><button class="btn btn-green" onclick="bE()">⚡ 10 Energi (5💎)</button><button class="btn btn-gold" onclick="bG()">🪙 500 Profit (10💎)</button><button class="btn" onclick="rd()">🎟️ Redeem</button><hr style="border-color:#334155;margin:6px 0"><button class="btn btn-red" onclick="wD()">💸 Tukar 💎 → Rp<br><small>100💎 = Rp10K | Max 500/hari</small></button>'}
+// ==================== TAB NAVIGATION ====================
+document.getElementById('tabBar').addEventListener('click', function(e) {
+  if (e.target.classList.contains('tab')) {
+    switchTab(e.target.dataset.tab, e.target);
+  }
+});
 
-// ===== CARD ACTIONS =====
-function tC(i){var p=S.sl.indexOf(i);if(p>=0)S.sl.splice(p,1);else if(S.sl.length<2)S.sl.push(i);rCd(document.getElementById('ct'))}
-function brC(){if(S.sl.length!==2)return ts('⚠️ Pilih 2!');if(S.en<2)return ts('⚡ Kurang!');var s=S.sl.slice().sort(function(a,b){return b-a}),p1=S.cd[s[0]],p2=S.cd[s[1]];S.cd.splice(s[0],1);S.cd.splice(s[1],1);var ns=Math.floor((p1.level+p2.level)/2)+1;if(ns>4)ns=4;var cand=PETS.filter(function(c){return c.stage===ns});if(!cand.length)cand=PETS;var b=nC(cand[Math.floor(Math.random()*cand.length)],ns);S.cd.push(b);S.en-=2;S.sl=[];sv();ts('🧬 '+b.emoji+' '+b.name)}
-function evC(){if(S.sl.length!==1)return ts('⚠️ Pilih 1!');var i=S.sl[0],c=S.cd[i];if((c.st||0)<5)return ts('⭐ '+(c.st||0)+'/5');if(S.pf<10)return ts('💰 Kurang!');S.pf-=10;c.level=Math.min(4,c.level+1);c.atk=Math.floor(c.atk*1.15);c.def=Math.floor(c.def*1.15);c.hp=Math.floor(c.hp*1.15);c.st=0;c.hu=100;S.sl=[];sv();ts('✨ Lv'+c.level+'!')}
-function seC(){if(!S.sl.length)return ts('⚠️ Pilih!');var s=S.sl.slice().sort(function(a,b){return b-a}),tot=0;s.forEach(function(i){tot+=S.cd[i].atk+S.cd[i].def;S.cd.splice(i,1)});S.pf+=tot;S.sl=[];sv();ts('💵 +'+tot)}
-function dF(tp){var i=parseInt(document.getElementById('ft').value);if(isNaN(i)||!S.cd[i])return;var c=S.cd[i],cost,hg,sc;if(tp==='b'){cost=5;hg=30;sc=.25;if(S.pf<cost)return ts('💰');S.pf-=cost}else if(tp==='m'){cost=15;hg=60;sc=.45;if(S.pf<cost)return ts('💰');S.pf-=cost}else{cost=1;hg=100;sc=.7;if(S.dm<cost)return ts('💎');S.dm-=cost}c.hu=Math.min(100,(c.hu||50)+hg);if(Math.random()<sc&&(c.st||0)<5){c.st=(c.st||0)+1;ts('⭐ +1')}if(S.en>0)S.en-=2;sv();sT('feed')}
-function sB(){if(!canBattle())return ts('❌ Max 30 battle/hari!');var i=parseInt(document.getElementById('bc').value);if(isNaN(i)||!S.cd[i])return;if(S.en<3)return ts('⚡ Kurang!');S.en-=3;S.pf+=15;S.dm+=2;var c=S.cd[i];if((c.st||0)<5)c.st=Math.min(5,(c.st||0)+2);sv();ts('🏆 +15💰 +2💎');rBt(document.getElementById('ct'))}
-function gMk(){if(!S.ml.length)return'<p style="font-size:9px;color:#94a3b8;">Kosong</p>';return S.ml.map(function(l,i){return'<div class="battle-card"><div>'+l.emoji+' '+l.name+' Lv'+l.level+'</div><div>💎'+l.price+' <button class="btn btn-green" style="padding:3px 6px;font-size:9px;width:auto" onclick="bMk('+i+')">Beli</button></div></div>'}).join('')}
-function lsMk(){if(!S.sl.length)return;var p=parseInt(document.getElementById('mp').value)||10;var s=S.sl.slice().sort(function(a,b){return b-a});s.forEach(function(i){S.ml.push({...S.cd[i],price:p});S.cd.splice(i,1)});S.sl=[];sv();sT('market');ts('📤 Terlisting!')}
-function bMk(i){var l=S.ml[i];if(!l||S.dm<l.price)return ts('💎 Kurang!');S.dm-=l.price;S.cd.push({...l});S.ml.splice(i,1);sv();sT('market')}
-function bP(n,cost){if(S.dm<cost)return ts('💎 Butuh '+cost);S.dm-=cost;var res='';for(var i=0;i<n;i++){var r=Math.random(),cand;if(r<0.4)cand=PETS.filter(function(c){return c.rarity==='common'});else if(r<0.7)cand=PETS.filter(function(c){return c.rarity==='rare'});else if(r<0.9)cand=PETS.filter(function(c){return c.rarity==='epic'});else if(r<0.97)cand=PETS.filter(function(c){return c.rarity==='legendary'});else cand=PETS.filter(function(c){return c.rarity==='mythic'});if(!cand.length)cand=PETS;var nc=nC(cand[Math.floor(Math.random()*cand.length)]);S.cd.push(nc);res+='<span style="font-size:22px">'+nc.emoji+'</span> '}if(n>=5){var rare=PETS.filter(function(c){return c.rarity==='rare'||c.rarity==='epic'});var gc=nC(rare[Math.floor(Math.random()*rare.length)]);S.cd.push(gc);res+='<br><b>🎁 Bonus:</b> '+gc.emoji+' '+gc.name+' ('+gc.rarity+')'}document.getElementById('pr').innerHTML=res;sv();ts('🎁 '+n+' pet!')}
-function bD(){var code='EVO'+Math.floor(Math.random()*9000+1000);document.getElementById('mod').innerHTML='<div class="modal"><
+function switchTab(tab, el) {
+  var tabs = document.querySelectorAll('.tab');
+  for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove('active');
+  if (el) el.classList.add('active');
+  else {
+    var t = document.querySelector('[data-tab="' + tab + '"]');
+    if (t) t.classList.add('active');
+  }
+
+  var content = document.getElementById('ct');
+  if (tab === 'cards') renderCards(content);
+  else if (tab === 'breed') content.innerHTML = '<p style="color:#94a3b8;font-size:10px;">Pilih 2 kartu di tab Kartu</p><button class="btn btn-primary" onclick="breedCards()">🧬 Breed (⚡2)</button>';
+  else if (tab === 'feed') renderFeed(content);
+  else if (tab === 'battle') renderBattle(content);
+  else if (tab === 'market') renderMarket(content);
+  else if (tab === 'shop') renderShop(content);
+}
+
+// ==================== RENDER FUNCTIONS ====================
+function renderCards(c) {
+  var h = '<p style="font-size:9px;color:#94a3b8;">Total: ' + state.cards.length + ' | Klik (max 2)</p><div class="grid">';
+  for (var i = 0; i < state.cards.length; i++) {
+    var cd = state.cards[i];
+    var sel = state.selected.indexOf(i) >= 0 ? ' selected' : '';
+    var sh = '';
+    for (var s = 0; s < 5; s++) sh += '<span class="' + (s < (cd.stars || 0) ? 'on' : 'off') + '">' + (s < (cd.stars || 0) ? '⭐' : '☆') + '</span>';
+    h += '<div class="card rarity-' + cd.rarity + sel + '" onclick="tapCard(' + i + ')"><div class="lvl">Lv' + cd.level + '</div><div class="emoji">' + cd.emoji + '</div><div class="name">' + cd.name + '</div><div class="stars">' + sh + '</div><div class="stats-row">⚔' + cd.atk + ' 🛡' + cd.def + '</div></div>';
+  }
+  h += '</div><button class="btn btn-green" onclick="evolveCard()">✨ Evolve (⭐5)</button><button class="btn btn-red" onclick="sellCard()">💵 Sell</button>';
+  c.innerHTML = h;
+}
+
+function renderFeed(c) {
+  var fo = '<option value="">Pilih makhluk...</option>';
+  for (var i = 0; i < state.cards.length; i++) fo += '<option value="' + i + '">' + state.cards[i].emoji + ' ' + state.cards[i].name + '</option>';
+  c.innerHTML = '<h4>🍖 Feeding</h4><select id="feedTarget">' + fo + '</select><div class="feed-opt"><button class="btn" onclick="doFeed(\'basic\')">🍞 💰5</button><button class="btn btn-primary" onclick="doFeed(\'meat\')">🥩 💰15</button><button class="btn btn-blue" onclick="doFeed(\'premium\')">🍰 💎1</button></div>';
+}
+
+function renderBattle(c) {
+  var bo = '<option value="">Pilih kartu...</option>';
+  for (var i = 0; i < state.cards.length; i++) bo += '<option value="' + i + '">' + state.cards[i].emoji + ' ' + state.cards[i].name + '</option>';
+  c.innerHTML = '<h4>⚔️ Battle (' + state.battleCount + '/' + MAX_BATTLE_PER_DAY + ')</h4><select id="battleCard">' + bo + '</select><button class="btn btn-green" onclick="startBattle()">Battle (⚡3)</button><p style="font-size:9px;color:#94a3b8;">Menang +15💰 +2💎 +2⭐</p>';
+}
+
+function renderMarket(c) {
+  c.innerHTML = '<h4>🏪 Pasar</h4><button class="btn btn-primary" onclick="listToMarket()">📤 Jual</button><input id="marketPrice" type="number" value="10" placeholder="Harga 💎"><div id="marketList">' + getMarketHTML() + '</div>';
+}
+
+function renderShop(c) {
+  c.innerHTML = '<div class="pack-title">🎁 BOOSTER PACK</div>' +
+    '<button class="btn btn-primary" onclick="buyPack(1,10)">🥉 Silver - 10💎 (1 Pet)</button>' +
+    '<button class="btn btn-gold" onclick="buyPack(3,25)">🥈 Gold - 25💎 (3 Pet)</button>' +
+    '<button class="btn btn-purple" onclick="buyPack(5,50)">🥇 Platinum - 50💎 (5+1 Bonus)</button>' +
+    '<div id="packResult" style="text-align:center;margin:6px;font-size:20px"></div>' +
+    '<hr style="border-color:#334155;margin:6px 0">' +
+    '<button class="btn btn-blue" onclick="buyDiamond()">💰 Beli 120💎 (Rp15K)</button>' +
+    '<button class="btn btn-green" onclick="buyEnergy()">⚡ 10 Energi (5💎)</button>' +
+    '<button class="btn btn-gold" onclick="buyGold()">🪙 500 Profit (10💎)</button>' +
+    '<button class="btn" onclick="redeemCode()">🎟️ Redeem</button>' +
+    '<hr style="border-color:#334155;margin:6px 0">' +
+    '<button class="btn btn-red" onclick="withdrawDiamond()">💸 WD 💎 → Rp<br><small>100💎 = Rp10K | Max 500/hari</small></button>';
+}
+
+// ==================== CARD ACTIONS ====================
+function tapCard(i) {
+  var p = state.selected.indexOf(i);
+  if (p >= 0) state.selected.splice(p, 1);
+  else if (state.selected.length < 2) state.selected.push(i);
+  renderCards(document.getElementById('ct'));
+}
+
+function breedCards() {
+  if (state.selected.length !== 2) return toast('⚠️ Pilih 2 kartu!');
+  if (state.energy < 2) return toast('⚡ Energi kurang!');
+  var s = state.selected.slice().sort(function(a, b) 
