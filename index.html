@@ -2,7 +2,7 @@
 <html lang="id"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Evo Cards v7.5.4</title>
+<title>Evo Cards v7.6 - 50 Pets</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,sans-serif}
@@ -41,7 +41,7 @@ input,select{width:100%;padding:10px;margin:4px 0;border-radius:8px;border:none;
 </style></head><body>
 
 <div class="app" id="gameApp">
-  <div class="top" onclick="tapLogo()"><div class="logo">⚡ EVO CARDS v7.5.4</div>
+  <div class="top" onclick="tapLogo()"><div class="logo">⚡ EVO CARDS v7.6</div>
     <div class="stats">
       <div class="badge">💰<span id="pf">80</span></div>
       <div class="badge">💎<span id="dm">30</span></div>
@@ -57,7 +57,7 @@ input,select{width:100%;padding:10px;margin:4px 0;border-radius:8px;border:none;
     <div class="tab" data-tab="shop">🛒Shop</div>
   </div>
   <div class="content" id="ct"></div>
-  <div class="log" id="lg">✅ v7.5.4 Ready</div>
+  <div class="log" id="lg">🃏 50 Pets Ready!</div>
 </div>
 
 <div class="app hidden" id="adminApp">
@@ -78,15 +78,74 @@ input,select{width:100%;padding:10px;margin:4px 0;border-radius:8px;border:none;
 var AC='727277',SK='evo2026'+AC,GP='088989727277',WA='6288989727277';
 var tg=window.Telegram?.WebApp;if(tg)tg.expand();
 
-var PETS=[{id:'sprout',name:'Sprout',emoji:'🌱',rarity:'common',atk:5,def:2,hp:30,stage:1},{id:'bloom',name:'Bloom',emoji:'🌸',rarity:'common',atk:12,def:5,hp:50,stage:2},{id:'cactus',name:'Cactus',emoji:'🌵',rarity:'common',atk:8,def:8,hp:40,stage:1},{id:'treant',name:'Treant',emoji:'🌳',rarity:'rare',atk:22,def:12,hp:80,stage:3},{id:'wolf',name:'Wolf',emoji:'🐺',rarity:'rare',atk:28,def:8,hp:70,stage:2},{id:'dragon',name:'Dragon',emoji:'🐉',rarity:'epic',atk:40,def:18,hp:120,stage:4},{id:'phoenix',name:'Phoenix',emoji:'🔥',rarity:'epic',atk:45,def:15,hp:110,stage:3},{id:'zeus',name:'Zeus',emoji:'⚡',rarity:'legendary',atk:65,def:20,hp:140,stage:4}];
+// ===== 50 PETS =====
+var PETS=[
+  // COMMON (16) - Stage 1-2
+  {id:1,name:'Sprout',emoji:'🌱',rarity:'common',atk:5,def:2,hp:30,stage:1},
+  {id:2,name:'Worm',emoji:'🐛',rarity:'common',atk:4,def:3,hp:28,stage:1},
+  {id:3,name:'Snail',emoji:'🐌',rarity:'common',atk:3,def:5,hp:35,stage:1},
+  {id:4,name:'Fish',emoji:'🐟',rarity:'common',atk:6,def:2,hp:26,stage:1},
+  {id:5,name:'Bee',emoji:'🐝',rarity:'common',atk:7,def:1,hp:22,stage:1},
+  {id:6,name:'Ant',emoji:'🐜',rarity:'common',atk:4,def:4,hp:32,stage:1},
+  {id:7,name:'Mouse',emoji:'🐭',rarity:'common',atk:6,def:3,hp:25,stage:1},
+  {id:8,name:'Frog',emoji:'🐸',rarity:'common',atk:5,def:3,hp:30,stage:1},
+  {id:9,name:'Bloom',emoji:'🌸',rarity:'common',atk:10,def:5,hp:45,stage:2},
+  {id:10,name:'Puppy',emoji:'🐶',rarity:'common',atk:12,def:4,hp:40,stage:2},
+  {id:11,name:'Kitten',emoji:'🐱',rarity:'common',atk:11,def:3,hp:38,stage:2},
+  {id:12,name:'Bunny',emoji:'🐰',rarity:'common',atk:9,def:6,hp:42,stage:2},
+  {id:13,name:'Duck',emoji:'🦆',rarity:'common',atk:10,def:5,hp:44,stage:2},
+  {id:14,name:'Piglet',emoji:'🐷',rarity:'common',atk:8,def:7,hp:50,stage:2},
+  {id:15,name:'Lamb',emoji:'🐑',rarity:'common',atk:7,def:8,hp:55,stage:2},
+  {id:16,name:'Cactus',emoji:'🌵',rarity:'common',atk:8,def:8,hp:40,stage:1},
 
-var S=JSON.parse(localStorage.getItem('evo754')||'null')||{pf:80,dm:30,en:12,me:20,cd:[],sl:[],ml:[],bc:0,bd:'',wa:0,wd:''};
+  // RARE (14) - Stage 2-3
+  {id:17,name:'Wolf',emoji:'🐺',rarity:'rare',atk:22,def:8,hp:65,stage:2},
+  {id:18,name:'Eagle',emoji:'🦅',rarity:'rare',atk:25,def:6,hp:55,stage:2},
+  {id:19,name:'Snake',emoji:'🐍',rarity:'rare',atk:20,def:10,hp:60,stage:2},
+  {id:20,name:'Fox',emoji:'🦊',rarity:'rare',atk:18,def:12,hp:58,stage:2},
+  {id:21,name:'Owl',emoji:'🦉',rarity:'rare',atk:24,def:7,hp:52,stage:2},
+  {id:22,name:'Shark',emoji:'🦈',rarity:'rare',atk:30,def:10,hp:70,stage:3},
+  {id:23,name:'Tiger',emoji:'🐯',rarity:'rare',atk:28,def:14,hp:80,stage:3},
+  {id:24,name:'Bear',emoji:'🐻',rarity:'rare',atk:26,def:16,hp:85,stage:3},
+  {id:25,name:'Gorilla',emoji:'🦍',rarity:'rare',atk:32,def:12,hp:75,stage:3},
+  {id:26,name:'Rhino',emoji:'🦏',rarity:'rare',atk:30,def:18,hp:90,stage:3},
+  {id:27,name:'Crocodile',emoji:'🐊',rarity:'rare',atk:34,def:14,hp:72,stage:3},
+  {id:28,name:'Cheetah',emoji:'🐆',rarity:'rare',atk:36,def:8,hp:55,stage:3},
+  {id:29,name:'Scorpion',emoji:'🦂',rarity:'rare',atk:33,def:13,hp:62,stage:3},
+  {id:30,name:'Treant',emoji:'🌳',rarity:'rare',atk:22,def:12,hp:80,stage:3},
+
+  // EPIC (12) - Stage 3-4
+  {id:31,name:'Dragon',emoji:'🐉',rarity:'epic',atk:45,def:20,hp:120,stage:4},
+  {id:32,name:'Phoenix',emoji:'🔥',rarity:'epic',atk:50,def:15,hp:110,stage:3},
+  {id:33,name:'Kraken',emoji:'🐙',rarity:'epic',atk:42,def:22,hp:130,stage:4},
+  {id:34,name:'Mammoth',emoji:'🦣',rarity:'epic',atk:40,def:28,hp:140,stage:4},
+  {id:35,name:'Cerberus',emoji:'🐕',rarity:'epic',atk:48,def:18,hp:115,stage:3},
+  {id:36,name:'Hydra',emoji:'🐍',rarity:'epic',atk:44,def:24,hp:125,stage:4},
+  {id:37,name:'Griffin',emoji:'🦅',rarity:'epic',atk:52,def:14,hp:105,stage:3},
+  {id:38,name:'Wyvern',emoji:'🐲',rarity:'epic',atk:55,def:12,hp:100,stage:4},
+  {id:39,name:'Basilisk',emoji:'🦎',rarity:'epic',atk:46,def:21,hp:118,stage:3},
+  {id:40,name:'Chimera',emoji:'🦁',rarity:'epic',atk:47,def:19,hp:122,stage:4},
+  {id:41,name:'Behemoth',emoji:'🦏',rarity:'epic',atk:38,def:30,hp:150,stage:4},
+  {id:42,name:'Leviathan',emoji:'🐋',rarity:'epic',atk:36,def:32,hp:155,stage:4},
+
+  // LEGENDARY (8) - Stage 4
+  {id:43,name:'Zeus',emoji:'⚡',rarity:'legendary',atk:70,def:25,hp:160,stage:4},
+  {id:44,name:'Odin',emoji:'👁️',rarity:'legendary',atk:65,def:30,hp:170,stage:4},
+  {id:45,name:'Ra',emoji:'☀️',rarity:'legendary',atk:75,def:20,hp:150,stage:4},
+  {id:46,name:'Shiva',emoji:'🔱',rarity:'legendary',atk:68,def:28,hp:165,stage:4},
+  {id:47,name:'Thor',emoji:'🔨',rarity:'legendary',atk:78,def:18,hp:145,stage:4},
+  {id:48,name:'Hades',emoji:'💀',rarity:'legendary',atk:60,def:35,hp:180,stage:4},
+  {id:49,name:'Poseidon',emoji:'🌊',rarity:'legendary',atk:62,def:33,hp:175,stage:4},
+  {id:50,name:'Gaia',emoji:'🌍',rarity:'legendary',atk:55,def:40,hp:200,stage:4}
+];
+
+var S=JSON.parse(localStorage.getItem('evo7650')||'null')||{pf:80,dm:30,en:12,me:20,cd:[],sl:[],ml:[],bc:0,bd:'',wa:0,wd:''};
 
 function nC(t,lvl){lvl=lvl||1;var m=1+(lvl-1)*0.08;return{id:t.id,name:t.name,emoji:t.emoji,rarity:t.rarity,stage:t.stage,level:lvl,atk:Math.floor(t.atk*m),def:Math.floor(t.def*m),hp:Math.floor(t.hp*m),uid:Math.random().toString(36).slice(2,9),st:0,hu:100}}
-function sv(){localStorage.setItem('evo754',JSON.stringify(S));upUI()}
+function sv(){localStorage.setItem('evo7650',JSON.stringify(S));upUI()}
 function upUI(){document.getElementById('pf').textContent=S.pf;document.getElementById('dm').textContent=S.dm;document.getElementById('en').textContent=S.en;document.getElementById('me').textContent=S.me}
 function ts(m){document.getElementById('lg').textContent=m}
-function fx(){if(!S.cd||S.cd.length===0)S.cd=[nC(PETS[0],2),nC(PETS[0],2),nC(PETS[1],1),nC(PETS[2],1)];if(!S.me)S.me=20;if(S.en>S.me)S.en=S.me;if(!S.ml)S.ml=[];if(!S.sl)S.sl=[]}
+function fx(){if(!S.cd||S.cd.length===0)S.cd=[nC(PETS[0],2),nC(PETS[0],2),nC(PETS[8],1),nC(PETS[16],1)];if(!S.me)S.me=20;if(S.en>S.me)S.en=S.me;if(!S.ml)S.ml=[];if(!S.sl)S.sl=[]}
 
 setInterval(function(){for(var i=0;i<S.cd.length;i++)S.cd[i].hu=Math.max(0,(S.cd[i].hu||100)-3);sv()},600000);
 setInterval(function(){if(S.en<S.me){S.en++;sv()}},300000);
@@ -103,11 +162,11 @@ function sT(tab,el){
   else if(tab==='breed')c.innerHTML='<p style="color:#94a3b8;font-size:10px;">Pilih 2 kartu di tab Kartu<br>⚠️ Hunger <30% tidak bisa breed!</p><button class="btn btn-primary" onclick="brC()">🧬 Breed (⚡2)</button>';
   else if(tab==='battle')rBt(c);else if(tab==='market')rMk(c);else if(tab==='shop')rSp(c);
 }
-function rCd(c){var h='<p style="font-size:9px;color:#94a3b8;">Total: '+S.cd.length+' | Klik (max 2)</p><div class="grid">';for(var i=0;i<S.cd.length;i++){var cd=S.cd[i],sel=S.sl.indexOf(i)>=0?' selected':'',sh='';for(var s=0;s<5;s++)sh+='<span class="'+(s<(cd.st||0)?'on':'off')+'">'+(s<(cd.st||0)?'⭐':'☆')+'</span>';var hu=cd.hu||100,hc=hu>=70?'#22c55e':hu>=30?'#f59e0b':'#ef4444';h+='<div class="card rarity-'+cd.rarity+sel+'" onclick="tC('+i+')"><div class="lvl">Lv'+cd.level+'</div><div class="emoji">'+cd.emoji+'</div><div class="name">'+cd.name+'</div><div class="stars">'+sh+'</div><div class="stats-row">⚔'+cd.atk+' 🛡'+cd.def+'</div><div class="hunger-bar"><div class="hunger-fill" style="width:'+hu+'%;background:'+hc+'"></div></div><span style="font-size:6px;color:#94a3b8;">🍖'+hu+'%</span></div>'}h+='</div><button class="btn btn-green" onclick="evC()">✨ Evolve (⭐5, 💰10)</button><button class="btn btn-red" onclick="seC()">💵 Sell</button>';c.innerHTML=h}
+function rCd(c){var h='<p style="font-size:9px;color:#94a3b8;">Total: '+S.cd.length+'/50 | Klik (max 2)</p><div class="grid">';for(var i=0;i<S.cd.length;i++){var cd=S.cd[i],sel=S.sl.indexOf(i)>=0?' selected':'',sh='';for(var s=0;s<5;s++)sh+='<span class="'+(s<(cd.st||0)?'on':'off')+'">'+(s<(cd.st||0)?'⭐':'☆')+'</span>';var hu=cd.hu||100,hc=hu>=70?'#22c55e':hu>=30?'#f59e0b':'#ef4444';h+='<div class="card rarity-'+cd.rarity+sel+'" onclick="tC('+i+')"><div class="lvl">Lv'+cd.level+'</div><div class="emoji">'+cd.emoji+'</div><div class="name">'+cd.name+'</div><div class="stars">'+sh+'</div><div class="stats-row">⚔'+cd.atk+' 🛡'+cd.def+'</div><div class="hunger-bar"><div class="hunger-fill" style="width:'+hu+'%;background:'+hc+'"></div></div><span style="font-size:6px;color:#94a3b8;">🍖'+hu+'%</span></div>'}h+='</div><button class="btn btn-green" onclick="evC()">✨ Evolve (⭐5, 💰10)</button><button class="btn btn-red" onclick="seC()">💵 Sell</button>';c.innerHTML=h}
 function rFd(c){var fo='<option value="">Pilih kartu...</option>';for(var i=0;i<S.cd.length;i++)fo+='<option value="'+i+'">'+S.cd[i].emoji+' '+S.cd[i].name+' 🍖'+(S.cd[i].hu||100)+'%</option>';c.innerHTML='<div class="feeding-info">🍖 <b>FEEDING</b><br>Kartu lapar -3/10 menit | <30% tidak bisa breed</div><h4>🍖 Pilih & Makanan</h4><select id="ft">'+fo+'</select><div class="feed-opt"><button class="btn" onclick="dF(\'b\')">🍞 💰5 (+30%)</button><button class="btn btn-primary" onclick="dF(\'m\')">🥩 💰15 (+60%)</button><button class="btn btn-blue" onclick="dF(\'p\')">🍰 💎1 (+100%)</button></div>'}
 function rBt(c){var bo='<option value="">Pilih...</option>';for(var i=0;i<S.cd.length;i++)bo+='<option value="'+i+'">'+S.cd[i].emoji+' '+S.cd[i].name+'</option>';c.innerHTML='<h4>⚔️ Battle</h4><select id="bc">'+bo+'</select><button class="btn btn-green" onclick="sB()">Battle (⚡3)</button><p style="font-size:9px;color:#94a3b8;">Menang +15💰 +2💎 +2⭐</p>'}
 function rMk(c){c.innerHTML='<h4>🏪 Pasar</h4><button class="btn btn-primary" onclick="lsMk()">📤 Jual (min 5💎)</button><input id="mp" type="number" value="10" placeholder="Harga 💎"><div id="mk">'+gMk()+'</div>'}
-function rSp(c){c.innerHTML='<div class="pack-title">🎁 BOOSTER PACK</div><button class="btn btn-primary" onclick="bP(1,10)">🥉 Silver (1) - 10💎</button><button class="btn btn-gold" onclick="bP(3,25)">🥈 Gold (3) - 25💎</button><button class="btn btn-purple" onclick="bP(5,50)">🥇 Platinum (5+1) - 50💎</button><div id="pr" style="text-align:center;margin:6px;font-size:20px"></div><hr style="border-color:#334155;margin:6px 0"><button class="btn btn-blue" onclick="bD()">💰 Beli 120💎 (Rp15K)</button><button class="btn btn-green" onclick="bE()">⚡ 10 Energi (5💎)</button><button class="btn btn-gold" onclick="bG()">🪙 500 Profit (10💎)</button><button class="btn" onclick="rd()">🎟️ Redeem</button><hr style="border-color:#334155;margin:6px 0"><button class="btn btn-red" onclick="wD()">💸 WD 💎 → Rp<br><small>100💎=Rp10K</small></button>'}
+function rSp(c){c.innerHTML='<div class="pack-title">🎁 BOOSTER PACK (50 Pets!)</div><button class="btn btn-primary" onclick="bP(1,10)">🥉 Silver (1) - 10💎</button><button class="btn btn-gold" onclick="bP(3,25)">🥈 Gold (3) - 25💎</button><button class="btn btn-purple" onclick="bP(5,50)">🥇 Platinum (5+1) - 50💎</button><div id="pr" style="text-align:center;margin:6px;font-size:20px"></div><hr style="border-color:#334155;margin:6px 0"><button class="btn btn-blue" onclick="bD()">💰 Beli 120💎 (Rp15K)</button><button class="btn btn-green" onclick="bE()">⚡ 10 Energi (5💎)</button><button class="btn btn-gold" onclick="bG()">🪙 500 Profit (10💎)</button><button class="btn" onclick="rd()">🎟️ Redeem</button><hr style="border-color:#334155;margin:6px 0"><button class="btn btn-red" onclick="wD()">💸 WD 💎 → Rp<br><small>100💎=Rp10K</small></button>'}
 
 function tC(i){var p=S.sl.indexOf(i);if(p>=0)S.sl.splice(p,1);else if(S.sl.length<2)S.sl.push(i);rCd(document.getElementById('ct'))}
 function brC(){if(S.sl.length!==2)return ts('⚠️ Pilih 2!');if(S.en<2)return ts('⚡ Kurang!');var s=S.sl.slice().sort(function(a,b){return b-a}),p1=S.cd[s[0]],p2=S.cd[s[1]];if((p1.hu||100)<30||(p2.hu||100)<30)return ts('😰 Lapar!');S.cd.splice(s[0],1);S.cd.splice(s[1],1);var ns=Math.floor((p1.level+p2.level)/2)+1;if(ns>4)ns=4;var cand=PETS.filter(function(c){return c.stage===ns});if(!cand.length)cand=PETS;var b=nC(cand[Math.floor(Math.random()*cand.length)],ns);S.cd.push(b);S.en-=2;S.sl=[];sv();ts('🧬 '+b.emoji+' '+b.name)}
@@ -122,29 +181,5 @@ function bP(n,cost){if(S.dm<cost)return ts('💎 Butuh '+cost);S.dm-=cost;var re
 function bD(){var code='EVO'+Math.floor(Math.random()*9000+1000);var modal=document.createElement('div');modal.innerHTML='<div style="position:fixed;inset:0;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;z-index:2000"><div style="background:#1e293b;border:2px solid #475569;border-radius:14px;padding:14px;max-width:320px;width:100%;text-align:center"><b>💰 Rp15.000</b><br>GoPay: '+GP+'<br>Ref: '+code+'<br><button class="btn btn-primary" onclick="window.open(\'https://wa.me/'+WA+'?text=Bayar%20'+code+'\')" style="margin:4px">WA Admin</button><button class="btn" onclick="this.parentElement.parentElement.parentElement.remove()" style="margin:4px">Close</button></div></div>';document.body.appendChild(modal.firstChild)}
 function bE(){if(S.dm<5)return ts('💎 Butuh 5');S.dm-=5;S.en=Math.min(S.me,S.en+10);sv();ts('⚡ +10')}
 function bG(){if(S.dm<10)return ts('💎 Butuh 10');S.dm-=10;S.pf+=500;sv();ts('🪙 +500')}
-
-// ===== REDEEM (FIX #5) =====
 function rd(){
-  var now=Date.now(),rl=JSON.parse(localStorage.getItem('evoRL')||'{"c":0,"t":0}');
-  if(now-rl.t>3600000){rl.c=0;rl.t=now}
-  if(rl.c>=3)return ts('❌ Blokir 1 jam!');
-  var code=prompt('Kode redeem:');if(!code||code.length<8)return ts('❌ Min 8 karakter!');
-  try{
-    var raw=atob(code),p=raw.split('|'),d=p[0],ts2=p[1];
-    if(btoa(d+'|'+ts2+'|'+SK).replace(/=/g,'')!==code){rl.c++;localStorage.setItem('evoRL',JSON.stringify(rl));return ts('❌ Salah! ('+(3-rl.c)+'x)')}
-    var used=JSON.parse(localStorage.getItem('evoU')||'[]');if(used.indexOf(code)>=0)return ts('⚠️ Sudah');
-    S.dm+=parseInt(d);used.push(code);localStorage.setItem('evoU',JSON.stringify(used));rl.c=0;localStorage.setItem('evoRL',JSON.stringify(rl));sv();ts('🎉 +'+d+'💎')
-  }catch(e){rl.c++;localStorage.setItem('evoRL',JSON.stringify(rl));ts('❌ Error')}
-}
-
-function wD(){if(S.dm<100)return ts('💎 Min 100!');var amt=Math.floor(S.dm/100)*100;var rp=Math.floor(amt/100)*10000;var rek=prompt('Nomor GoPay/BCA:\n\nTukar '+amt+'💎 = Rp'+rp.toLocaleString());if(!rek)return;if(confirm('Konfirmasi?')){S.dm-=amt;sv();var w=JSON.parse(localStorage.getItem('evoWD')||'[]');w.push({amt:amt,rp:rp,rek:rek,time:new Date().toLocaleString(),status:'Pending'});localStorage.setItem('evoWD',JSON.stringify(w));ts('✅ WD dikirim!')}}
-
-function adminLogin(){if(document.getElementById('adminPass').value===AC){document.getElementById('adminLogin').classList.add('hidden');document.getElementById('adminPanel').classList.remove('hidden');loadAd();loadWD();loadFees()}}
-function genCode(){var d=document.getElementById('genDia').value||120,n=document.getElementById('genNote').value||'',ts2=Date.now(),code=btoa(d+'|'+ts2+'|'+SK).replace(/=/g,'');document.getElementById('genOut').innerHTML='<div class="codebox">'+code+'</div><button class="btn" onclick="navigator.clipboard.writeText(\''+code+'\')">📋 Copy</button>';var h=JSON.parse(localStorage.getItem('evoH')||'[]');h.unshift({code,d,note:n,time:new Date().toLocaleString()});localStorage.setItem('evoH',JSON.stringify(h.slice(0,50)));loadAd()}
-function loadAd(){document.getElementById('histList').innerHTML=JSON.parse(localStorage.getItem('evoH')||'[]').map(function(h){return'<div style="padding:3px;border-bottom:1px solid #334155">'+h.time+' - '+h.d+'💎<br><span style="font-size:8px">'+h.code+'</span></div>'}).join('')}
-function loadWD(){var w=JSON.parse(localStorage.getItem('evoWD')||'[]');document.getElementById('wdList').innerHTML=w.map(function(x,i){var c=x.status==='Done'?'#22c55e':'#facc15';return'<div style="padding:4px;border-bottom:1px solid #334155">'+x.time+'<br>'+x.amt+'💎 = Rp'+x.rp.toLocaleString()+'<br>Rek: '+x.rek+'<br><span style="color:'+c+'">'+x.status+'</span> '+(x.status==='Pending'?'<button class="btn btn-green" style="padding:2px 5px;font-size:8px;width:auto" onclick="dnW('+i+')">✅</button>':'')+'</div>'}).join('')||'<span style="color:#94a3b8">Tidak ada</span>'}
-function dnW(i){var w=JSON.parse(localStorage.getItem('evoWD')||'[]');if(w[i]){w[i].status='Done';localStorage.setItem('evoWD',JSON.stringify(w));loadWD()}}
-function loadFees(){document.getElementById('feeDisplay').textContent=(parseInt(localStorage.getItem('evoFees')||'0'))+' 💎'}
-
-fx();sv();sT('cards',document.querySelector('[data-tab="cards"]'));
-</script></body></html>
+  var now=Date.now(),rl=JSON.parse(localStorage.getItem('evoR
