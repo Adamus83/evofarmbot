@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Evo Cards v9.0 — Fixed</title>
+<title>Evo Cards v9.2 — OTP Admin</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
 body{background:#0b0f19;color:#e2e8f0;display:flex;justify-content:center;min-height:100vh}
 .app{width:100%;max-width:480px;background:#151b2b;min-height:100vh;display:flex;flex-direction:column;position:relative}
-.top{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:#0f172a;border-bottom:2px solid #1e293b}
-.logo{font-weight:900;font-size:18px;background:linear-gradient(135deg,#facc15,#f59e0b);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.top{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:#0f172a;border-bottom:2px solid #1e293b;position:relative}
+.logo{font-weight:900;font-size:18px;background:linear-gradient(135deg,#facc15,#f59e0b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;cursor:pointer;user-select:none;-webkit-user-select:none}
 .stats{display:flex;gap:6px}
 .badge{background:#1e293b;padding:6px 10px;border-radius:12px;font-size:11px;font-weight:800;display:flex;align-items:center;gap:4px;color:#facc15;font-family:monospace;border:1px solid #334155}
 .badge span{color:#fff;font-family:monospace;font-weight:900}
@@ -39,6 +39,8 @@ body{background:#0b0f19;color:#e2e8f0;display:flex;justify-content:center;min-he
 .btn-gold{background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff}
 .btn-purple{background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:#fff}
 .btn-premium{background:linear-gradient(135deg,#ec4899,#db2777);color:#fff}
+.btn-dark{background:#0f172a;border:2px solid #334155;color:#94a3b8}
+.btn-otp{background:linear-gradient(135deg,#f43f5e,#e11d48);color:#fff;box-shadow:0 4px 12px rgba(244,63,94,.3)}
 .log{text-align:center;padding:8px;font-size:10px;color:#94a3b8;background:#0f172a;border-top:1px solid #1e293b;font-weight:600;min-height:36px;display:flex;align-items:center;justify-content:center}
 .section-title{font-size:14px;font-weight:900;margin:12px 0 8px;color:#facc15}
 .panel{background:#0f172a;border:1px solid #1e293b;border-radius:12px;padding:12px;margin:8px 0}
@@ -62,13 +64,14 @@ body{background:#0b0f19;color:#e2e8f0;display:flex;justify-content:center;min-he
 .referral-code{font-size:24px;font-weight:900;color:#facc15;font-family:monospace;letter-spacing:2px}
 input,select{width:100%;padding:10px;background:#1e293b;border:1px solid #334155;border-radius:8px;color:#fff;font-size:13px;margin:4px 0}
 input:focus,select:focus{outline:none;border-color:#facc15}
-.modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.8);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px;opacity:0;pointer-events:none;transition:opacity .3s}.modal.active{opacity:1;pointer-events:all}
+.modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.85);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px;opacity:0;pointer-events:none;transition:opacity .3s}.modal.active{opacity:1;pointer-events:all}
 .modal-content{background:#1e293b;border:2px solid #334155;border-radius:16px;padding:20px;max-width:360px;width:100%;max-height:80vh;overflow-y:auto;text-align:center}
 .modal-title{font-size:18px;font-weight:900;margin-bottom:12px;color:#facc15}
 .modal-text{font-size:13px;color:#94a3b8;margin-bottom:16px;line-height:1.6}
 .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-100px);background:#0f172a;border:2px solid #22c55e;color:#22c55e;padding:12px 24px;border-radius:12px;font-weight:900;font-size:13px;z-index:2000;transition:transform .3s}
 .toast.show{transform:translateX(-50%) translateY(0)}
 .toast.error{border-color:#ef4444;color:#ef4444}
+.toast.info{border-color:#3b82f6;color:#3b82f6}
 .pack-opening{display:flex;justify-content:center;gap:12px;margin:20px 0;min-height:80px;align-items:center}
 .pack-card{font-size:48px;animation:packPop .5s ease-out}
 @keyframes packPop{0%{transform:scale(0) rotate(-180deg);opacity:0}70%{transform:scale(1.2) rotate(10deg)}100%{transform:scale(1) rotate(0);opacity:1}}
@@ -78,13 +81,49 @@ input:focus,select:focus{outline:none;border-color:#facc15}
 .leaderboard-rank.gold{background:linear-gradient(135deg,#facc15,#f59e0b);color:#0f172a}
 .hidden{display:none!important}
 .version-tag{position:fixed;bottom:4px;right:8px;font-size:9px;color:#334155;font-weight:700;z-index:50}
+
+/* Admin Market */
+.admin-market{background:linear-gradient(135deg,#0f172a,#1e293b);border:2px solid #f43f5e;border-radius:16px;padding:16px;margin:12px 0;position:relative;overflow:hidden}
+.admin-market::before{content:'ADMIN';position:absolute;top:4px;right:8px;font-size:9px;color:#f43f5e;font-weight:900;letter-spacing:2px;opacity:.5}
+.rate-box{background:#0f172a;border:1px solid #334155;border-radius:10px;padding:10px;margin:8px 0;text-align:center}
+.rate-box .rate-label{font-size:10px;color:#64748b;text-transform:uppercase;letter-spacing:1px}
+.rate-box .rate-value{font-size:18px;font-weight:900;color:#facc15;margin:4px 0}
+.rate-box .rate-desc{font-size:11px;color:#94a3b8}
+.tx-history{max-height:150px;overflow-y:auto;margin-top:8px}
+.tx-item{display:flex;justify-content:space-between;padding:6px 8px;background:#1e293b;border-radius:6px;margin:3px 0;font-size:11px;border-left:3px solid #334155}
+.tx-item.buy{border-left-color:#22c55e}.tx-item.sell{border-left-color:#ef4444}
+.tx-item .tx-type{font-weight:700}.tx-item .tx-amount{color:#facc15;font-weight:900}
+.balance-display{display:flex;justify-content:space-between;align-items:center;padding:12px;background:#1e293b;border-radius:10px;margin:8px 0;border:1px solid #334155}
+.balance-display .bal-label{font-size:10px;color:#64748b}.balance-display .bal-value{font-size:20px;font-weight:900;color:#facc15}
+
+/* OTP Styles */
+.otp-display{background:#0f172a;border:2px solid #f43f5e;border-radius:12px;padding:20px;text-align:center;margin:16px 0}
+.otp-code{font-size:36px;font-weight:900;color:#f43f5e;font-family:monospace;letter-spacing:8px;text-shadow:0 0 10px rgba(244,63,94,.5)}
+.otp-timer{font-size:11px;color:#94a3b8;margin-top:8px}
+.otp-expired{text-decoration:line-through;opacity:.5}
+.pending-badge{background:#f43f5e;color:#fff;font-size:9px;padding:2px 6px;border-radius:4px;margin-left:6px;font-weight:900}
+.status-pending{color:#f59e0b}.status-approved{color:#22c55e}.status-rejected{color:#ef4444}
+
+/* Admin Panel Hidden */
+.admin-panel-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.9);z-index:3000;display:none;align-items:center;justify-content:center;padding:20px}
+.admin-panel-overlay.active{display:flex}
+.admin-panel{background:#0f172a;border:2px solid #f43f5e;border-radius:16px;width:100%;max-width:420px;max-height:90vh;overflow-y:auto;padding:16px}
+.admin-header{text-align:center;margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid #1e293b}
+.admin-title{font-size:20px;font-weight:900;color:#f43f5e}
+.admin-subtitle{font-size:11px;color:#94a3b8}
+.admin-section{background:#1e293b;border-radius:10px;padding:12px;margin:10px 0}
+.admin-section-title{font-size:12px;font-weight:900;color:#facc15;margin-bottom:8px;text-transform:uppercase}
+.otp-list-item{display:flex;justify-content:space-between;align-items:center;padding:8px;background:#0f172a;border-radius:8px;margin:4px 0;font-size:11px;border-left:3px solid #f43f5e}
+.otp-list-item .otp-val{font-size:16px;font-weight:900;color:#f43f5e;font-family:monospace}
+.click-hint{position:absolute;top:100%;left:50%;transform:translateX(-50%);background:#f43f5e;color:#fff;padding:4px 8px;border-radius:4px;font-size:9px;font-weight:900;white-space:nowrap;opacity:0;transition:opacity .3s;pointer-events:none;margin-top:4px}
+.logo:hover .click-hint{opacity:1}
 </style>
 </head>
 <body>
 
 <div class="app" id="gameApp">
   <div class="top">
-    <div class="logo">⚡ EVO CARDS v9.0</div>
+    <div class="logo" id="logoBtn">⚡ EVO CARDS v9.2<span class="click-hint">5x tap = Admin</span></div>
     <div class="stats">
       <div class="badge">💰 <span id="res-gold">0</span></div>
       <div class="badge premium">💎 <span id="res-gem">0</span></div>
@@ -99,43 +138,79 @@ input:focus,select:focus{outline:none;border-color:#facc15}
     <div class="tab" data-tab="battle">⚔️ Battle</div>
     <div class="tab" data-tab="market">🏪 Pasar</div>
     <div class="tab" data-tab="earn">💰 Earn</div>
+    <div class="tab" data-tab="admin">🏦 Admin</div>
     <div class="tab" data-tab="shop">🛒 Shop</div>
   </div>
   
   <div class="content" id="content"></div>
   <div class="log" id="log">⏳ Loading...</div>
-  <div class="version-tag">v9.0 FIXED</div>
+  <div class="version-tag">v9.2 OTP ADMIN</div>
 </div>
 
+<!-- MODALS -->
 <div class="modal" id="modal"><div class="modal-content" id="modalContent"></div></div>
 <div class="toast" id="toast"></div>
 
+<!-- HIDDEN ADMIN PANEL -->
+<div class="admin-panel-overlay" id="adminOverlay">
+  <div class="admin-panel">
+    <div class="admin-header">
+      <div class="admin-title">🔐 ADMIN PANEL</div>
+      <div class="admin-subtitle">Verifikasi Transaksi OTP</div>
+    </div>
+    
+    <div id="adminLogin">
+      <div class="panel" style="text-align:center">
+        <div style="font-size:48px;margin:12px 0">🔒</div>
+        <div style="font-size:14px;font-weight:900;margin-bottom:8px">Masukkan Password Admin</div>
+        <input type="password" id="adminPass" placeholder="Password..." style="text-align:center;font-size:18px;letter-spacing:4px">
+        <button class="btn btn-otp" onclick="window.gameApp.adminPanel.login()">🔓 Unlock</button>
+        <button class="btn btn-dark" onclick="window.gameApp.adminPanel.close()">❌ Tutup</button>
+      </div>
+    </div>
+    
+    <div id="adminDashboard" class="hidden">
+      <div class="admin-section">
+        <div class="admin-section-title">📨 OTP Aktif (Simulasi WA)</div>
+        <div id="otpActiveList"><p class="info-text">Tidak ada OTP aktif</p></div>
+      </div>
+      
+      <div class="admin-section">
+        <div class="admin-section-title">⏳ Pending Transactions</div>
+        <div id="pendingTxList"><p class="info-text">Tidak ada transaksi pending</p></div>
+      </div>
+      
+      <div class="admin-section">
+        <div class="admin-section-title">✅ Verifikasi Manual</div>
+        <input type="text" id="verifyOtpInput" placeholder="Masukkan OTP..." style="text-align:center;font-size:16px;letter-spacing:6px">
+        <button class="btn btn-green" onclick="window.gameApp.adminPanel.verifyOtp()">✅ Approve</button>
+        <button class="btn btn-red" onclick="window.gameApp.adminPanel.rejectOtp()">❌ Reject</button>
+      </div>
+      
+      <div class="admin-section">
+        <div class="admin-section-title">📊 Statistik</div>
+        <div id="adminStats" style="font-size:11px;color:#94a3b8"></div>
+      </div>
+      
+      <button class="btn btn-dark" onclick="window.gameApp.adminPanel.logout()">🚪 Logout</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // ============================================
-// EVO CARDS v9.0 — FULLY WORKING VERSION
+// EVO CARDS v9.2 — OTP ADMIN VERIFICATION
 // ============================================
 
 const CONFIG = {
-  MAX_ENERGY: 20,
-  ENERGY_REGEN_MINUTES: 5,
-  HUNGER_DECAY_MINUTES: 10,
-  HUNGER_DECAY_AMOUNT: 5,
-  MAX_BATTLE_DAY: 30,
-  BATTLE_COST: 3,
-  BATTLE_REWARD_BASE: 10,
-  EVOLVE_COST: 50,
-  EVOLVE_STARS_REQ: 5,
-  BREED_COST_ENERGY: 3,
-  BREED_MIN_HUNGER: 30,
-  MARKET_TAX_RATE: 0.1,
-  AD_REWARD_ENERGY: 5,
-  AD_REWARD_GOLD: 25,
-  DAILY_STREAK_MAX: 7,
-  PITY_LEGENDARY: 50,
-  PITY_MYTHIC: 200,
-  REFERRAL_REWARD_GEM: 10,
-  REFERRAL_REWARD_GOLD: 100,
-  QUEST_DAILY_RESET: 24
+  MAX_ENERGY: 20, ENERGY_REGEN_MINUTES: 5, HUNGER_DECAY_MINUTES: 10, HUNGER_DECAY_AMOUNT: 5,
+  MAX_BATTLE_DAY: 30, BATTLE_COST: 3, BATTLE_REWARD_BASE: 10, EVOLVE_COST: 50, EVOLVE_STARS_REQ: 5,
+  BREED_COST_ENERGY: 3, BREED_MIN_HUNGER: 30, MARKET_TAX_RATE: 0.1, AD_REWARD_ENERGY: 5, AD_REWARD_GOLD: 25,
+  DAILY_STREAK_MAX: 7, PITY_LEGENDARY: 50, PITY_MYTHIC: 200, REFERRAL_REWARD_GEM: 10, REFERRAL_REWARD_GOLD: 100,
+  QUEST_DAILY_RESET: 24,
+  ADMIN_BUY_RATE: 15000, ADMIN_SELL_RATE: 10000, ADMIN_MIN_BUY: 1000, ADMIN_MIN_SELL: 1000,
+  ADMIN_MAX_BUY: 50000, ADMIN_MAX_SELL: 50000,
+  OTP_LENGTH: 6, OTP_EXPIRY_MINUTES: 5, ADMIN_PASSWORD: '727277'
 };
 
 const PETS_BASE = [
@@ -153,794 +228,404 @@ const PETS_BASE = [
 const RARITY_WEIGHTS = {common:50,rare:30,epic:15,legendary:4.5,mythic:0.5};
 
 // ============================================
-// SECURITY & STATE MANAGEMENT
+// SECURITY
 // ============================================
-
 class SecurityManager {
-  static generateChecksum(obj) {
-    const str = JSON.stringify(obj,(k,v)=>k==='checksum'?undefined:v);
-    let hash = 0;
-    for(let i=0;i<str.length;i++){const c=str.charCodeAt(i);hash=((hash<<5)-hash)+c;hash|=0}
-    return Math.abs(hash).toString(36);
+  static generateChecksum(obj){const str=JSON.stringify(obj,(k,v)=>k==='checksum'?undefined:v);let hash=0;for(let i=0;i<str.length;i++){const c=str.charCodeAt(i);hash=((hash<<5)-hash)+c;hash|=0}return Math.abs(hash).toString(36)}
+  static sanitizeState(state){if(!state)return this.getDefaultState();state.gold=Math.max(0,Math.min(999999,Math.floor(state.gold||0)));state.gem=Math.max(0,Math.min(99999,Math.floor(state.gem||0)));state.energy=Math.max(0,Math.min(50,Math.floor(state.energy||CONFIG.MAX_ENERGY)));state.maxEnergy=Math.max(10,Math.min(50,Math.floor(state.maxEnergy||CONFIG.MAX_ENERGY)));if(!Array.isArray(state.cards))state.cards=[];if(!Array.isArray(state.market))state.market=[];if(!Array.isArray(state.selected))state.selected=[];if(!Array.isArray(state.quests))state.quests=[];if(!Array.isArray(state.txHistory))state.txHistory=[];if(!Array.isArray(state.pendingTx))state.pendingTx=[];if(!Array.isArray(state.otpList))state.otpList=[];if(!state.questProgress)state.questProgress={};state.cards.forEach(c=>{c.level=Math.max(1,Math.min(10,Math.floor(c.level||1)));c.stars=Math.max(0,Math.min(5,Math.floor(c.stars||0)));c.hunger=Math.max(0,Math.min(100,Math.floor(c.hunger||100)));c.xp=Math.max(0,Math.min(c.level*100,Math.floor(c.xp||0)))});return state}
+  static getDefaultState(){return{gold:100,gem:20,energy:15,maxEnergy:CONFIG.MAX_ENERGY,cards:[],selected:[],market:[],battleCount:0,battleDate:'',lastEnergyRegen:Date.now(),lastHungerDecay:Date.now(),dailyStreak:0,lastDailyClaim:'',quests:[],questProgress:{},referralCode:'',referredBy:'',referrals:[],totalSpent:0,totalEarned:0,pityCounter:0,adWatchedToday:0,adDate:'',version:'9.2',checksum:'',txHistory:[],pendingTx:[],otpList:[]}}
+}
+
+// ============================================
+// ECONOMY
+// ============================================
+class EconomyManager {
+  constructor(game){this.game=game}
+  canAfford(g=0,m=0,e=0){const s=this.game.state;return s.gold>=g&&s.gem>=m&&s.energy>=e}
+  spend(g=0,m=0,e=0,r=''){const s=this.game.state;if(!this.canAfford(g,m,e)){this.game.log(`❌ Kurang! Butuh ${g>0?g+'💰':''}${m>0?m+'💎':''}${e>0?e+'⚡':''}`);return false}s.gold-=g;s.gem-=m;s.energy-=e;if(m>0)s.totalSpent+=m;this.game.log(`💸 ${r}: -${g>0?g+'💰':''}${m>0?m+'💎':''}${e>0?e+'⚡':''}`);this.game.updateUI();return true}
+  earn(g=0,m=0,e=0,r=''){const s=this.game.state;s.gold+=g;s.gem+=m;s.energy=Math.min(s.maxEnergy,s.energy+e);if(g>0)s.totalEarned+=g;this.game.log(`🎉 ${r}: +${g>0?g+'💰':''}${m>0?m+'💎':''}${e>0?e+'⚡':''}`);this.game.showToast(`+${g>0?g+'💰':''}${m>0?m+'💎':''}${e>0?e+'⚡':''}`,m>0?'premium':'');this.game.updateUI();return true}
+  addTx(t,a,r,n=''){const s=this.game.state;s.txHistory.unshift({type:t,amount:a,rupiah:r,note:n,date:new Date().toISOString(),id:'tx_'+Date.now()});if(s.txHistory.length>50)s.txHistory.pop();this.game.saveState()}
+}
+
+// ============================================
+// OTP & ADMIN PANEL MANAGER
+// ============================================
+class AdminPanelManager {
+  constructor(game){this.game=game;this.clickCount=0;this.lastClickTime=0;this.isLoggedIn=false}
+  
+  // 5x click detection on logo
+  handleLogoClick(){
+    const now=Date.now();
+    if(now-this.lastClickTime>2000)this.clickCount=0;
+    this.lastClickTime=now;
+    this.clickCount++;
+    
+    if(this.clickCount>=5){
+      this.clickCount=0;
+      this.open();
+    } else if(this.clickCount>=2){
+      this.game.showToast(`${5-this.clickCount} tap lagi...`,'info');
+    }
   }
   
-  static sanitizeState(state) {
-    if(!state) return this.getDefaultState();
-    state.gold = Math.max(0,Math.min(999999,Math.floor(state.gold||0)));
-    state.gem = Math.max(0,Math.min(99999,Math.floor(state.gem||0)));
-    state.energy = Math.max(0,Math.min(50,Math.floor(state.energy||CONFIG.MAX_ENERGY)));
-    state.maxEnergy = Math.max(10,Math.min(50,Math.floor(state.maxEnergy||CONFIG.MAX_ENERGY)));
-    if(!Array.isArray(state.cards)) state.cards=[];
-    if(!Array.isArray(state.market)) state.market=[];
-    if(!Array.isArray(state.selected)) state.selected=[];
-    if(!Array.isArray(state.quests)) state.quests=[];
-    if(!state.questProgress) state.questProgress={};
-    state.cards.forEach(c=>{
-      c.level=Math.max(1,Math.min(10,Math.floor(c.level||1)));
-      c.stars=Math.max(0,Math.min(5,Math.floor(c.stars||0)));
-      c.hunger=Math.max(0,Math.min(100,Math.floor(c.hunger||100)));
-      c.xp=Math.max(0,Math.min(c.level*100,Math.floor(c.xp||0)));
-    });
-    return state;
+  open(){
+    document.getElementById('adminOverlay').classList.add('active');
+    document.getElementById('adminLogin').classList.remove('hidden');
+    document.getElementById('adminDashboard').classList.add('hidden');
+    this.isLoggedIn=false;
+    document.getElementById('adminPass').value='';
+    document.getElementById('adminPass').focus();
   }
   
-  static getDefaultState() {
-    return {
-      gold:100,gem:20,energy:15,maxEnergy:CONFIG.MAX_ENERGY,
-      cards:[],selected:[],market:[],
-      battleCount:0,battleDate:'',lastEnergyRegen:Date.now(),
-      lastHungerDecay:Date.now(),dailyStreak:0,lastDailyClaim:'',
-      quests:[],questProgress:{},referralCode:'',referredBy:'',
-      referrals:[],totalSpent:0,totalEarned:0,pityCounter:0,
-      adWatchedToday:0,adDate:'',version:'9.0',checksum:''
+  close(){
+    document.getElementById('adminOverlay').classList.remove('active');
+    this.isLoggedIn=false;
+  }
+  
+  login(){
+    const pass=document.getElementById('adminPass').value;
+    if(pass===CONFIG.ADMIN_PASSWORD){
+      this.isLoggedIn=true;
+      document.getElementById('adminLogin').classList.add('hidden');
+      document.getElementById('adminDashboard').classList.remove('hidden');
+      this.refreshDashboard();
+      this.game.log('🔓 Admin Panel Aktif!');
+    } else {
+      this.game.showToast('❌ Password salah!','error');
+      document.getElementById('adminPass').value='';
+    }
+  }
+  
+  logout(){
+    this.isLoggedIn=false;
+    document.getElementById('adminLogin').classList.remove('hidden');
+    document.getElementById('adminDashboard').classList.add('hidden');
+  }
+  
+  // Generate OTP for transaction
+  generateOtp(txId,type,amount,rupiah,playerNote=''){
+    const otp=Math.floor(100000+Math.random()*900000).toString();
+    const expiry=Date.now()+(CONFIG.OTP_EXPIRY_MINUTES*60000);
+    
+    const otpData={
+      id:txId,otp,type,amount,rupiah,playerNote,
+      created:Date.now(),expiry,status:'pending',verifiedBy:''
     };
+    
+    this.game.state.otpList.unshift(otpData);
+    if(this.game.state.otpList.length>20)this.game.state.otpList.pop();
+    this.game.saveState();
+    
+    // Show OTP in console (simulating WA notification to admin)
+    console.log('%c🔐 OTP BARU — KIRIM KE WA ADMIN','background:#f43f5e;color:#fff;font-size:14px;padding:8px;border-radius:4px');
+    console.log('%cOTP: '+otp,'font-size:24px;font-weight:900;color:#f43f5e');
+    console.log('Transaksi:',type.toUpperCase(),amount+'💎','= Rp'+rupiah.toLocaleString());
+    console.log('Player:',playerNote||'Anonymous');
+    console.log('Expired:',new Date(expiry).toLocaleTimeString());
+    
+    return otp;
+  }
+  
+  // Admin verifies OTP
+  verifyOtp(){
+    const input=document.getElementById('verifyOtpInput').value.trim();
+    if(!input||input.length!==CONFIG.OTP_LENGTH){this.game.showToast('❌ OTP 6 digit!','error');return}
+    
+    const otpData=this.game.state.otpList.find(o=>o.otp===input&&o.status==='pending');
+    if(!otpData){this.game.showToast('❌ OTP tidak valid/expired!','error');return}
+    if(Date.now()>otpData.expiry){this.game.showToast('❌ OTP expired!','error');return}
+    
+    // Approve transaction
+    otpData.status='approved';
+    otpData.verifiedAt=Date.now();
+    otpData.verifiedBy='admin';
+    
+    const s=this.game.state;
+    const p=s.pendingTx.find(t=>t.id===otpData.id);
+    if(p){
+      p.status='approved';p.verifiedAt=Date.now();
+      
+      if(p.type==='buy'){
+        s.gem+=p.amount;
+        this.game.economy.addTx('buy',p.amount,p.rupiah,'Approved: '+p.playerNote);
+        this.notifyPlayer('✅ Pembelian '+p.amount+'💎 disetujui! Diamond masuk.');
+      } else if(p.type==='sell'){
+        s.gem-=p.amount;
+        this.game.economy.addTx('sell',p.amount,p.rupiah,'Approved: '+p.playerNote+' → '+p.rek);
+        this.notifyPlayer('✅ Penjualan '+p.amount+'💎 disetujui! Rp'+p.rupiah.toLocaleString()+' dikirim ke '+p.rek);
+      }
+    }
+    
+    this.game.saveState();
+    this.game.updateUI();
+    document.getElementById('verifyOtpInput').value='';
+    this.refreshDashboard();
+    this.game.showToast('✅ OTP Verified & Approved!','premium');
+    this.game.log('✅ Transaksi '+otpData.id+' APPROVED');
+  }
+  
+  rejectOtp(){
+    const input=document.getElementById('verifyOtpInput').value.trim();
+    if(!input){this.game.showToast('❌ Masukkan OTP!','error');return}
+    
+    const otpData=this.game.state.otpList.find(o=>o.otp===input&&o.status==='pending');
+    if(!otpData){this.game.showToast('❌ OTP tidak valid!','error');return}
+    
+    otpData.status='rejected';
+    otpData.verifiedAt=Date.now();
+    
+    const p=this.game.state.pendingTx.find(t=>t.id===otpData.id);
+    if(p){p.status='rejected';p.verifiedAt=Date.now()}
+    
+    this.notifyPlayer('❌ Transaksi '+otpData.amount+'💎 DITOLAK oleh admin.');
+    
+    this.game.saveState();
+    document.getElementById('verifyOtpInput').value='';
+    this.refreshDashboard();
+    this.game.showToast('❌ Transaction Rejected','error');
+  }
+  
+  notifyPlayer(msg){
+    // Show notification to player even if they're on another tab
+    this.game.showToast(msg,'info');
+    // Store in notification queue
+    if(!this.game.state.notifications)this.game.state.notifications=[];
+    this.game.state.notifications.unshift({msg,time:Date.now(),read:false});
+    this.game.saveState();
+  }
+  
+  refreshDashboard(){
+    if(!this.isLoggedIn)return;
+    
+    // Active OTPs
+    const activeOtps=this.game.state.otpList.filter(o=>o.status==='pending'&&Date.now()<o.expiry);
+    const otpEl=document.getElementById('otpActiveList');
+    if(!activeOtps.length){otpEl.innerHTML='<p class="info-text">Tidak ada OTP aktif</p>'}
+    else {
+      otpEl.innerHTML=activeOtps.map(o=>{
+        const mins=Math.ceil((o.expiry-Date.now())/60000);
+        return `<div class="otp-list-item">
+          <div><div style="font-size:9px;color:#94a3b8">${o.type.toUpperCase()} ${o.amount}💎</div><div class="otp-val">${o.otp}</div></div>
+          <div style="text-align:right"><div style="font-size:11px;color:#facc15">Rp${o.rupiah.toLocaleString()}</div><div style="font-size:9px;color:#f59e0b">${mins}m left</div></div>
+        </div>`;
+      }).join('');
+    }
+    
+    // Pending transactions
+    const pending=this.game.state.pendingTx.filter(t=>t.status==='pending');
+    const pendingEl=document.getElementById('pendingTxList');
+    if(!pending.length){pendingEl.innerHTML='<p class="info-text">Tidak ada transaksi pending</p>'}
+    else {
+      pendingEl.innerHTML=pending.map(t=>{
+        return `<div class="battle-card">
+          <div><span class="status-pending">⏳ ${t.type.toUpperCase()}</span> ${t.amount}💎<br><span style="font-size:9px;color:#64748b">${t.playerNote||''}</span></div>
+          <div style="text-align:right"><div style="font-size:11px;color:#facc15">Rp${t.rupiah.toLocaleString()}</div><div style="font-size:9px;color:#f59e0b">${t.rek||''}</div></div>
+        </div>`;
+      }).join('');
+    }
+    
+    // Stats
+    const approved=this.game.state.otpList.filter(o=>o.status==='approved').length;
+    const rejected=this.game.state.otpList.filter(o=>o.status==='rejected').length;
+    const totalVol=this.game.state.otpList.filter(o=>o.status==='approved').reduce((a,o)=>a+o.rupiah,0);
+    document.getElementById('adminStats').innerHTML=`
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div>✅ Approved: ${approved}</div>
+        <div>❌ Rejected: ${rejected}</div>
+        <div>⏳ Pending: ${pending.length}</div>
+        <div>💰 Volume: Rp${totalVol.toLocaleString()}</div>
+      </div>
+    `;
+  }
+  
+  startAutoRefresh(){
+    setInterval(()=>{if(this.isLoggedIn)this.refreshDashboard()},5000);
   }
 }
 
 // ============================================
-// ECONOMY MANAGER
+// ADMIN MARKET (MODIFIED WITH OTP)
 // ============================================
-
-class EconomyManager {
-  constructor(game){this.game=game;}
+class AdminMarketManager {
+  constructor(game){this.game=game}
   
-  canAfford(gold=0,gem=0,energy=0){
+  buyDiamond(amount){
     const s=this.game.state;
-    return s.gold>=gold && s.gem>=gem && s.energy>=energy;
-  }
-  
-  spend(gold=0,gem=0,energy=0,reason=''){
-    const s=this.game.state;
-    if(!this.canAfford(gold,gem,energy)){
-      this.game.log(`❌ Tidak cukup! Butuh ${gold>0?gold+'💰':''}${gem>0?gem+'💎':''}${energy>0?energy+'⚡':''}`);
-      return false;
-    }
-    s.gold-=gold; s.gem-=gem; s.energy-=energy;
-    if(gem>0) s.totalSpent+=gem;
-    this.game.log(`💸 ${reason}: -${gold>0?gold+'💰':''}${gem>0?gem+'💎':''}${energy>0?energy+'⚡':''}`);
-    this.game.updateUI();
+    amount=Math.floor(amount/1000)*1000;
+    if(amount<CONFIG.ADMIN_MIN_BUY){this.game.log(`❌ Min ${CONFIG.ADMIN_MIN_BUY}💎!`);return false}
+    if(amount>CONFIG.ADMIN_MAX_BUY){this.game.log(`❌ Max ${CONFIG.ADMIN_MAX_BUY}💎!`);return false}
+    
+    const rupiah=Math.floor(amount/1000)*CONFIG.ADMIN_BUY_RATE;
+    const playerNote=prompt(`💎 BELI DIAMOND\n\nJumlah: ${amount.toLocaleString()}💎\nTotal: Rp${rupiah.toLocaleString()}\nRate: Rp${CONFIG.ADMIN_BUY_RATE.toLocaleString()}/1000💎\n\nMasukkan nama/ID untuk verifikasi:`);
+    if(!playerNote)return false;
+    
+    // Create pending transaction
+    const txId='TX'+Date.now().toString(36).toUpperCase();
+    const otp=this.game.adminPanel.generateOtp(txId,'buy',amount,rupiah,playerNote);
+    
+    s.pendingTx.unshift({
+      id:txId,type:'buy',amount,rupiah,playerNote,rek:'',
+      status:'pending',created:Date.now()
+    });
+    this.game.saveState();
+    
+    // Show OTP to player (so they can tell admin)
+    this.game.showModal('⏳ Menunggu Verifikasi Admin',`
+      <div class="otp-display">
+        <div style="font-size:11px;color:#94a3b8;margin-bottom:8px">KODE OTP ANDA (beritahu admin)</div>
+        <div class="otp-code">${otp}</div>
+        <div class="otp-timer">⏱️ Berlaku ${CONFIG.OTP_EXPIRY_MINUTES} menit</div>
+      </div>
+      <div style="font-size:12px;color:#94a3b8;text-align:left">
+        <b>Langkah:</b><br>
+        1. Transfer Rp${rupiah.toLocaleString()} ke rekening admin<br>
+        2. Kirim OTP <b>${otp}</b> ke WA admin<br>
+        3. Tunggu verifikasi (1-5 menit)<br>
+        4. Diamond akan masuk otomatis
+      </div>
+    `,'Mengerti');
+    
+    this.game.log(`⏳ Pembelian ${amount}💎 pending. OTP: ${otp}`);
     return true;
   }
   
-  earn(gold=0,gem=0,energy=0,reason=''){
+  sellDiamond(amount){
     const s=this.game.state;
-    s.gold+=gold; s.gem+=gem; s.energy=Math.min(s.maxEnergy,s.energy+energy);
-    if(gold>0) s.totalEarned+=gold;
-    this.game.log(`🎉 ${reason}: +${gold>0?gold+'💰':''}${gem>0?gem+'💎':''}${energy>0?energy+'⚡':''}`);
-    this.game.showToast(`+${gold>0?gold+'💰':''}${gem>0?gem+'💎':''}${energy>0?energy+'⚡':''}`, gem>0?'premium':'');
-    this.game.updateUI();
+    amount=Math.floor(amount/1000)*1000;
+    if(amount<CONFIG.ADMIN_MIN_SELL){this.game.log(`❌ Min ${CONFIG.ADMIN_MIN_SELL}💎!`);return false}
+    if(amount>CONFIG.ADMIN_MAX_SELL){this.game.log(`❌ Max ${CONFIG.ADMIN_MAX_SELL}💎!`);return false}
+    if(s.gem<amount){this.game.log(`❌ Kurang ${amount-s.gem}💎!`);return false}
+    
+    const rupiah=Math.floor(amount/1000)*CONFIG.ADMIN_SELL_RATE;
+    const rek=prompt(`💸 JUAL DIAMOND\n\nJumlah: ${amount.toLocaleString()}💎\nDiterima: Rp${rupiah.toLocaleString()}\nRate: Rp${CONFIG.ADMIN_SELL_RATE.toLocaleString()}/1000💎\n\nMasukkan nomor rekening/e-wallet:`);
+    if(!rek)return false;
+    
+    const playerNote=prompt('Masukkan nama/ID untuk verifikasi:');
+    if(!playerNote)return false;
+    
+    const txId='TX'+Date.now().toString(36).toUpperCase();
+    const otp=this.game.adminPanel.generateOtp(txId,'sell',amount,rupiah,playerNote+' → '+rek);
+    
+    s.pendingTx.unshift({
+      id:txId,type:'sell',amount,rupiah,playerNote,rek,
+      status:'pending',created:Date.now()
+    });
+    this.game.saveState();
+    
+    this.game.showModal('⏳ Menunggu Verifikasi Admin',`
+      <div class="otp-display">
+        <div style="font-size:11px;color:#94a3b8;margin-bottom:8px">KODE OTP ANDA (beritahu admin)</div>
+        <div class="otp-code">${otp}</div>
+        <div class="otp-timer">⏱️ Berlaku ${CONFIG.OTP_EXPIRY_MINUTES} menit</div>
+      </div>
+      <div style="font-size:12px;color:#94a3b8;text-align:left">
+        <b>Langkah:</b><br>
+        1. Diamond ${amount}💎 dikunci sementara<br>
+        2. Kirim OTP <b>${otp}</b> ke WA admin<br>
+        3. Admin verifikasi & proses<br>
+        4. Rp${rupiah.toLocaleString()} dikirim ke ${rek}
+      </div>
+    `,'Mengerti');
+    
+    this.game.log(`⏳ Penjualan ${amount}💎 pending. OTP: ${otp}`);
     return true;
   }
+  
+  getTxHistory(limit=10){return(this.game.state.txHistory||[]).slice(0,limit)}
 }
 
 // ============================================
 // CARD MANAGER
 // ============================================
-
 class CardManager {
-  constructor(game){this.game=game;}
-  
+  constructor(game){this.game=game}
   createCard(baseId,level=1,bonusStars=0){
-    const base = PETS_BASE.find(p=>p.id===baseId);
-    if(!base) return null;
-    const mult = 1+(level-1)*0.1;
-    return {
-      uid: 'c_'+Math.random().toString(36).substr(2,9)+'_'+Date.now().toString(36),
-      baseId:base.id, name:base.name, emoji:base.emoji, rarity:base.rarity,
-      stage:base.stage, level:level,
-      atk:Math.floor(base.atk*mult), def:Math.floor(base.def*mult), 
-      hp:Math.floor(base.hp*mult), maxHp:Math.floor(base.hp*mult),
-      stars:bonusStars, hunger:100, xp:0, created:Date.now()
-    };
+    const base=PETS_BASE.find(p=>p.id===baseId);
+    if(!base)return null;
+    const mult=1+(level-1)*0.1;
+    return{uid:'c_'+Math.random().toString(36).substr(2,9)+'_'+Date.now().toString(36),baseId:base.id,name:base.name,emoji:base.emoji,rarity:base.rarity,stage:base.stage,level:level,atk:Math.floor(base.atk*mult),def:Math.floor(base.def*mult),hp:Math.floor(base.hp*mult),maxHp:Math.floor(base.hp*mult),stars:bonusStars,hunger:100,xp:0,created:Date.now()}
   }
-  
-  getRarityRoll(){
-    const s=this.game.state;
-    s.pityCounter++;
-    if(s.pityCounter >= CONFIG.PITY_MYTHIC){s.pityCounter=0; return 'mythic';}
-    if(s.pityCounter >= CONFIG.PITY_LEGENDARY && Math.random()<0.3){s.pityCounter=0; return 'legendary';}
-    const r=Math.random()*100; let cum=0;
-    for(const[rar,w] of Object.entries(RARITY_WEIGHTS)){
-      cum+=w; if(r<=cum) return rar;
-    }
-    return 'common';
-  }
-  
-  openPack(count,costGem,type='silver'){
-    if(!this.game.economy.spend(0,costGem,0,`Pack ${type}`)) return null;
-    const results=[];
-    for(let i=0;i<count;i++){
-      const rarity=this.getRarityRoll();
-      const pool=PETS_BASE.filter(p=>p.rarity===rarity);
-      const base=pool.length?pool[Math.floor(Math.random()*pool.length)]:PETS_BASE[0];
-      const bonus=Math.random()<0.15?1:0;
-      const card=this.createCard(base.id,1,bonus);
-      this.game.state.cards.push(card);
-      results.push(card);
-    }
-    if(type==='platinum' && count>=5){
-      const rarePool=PETS_BASE.filter(p=>['epic','legendary'].includes(p.rarity));
-      const bonusBase=rarePool[Math.floor(Math.random()*rarePool.length)]||PETS_BASE[6];
-      const bonusCard=this.createCard(bonusBase.id,Math.floor(Math.random()*2)+2,1);
-      this.game.state.cards.push(bonusCard);
-      results.push({...bonusCard,isBonus:true});
-    }
-    this.game.saveState();
-    return results;
-  }
-  
-  removeByIndex(indices){
-    const sorted=[...indices].sort((a,b)=>b-a);
-    const removed=[];
-    sorted.forEach(idx=>{
-      if(idx>=0 && idx<this.game.state.cards.length){
-        removed.push(this.game.state.cards[idx]);
-        this.game.state.cards.splice(idx,1);
-      }
-    });
-    return removed;
-  }
-  
-  breed(idx1,idx2){
-    const s=this.game.state;
-    if(idx1===idx2 || idx1<0 || idx2<0 || idx1>=s.cards.length || idx2>=s.cards.length){
-      this.game.log('❌ Pilih 2 kartu berbeda!');
-      return null;
-    }
-    if(!this.game.economy.spend(0,0,CONFIG.BREED_COST_ENERGY,'Breed')) return null;
-    
-    const p1=s.cards[idx1], p2=s.cards[idx2];
-    if(p1.hunger<CONFIG.BREED_MIN_HUNGER || p2.hunger<CONFIG.BREED_MIN_HUNGER){
-      this.game.log('❌ Kartu terlalu lapar! Feed dulu.');
-      return null;
-    }
-    
-    const removed=this.removeByIndex([idx1,idx2]);
-    if(removed.length!==2) return null;
-    
-    const [parent1,parent2]=removed;
-    const newStage=Math.min(5,Math.max(parent1.stage,parent2.stage)+1);
-    const pool=PETS_BASE.filter(p=>p.stage===newStage);
-    const candidates=pool.length?pool:PETS_BASE.filter(p=>p.stage>=newStage-1);
-    const base=candidates[Math.floor(Math.random()*candidates.length)];
-    const avgLevel=Math.floor((parent1.level+parent2.level)/2);
-    const inheritStars=Math.floor((parent1.stars+parent2.stars)/4);
-    
-    const child=this.createCard(base.id,Math.max(1,avgLevel),inheritStars);
-    s.cards.push(child);
-    s.selected=[];
-    this.game.log(`🧬 ${parent1.emoji} + ${parent2.emoji} = ${child.emoji} ${child.name}!`);
-    this.game.saveState();
-    return child;
-  }
-  
-  evolve(idx){
-    const s=this.game.state;
-    if(idx<0 || idx>=s.cards.length) return null;
-    const c=s.cards[idx];
-    if(c.stars<CONFIG.EVOLVE_STARS_REQ){
-      this.game.log(`❌ Butuh ${CONFIG.EVOLVE_STARS_REQ}⭐ (punya ${c.stars})`);
-      return null;
-    }
-    if(!this.game.economy.spend(CONFIG.EVOLVE_COST,0,0,'Evolve')) return null;
-    
-    const base=PETS_BASE.find(p=>p.id===c.baseId);
-    if(base && base.evoTo){
-      const newBase=PETS_BASE.find(p=>p.id===base.evoTo);
-      if(newBase){
-        c.baseId=newBase.id; c.name=newBase.name; c.emoji=newBase.emoji;
-        c.rarity=newBase.rarity; c.stage=newBase.stage;
-      }
-    }
-    c.level=Math.min(10,c.level+1); c.stars=0; c.hunger=100; c.xp=0;
-    const mult=1+(c.level-1)*0.1;
-    const currentBase=PETS_BASE.find(p=>p.id===c.baseId)||base;
-    c.atk=Math.floor(currentBase.atk*mult);
-    c.def=Math.floor(currentBase.def*mult);
-    c.hp=Math.floor(currentBase.hp*mult); c.maxHp=c.hp;
-    s.selected=[];
-    this.game.log(`✨ ${c.emoji} Evolved → Lv${c.level} ${c.name}!`);
-    this.game.saveState();
-    return c;
-  }
-  
-  sell(indices){
-    const cards=this.removeByIndex(indices);
-    let total=0;
-    cards.forEach(c=>{
-      const val=Math.floor((c.atk+c.def+c.hp/5)*(1+c.level*0.2)*(1+c.stars*0.5));
-      total+=val;
-    });
-    if(total>0) this.game.economy.earn(total,0,0,'Sell Cards');
-    this.game.state.selected=[];
-    this.game.saveState();
-    return total;
-  }
-  
-  feed(idx,foodType){
-    const s=this.game.state;
-    if(idx<0 || idx>=s.cards.length) return false;
-    const c=s.cards[idx];
-    const foods={
-      bread:{cost:10,hunger:25,xp:5,gold:true},
-      meat:{cost:25,hunger:50,xp:15,gold:true},
-      premium:{cost:2,hunger:100,xp:30,gold:false,dm:true}
-    };
-    const f=foods[foodType];
-    if(!f) return false;
-    
-    if(f.gold && !this.game.economy.spend(f.cost,0,0,`Feed ${foodType}`)) return false;
-    if(f.dm && !this.game.economy.spend(0,f.cost,0,`Feed ${foodType}`)) return false;
-    
-    c.hunger=Math.min(100,c.hunger+f.hunger);
-    c.xp=Math.min(c.level*100,c.xp+f.xp);
-    if(c.xp>=c.level*100){
-      c.level++; c.xp=0; c.maxHp=Math.floor(c.maxHp*1.1); c.hp=c.maxHp;
-      c.atk=Math.floor(c.atk*1.1); c.def=Math.floor(c.def*1.1);
-      this.game.log(`📈 ${c.emoji} Level Up! Lv${c.level}`);
-    }
-    if(Math.random()<0.2 && c.stars<5){
-      c.stars++; this.game.log(`⭐ ${c.emoji} +1 Star!`);
-    }
-    this.game.saveState();
-    return true;
-  }
+  getRarityRoll(){const s=this.game.state;s.pityCounter++;if(s.pityCounter>=CONFIG.PITY_MYTHIC){s.pityCounter=0;return'mythic'}if(s.pityCounter>=CONFIG.PITY_LEGENDARY&&Math.random()<0.3){s.pityCounter=0;return'legendary'}const r=Math.random()*100;let cum=0;for(const[rar,w]of Object.entries(RARITY_WEIGHTS)){cum+=w;if(r<=cum)return rar}return'common'}
+  openPack(count,costGem,type='silver'){if(!this.game.economy.spend(0,costGem,0,`Pack ${type}`))return null;const results=[];for(let i=0;i<count;i++){const rarity=this.getRarityRoll();const pool=PETS_BASE.filter(p=>p.rarity===rarity);const base=pool.length?pool[Math.floor(Math.random()*pool.length)]:PETS_BASE[0];const bonus=Math.random()<0.15?1:0;const card=this.createCard(base.id,1,bonus);this.game.state.cards.push(card);results.push(card)}if(type==='platinum'&&count>=5){const rarePool=PETS_BASE.filter(p=>['epic','legendary'].includes(p.rarity));const bonusBase=rarePool[Math.floor(Math.random()*rarePool.length)]||PETS_BASE[6];const bonusCard=this.createCard(bonusBase.id,Math.floor(Math.random()*2)+2,1);this.game.state.cards.push(bonusCard);results.push({...bonusCard,isBonus:true})}this.game.saveState();return results}
+  removeByIndex(indices){const sorted=[...indices].sort((a,b)=>b-a);const removed=[];sorted.forEach(idx=>{if(idx>=0&&idx<this.game.state.cards.length){removed.push(this.game.state.cards[idx]);this.game.state.cards.splice(idx,1)}});return removed}
+  breed(idx1,idx2){const s=this.game.state;if(idx1===idx2||idx1<0||idx2<0||idx1>=s.cards.length||idx2>=s.cards.length){this.game.log('❌ Pilih 2 kartu berbeda!');return null}if(!this.game.economy.spend(0,0,CONFIG.BREED_COST_ENERGY,'Breed'))return null;const p1=s.cards[idx1],p2=s.cards[idx2];if(p1.hunger<CONFIG.BREED_MIN_HUNGER||p2.hunger<CONFIG.BREED_MIN_HUNGER){this.game.log('❌ Kartu terlalu lapar!');return null}const removed=this.removeByIndex([idx1,idx2]);if(removed.length!==2)return null;const[parent1,parent2]=removed;const newStage=Math.min(5,Math.max(parent1.stage,parent2.stage)+1);const pool=PETS_BASE.filter(p=>p.stage===newStage);const candidates=pool.length?pool:PETS_BASE.filter(p=>p.stage>=newStage-1);const base=candidates[Math.floor(Math.random()*candidates.length)];const avgLevel=Math.floor((parent1.level+parent2.level)/2);const inheritStars=Math.floor((parent1.stars+parent2.stars)/4);const child=this.createCard(base.id,Math.max(1,avgLevel),inheritStars);s.cards.push(child);s.selected=[];this.game.log(`🧬 ${parent1.emoji}+${parent2.emoji}=${child.emoji} ${child.name}!`);this.game.saveState();return child}
+  evolve(idx){const s=this.game.state;if(idx<0||idx>=s.cards.length)return null;const c=s.cards[idx];if(c.stars<CONFIG.EVOLVE_STARS_REQ){this.game.log(`❌ Butuh ${CONFIG.EVOLVE_STARS_REQ}⭐ (punya ${c.stars})`);return null}if(!this.game.economy.spend(CONFIG.EVOLVE_COST,0,0,'Evolve'))return null;const base=PETS_BASE.find(p=>p.id===c.baseId);if(base&&base.evoTo){const newBase=PETS_BASE.find(p=>p.id===base.evoTo);if(newBase){c.baseId=newBase.id;c.name=newBase.name;c.emoji=newBase.emoji;c.rarity=newBase.rarity;c.stage=newBase.stage}}c.level=Math.min(10,c.level+1);c.stars=0;c.hunger=100;c.xp=0;const mult=1+(c.level-1)*0.1;const currentBase=PETS_BASE.find(p=>p.id===c.baseId)||base;c.atk=Math.floor(currentBase.atk*mult);c.def=Math.floor(currentBase.def*mult);c.hp=Math.floor(currentBase.hp*mult);c.maxHp=c.hp;s.selected=[];this.game.log(`✨ ${c.emoji} Evolved → Lv${c.level} ${c.name}!`);this.game.saveState();return c}
+  sell(indices){const cards=this.removeByIndex(indices);let total=0;cards.forEach(c=>{const val=Math.floor((c.atk+c.def+c.hp/5)*(1+c.level*0.2)*(1+c.stars*0.5));total+=val});if(total>0)this.game.economy.earn(total,0,0,'Sell Cards');this.game.state.selected=[];this.game.saveState();return total}
+  feed(idx,foodType){const s=this.game.state;if(idx<0||idx>=s.cards.length)return false;const c=s.cards[idx];const foods={bread:{cost:10,hunger:25,xp:5,gold:true},meat:{cost:25,hunger:50,xp:15,gold:true},premium:{cost:2,hunger:100,xp:30,gold:false,dm:true}};const f=foods[foodType];if(!f)return false;if(f.gold&&!this.game.economy.spend(f.cost,0,0,`Feed ${foodType}`))return false;if(f.dm&&!this.game.economy.spend(0,f.cost,0,`Feed ${foodType}`))return false;c.hunger=Math.min(100,c.hunger+f.hunger);c.xp=Math.min(c.level*100,c.xp+f.xp);if(c.xp>=c.level*100){c.level++;c.xp=0;c.maxHp=Math.floor(c.maxHp*1.1);c.hp=c.maxHp;c.atk=Math.floor(c.atk*1.1);c.def=Math.floor(c.def*1.1);this.game.log(`📈 ${c.emoji} Level Up! Lv${c.level}`)}if(Math.random()<0.2&&c.stars<5){c.stars++;this.game.log(`⭐ ${c.emoji} +1 Star!`)}this.game.saveState();return true}
 }
 
 // ============================================
 // BATTLE SYSTEM
 // ============================================
-
 class BattleSystem {
-  constructor(game){this.game=game;}
-  
-  calculatePower(card){
-    return Math.floor(card.atk*1.5+card.def+card.hp*0.3+card.level*5+card.stars*10);
-  }
-  
-  simulateBattle(playerCardIdx){
-    const s=this.game.state;
-    if(playerCardIdx<0 || playerCardIdx>=s.cards.length) return null;
-    
-    const today=new Date().toDateString();
-    if(s.battleDate!==today){s.battleDate=today; s.battleCount=0;}
-    if(s.battleCount>=CONFIG.MAX_BATTLE_DAY){
-      this.game.log(`❌ Max ${CONFIG.MAX_BATTLE_DAY} battle/hari!`);
-      return null;
-    }
-    if(!this.game.economy.spend(0,0,CONFIG.BATTLE_COST,'Battle')) return null;
-    
-    const pc=s.cards[playerCardIdx];
-    if(pc.hunger<20){this.game.log('❌ Kartu terlalu lapar!'); return null;}
-    
-    const pPower=this.calculatePower(pc);
-    const oPower=Math.floor(pPower*(0.7+Math.random()*0.6));
-    const oHp=Math.floor(oPower*0.6); const oAtk=Math.floor(oPower*0.4);
-    
-    let pHp=pc.hp, oHpCur=oHp, round=0;
-    const logs=[];
-    
-    while(pHp>0 && oHpCur>0 && round<20){
-      round++;
-      let dmg=Math.max(1,Math.floor(pc.atk*(0.8+Math.random()*0.4)));
-      let isCrit=Math.random()<0.1+pc.stars*0.02;
-      if(isCrit){dmg=Math.floor(dmg*1.5); logs.push(`⚔️ R${round}: 💥 CRIT ${dmg}dmg!`);}
-      else{logs.push(`⚔️ R${round}: You deal ${dmg}dmg`);}
-      oHpCur-=dmg;
-      if(oHpCur<=0) break;
-      
-      let odmg=Math.max(1,Math.floor(oAtk*(0.7+Math.random()*0.6)));
-      let oCrit=Math.random()<0.08;
-      if(oCrit){odmg=Math.floor(odmg*1.5); logs.push(`🛡️ R${round}: 💥 Enemy CRIT ${odmg}!`);}
-      else{logs.push(`🛡️ R${round}: Enemy deals ${odmg}`);}
-      pHp-=odmg;
-    }
-    
-    const win=pHp>0;
-    const rewardGold=win?Math.floor(CONFIG.BATTLE_REWARD_BASE*(1+pc.level*0.2)+oPower*0.1):Math.floor(CONFIG.BATTLE_REWARD_BASE*0.3);
-    const rewardGem=win?Math.floor(1+pc.stars*0.5):0;
-    const rewardXp=win?20:5;
-    
-    pc.hunger=Math.max(0,pc.hunger-15);
-    pc.xp=Math.min(pc.level*100,pc.xp+rewardXp);
-    s.battleCount++;
-    
-    this.game.economy.earn(rewardGold,rewardGem,0,win?'Victory':'Defeat');
-    if(win && Math.random()<0.3 && pc.stars<5){
-      pc.stars++; this.game.log(`⭐ Battle Star +1!`);
-    }
-    this.game.saveState();
-    
-    return {win,rounds:round,playerHp:pHp,enemyHp:Math.max(0,oHpCur),logs,rewardGold,rewardGem};
-  }
+  constructor(game){this.game=game}
+  calculatePower(card){return Math.floor(card.atk*1.5+card.def+card.hp*0.3+card.level*5+card.stars*10)}
+  simulateBattle(playerCardIdx){const s=this.game.state;if(playerCardIdx<0||playerCardIdx>=s.cards.length)return null;const today=new Date().toDateString();if(s.battleDate!==today){s.battleDate=today;s.battleCount=0}if(s.battleCount>=CONFIG.MAX_BATTLE_DAY){this.game.log(`❌ Max ${CONFIG.MAX_BATTLE_DAY} battle/hari!`);return null}if(!this.game.economy.spend(0,0,CONFIG.BATTLE_COST,'Battle'))return null;const pc=s.cards[playerCardIdx];if(pc.hunger<20){this.game.log('❌ Kartu terlalu lapar!');return null}const pPower=this.calculatePower(pc);const oPower=Math.floor(pPower*(0.7+Math.random()*0.6));const oHp=Math.floor(oPower*0.6);const oAtk=Math.floor(oPower*0.4);let pHp=pc.hp,oHpCur=oHp,round=0;const logs=[];while(pHp>0&&oHpCur>0&&round<20){round++;let dmg=Math.max(1,Math.floor(pc.atk*(0.8+Math.random()*0.4)));let isCrit=Math.random()<0.1+pc.stars*0.02;if(isCrit){dmg=Math.floor(dmg*1.5);logs.push(`⚔️ R${round}: 💥 CRIT ${dmg}dmg!`)}else{logs.push(`⚔️ R${round}: You deal ${dmg}dmg`)}oHpCur-=dmg;if(oHpCur<=0)break;let odmg=Math.max(1,Math.floor(oAtk*(0.7+Math.random()*0.6)));let oCrit=Math.random()<0.08;if(oCrit){odmg=Math.floor(odmg*1.5);logs.push(`🛡️ R${round}: 💥 Enemy CRIT ${odmg}!`)}else{logs.push(`🛡️ R${round}: Enemy deals ${odmg}`)}pHp-=odmg}const win=pHp>0;const rewardGold=win?Math.floor(CONFIG.BATTLE_REWARD_BASE*(1+pc.level*0.2)+oPower*0.1):Math.floor(CONFIG.BATTLE_REWARD_BASE*0.3);const rewardGem=win?Math.floor(1+pc.stars*0.5):0;const rewardXp=win?20:5;pc.hunger=Math.max(0,pc.hunger-15);pc.xp=Math.min(pc.level*100,pc.xp+rewardXp);s.battleCount++;this.game.economy.earn(rewardGold,rewardGem,0,win?'Victory':'Defeat');if(win&&Math.random()<0.3&&pc.stars<5){pc.stars++;this.game.log(`⭐ Battle Star +1!`)}this.game.saveState();return{win,rounds:round,playerHp:pHp,enemyHp:Math.max(0,oHpCur),logs,rewardGold,rewardGem}}
 }
 
 // ============================================
 // QUEST MANAGER
 // ============================================
-
 class QuestManager {
-  constructor(game){this.game=game; this.initQuests();}
-  
-  initQuests(){
-    if(!this.game.state.quests || !this.game.state.quests.length){
-      this.game.state.quests=this.generateDailyQuests();
-    }
-  }
-  
-  generateDailyQuests(){
-    return [
-      {id:'feed3',text:'Feed pet 3x',target:3,rewardGold:50,rewardGem:2,progress:0,completed:false},
-      {id:'battle5',text:'Win 5 battles',target:5,rewardGold:100,rewardGem:5,progress:0,completed:false},
-      {id:'breed1',text:'Breed 1 pet',target:1,rewardGold:75,rewardGem:3,progress:0,completed:false},
-      {id:'sell2',text:'Sell 2 cards',target:2,rewardGold:40,rewardGem:1,progress:0,completed:false},
-      {id:'openPack',text:'Open 1 pack',target:1,rewardGold:30,rewardGem:2,progress:0,completed:false}
-    ];
-  }
-  
-  checkQuest(action,count=1){
-    const s=this.game.state;
-    if(!s.quests) s.quests=this.generateDailyQuests();
-    s.quests.forEach(q=>{
-      if(q.completed) return;
-      if(q.id===action || (action==='feed' && q.id==='feed3') || (action==='battle' && q.id==='battle5')){
-        q.progress=Math.min(q.target,q.progress+count);
-        if(q.progress>=q.target){
-          q.completed=true;
-          this.game.economy.earn(q.rewardGold,q.rewardGem,0,'Quest Complete');
-          this.game.showToast(`Quest Done! +${q.rewardGem}💎`,'premium');
-        }
-      }
-    });
-    this.game.saveState();
-  }
-  
-  resetDaily(){
-    this.game.state.quests=this.generateDailyQuests();
-    this.game.log('📋 Daily quests reset!');
-  }
+  constructor(game){this.game=game;this.initQuests()}
+  initQuests(){if(!this.game.state.quests||!this.game.state.quests.length){this.game.state.quests=this.generateDailyQuests()}}
+  generateDailyQuests(){return[{id:'feed3',text:'Feed pet 3x',target:3,rewardGold:50,rewardGem:2,progress:0,completed:false},{id:'battle5',text:'Win 5 battles',target:5,rewardGold:100,rewardGem:5,progress:0,completed:false},{id:'breed1',text:'Breed 1 pet',target:1,rewardGold:75,rewardGem:3,progress:0,completed:false},{id:'sell2',text:'Sell 2 cards',target:2,rewardGold:40,rewardGem:1,progress:0,completed:false},{id:'openPack',text:'Open 1 pack',target:1,rewardGold:30,rewardGem:2,progress:0,completed:false}]}
+  checkQuest(action,count=1){const s=this.game.state;if(!s.quests)s.quests=this.generateDailyQuests();s.quests.forEach(q=>{if(q.completed)return;if(q.id===action||(action==='feed'&&q.id==='feed3')||(action==='battle'&&q.id==='battle5')){q.progress=Math.min(q.target,q.progress+count);if(q.progress>=q.target){q.completed=true;this.game.economy.earn(q.rewardGold,q.rewardGem,0,'Quest Complete');this.game.showToast(`Quest Done! +${q.rewardGem}💎`,'premium')}}});this.game.saveState()}
+  resetDaily(){this.game.state.quests=this.generateDailyQuests();this.game.log('📋 Daily quests reset!')}
 }
 
 // ============================================
 // MONETIZATION MANAGER
 // ============================================
-
 class MonetizationManager {
-  constructor(game){this.game=game;}
-  
-  watchAd(type='energy'){
-    const s=this.game.state;
-    const today=new Date().toDateString();
-    if(s.adDate!==today){s.adDate=today; s.adWatchedToday=0;}
-    if(s.adWatchedToday>=10){this.game.log('❌ Max 10 ads/hari!'); return false;}
-    
-    this.game.showModal('Menonton Iklan...','⏱️ Simulasi: Tonton video 30 detik untuk reward.<br><br>Di production, ini akan memanggil Ad SDK.','Tutup',()=>{
-      s.adWatchedToday++;
-      if(type==='energy') this.game.economy.earn(0,0,CONFIG.AD_REWARD_ENERGY,'Ad Reward');
-      else if(type==='gold') this.game.economy.earn(CONFIG.AD_REWARD_GOLD,0,0,'Ad Reward');
-      else if(type==='gem') this.game.economy.earn(0,1,0,'Ad Reward');
-      this.game.log(`📺 Ad watched! (${s.adWatchedToday}/10)`);
-      this.game.saveState();
-    });
-    return true;
-  }
-  
-  processReferral(code){
-    const s=this.game.state;
-    if(!code || code===s.referralCode){this.game.log('❌ Kode invalid!'); return false;}
-    if(s.referredBy){this.game.log('❌ Sudah pernah menggunakan referral!'); return false;}
-    
-    s.referredBy=code;
-    this.game.economy.earn(CONFIG.REFERRAL_REWARD_GOLD,CONFIG.REFERRAL_REWARD_GEM,0,'Referral Bonus');
-    this.game.log(`🎁 Referral bonus! +${CONFIG.REFERRAL_REWARD_GEM}💎`);
-    this.game.saveState();
-    return true;
-  }
-  
-  generateReferralCode(){
-    const s=this.game.state;
-    if(!s.referralCode){
-      s.referralCode='EVO'+Math.random().toString(36).substr(2,5).toUpperCase();
-    }
-    return s.referralCode;
-  }
-  
-  claimDailyStreak(){
-    const s=this.game.state;
-    const today=new Date().toDateString();
-    const yesterday=new Date(Date.now()-86400000).toDateString();
-    
-    if(s.lastDailyClaim===today){this.game.log('✅ Sudah claim hari ini!'); return false;}
-    
-    if(s.lastDailyClaim===yesterday){s.dailyStreak=Math.min(CONFIG.DAILY_STREAK_MAX,s.dailyStreak+1);}
-    else{s.dailyStreak=1;}
-    
-    s.lastDailyClaim=today;
-    const rewards=[{g:50,d:1},{g:75,d:2},{g:100,d:3},{g:150,d:4},{g:200,d:5},{g:300,d:7},{g:500,d:10}];
-    const rw=rewards[Math.min(s.dailyStreak-1,6)];
-    this.game.economy.earn(rw.g,rw.d,0,`Streak Day ${s.dailyStreak}`);
-    this.game.showToast(`Streak ${s.dailyStreak} 🔥 +${rw.d}💎`,'premium');
-    this.game.saveState();
-    return true;
-  }
+  constructor(game){this.game=game}
+  watchAd(type='energy'){const s=this.game.state;const today=new Date().toDateString();if(s.adDate!==today){s.adDate=today;s.adWatchedToday=0}if(s.adWatchedToday>=10){this.game.log('❌ Max 10 ads/hari!');return false}this.game.showModal('Menonton Iklan...','⏱️ Simulasi: Tonton video 30 detik untuk reward.<br><br>Di production, ini akan memanggil Ad SDK.','Tutup',()=>{s.adWatchedToday++;if(type==='energy')this.game.economy.earn(0,0,CONFIG.AD_REWARD_ENERGY,'Ad Reward');else if(type==='gold')this.game.economy.earn(CONFIG.AD_REWARD_GOLD,0,0,'Ad Reward');else if(type==='gem')this.game.economy.earn(0,1,0,'Ad Reward');this.game.log(`📺 Ad watched! (${s.adWatchedToday}/10)`);this.game.saveState()});return true}
+  processReferral(code){const s=this.game.state;if(!code||code===s.referralCode){this.game.log('❌ Kode invalid!');return false}if(s.referredBy){this.game.log('❌ Sudah pernah menggunakan referral!');return false}s.referredBy=code;this.game.economy.earn(CONFIG.REFERRAL_REWARD_GOLD,CONFIG.REFERRAL_REWARD_GEM,0,'Referral Bonus');this.game.log(`🎁 Referral bonus! +${CONFIG.REFERRAL_REWARD_GEM}💎`);this.game.saveState();return true}
+  generateReferralCode(){const s=this.game.state;if(!s.referralCode){s.referralCode='EVO'+Math.random().toString(36).substr(2,5).toUpperCase()}return s.referralCode}
+  claimDailyStreak(){const s=this.game.state;const today=new Date().toDateString();const yesterday=new Date(Date.now()-86400000).toDateString();if(s.lastDailyClaim===today){this.game.log('✅ Sudah claim hari ini!');return false}if(s.lastDailyClaim===yesterday){s.dailyStreak=Math.min(CONFIG.DAILY_STREAK_MAX,s.dailyStreak+1)}else{s.dailyStreak=1}s.lastDailyClaim=today;const rewards=[{g:50,d:1},{g:75,d:2},{g:100,d:3},{g:150,d:4},{g:200,d:5},{g:300,d:7},{g:500,d:10}];const rw=rewards[Math.min(s.dailyStreak-1,6)];this.game.economy.earn(rw.g,rw.d,0,`Streak Day ${s.dailyStreak}`);this.game.showToast(`Streak ${s.dailyStreak} 🔥 +${rw.d}💎`,'premium');this.game.saveState();return true}
 }
 
 // ============================================
 // UI MANAGER
 // ============================================
-
 class UIManager {
-  constructor(game){this.game=game;}
+  constructor(game){this.game=game}
+  renderTab(tab){this.game.currentTab=tab;const c=document.getElementById('content');document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===tab));switch(tab){case'cards':this.renderCards(c);break;case'feed':this.renderFeed(c);break;case'breed':this.renderBreed(c);break;case'battle':this.renderBattle(c);break;case'market':this.renderMarket(c);break;case'earn':this.renderEarn(c);break;case'admin':this.renderAdmin(c);break;case'shop':this.renderShop(c);break}this.game.updateUI()}
   
-  renderTab(tab){
-    this.game.currentTab=tab;
-    const c=document.getElementById('content');
-    document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===tab));
-    
-    switch(tab){
-      case 'cards': this.renderCards(c); break;
-      case 'feed': this.renderFeed(c); break;
-      case 'breed': this.renderBreed(c); break;
-      case 'battle': this.renderBattle(c); break;
-      case 'market': this.renderMarket(c); break;
-      case 'earn': this.renderEarn(c); break;
-      case 'shop': this.renderShop(c); break;
-    }
-    this.game.updateUI();
-  }
+  renderCards(c){const s=this.game.state;let h=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><span style="font-size:11px;color:#94a3b8;font-weight:700">Total: ${s.cards.length} cards</span><span style="font-size:11px;color:#facc15;font-weight:700">Selected: ${s.selected.length}/2</span></div><div class="grid">`;if(!s.cards.length){h+=`<div style="grid-column:1/-1;text-align:center;padding:40px;color:#64748b;font-size:12px">No cards yet. Open a pack!</div>`}else{s.cards.forEach((cd,i)=>{const sel=s.selected.includes(i)?' selected':'';const sh=Array(5).fill(0).map((_,si)=>`<span class="${si<(cd.stars||0)?'on':'off'}">${si<(cd.stars||0)?'⭐':'☆'}</span>`).join('');const hu=cd.hunger||100;const hc=hu>=70?'#22c55e':hu>=30?'#f59e0b':'#ef4444';const xpPct=Math.min(100,((cd.xp||0)/(cd.level*100))*100);h+=`<div class="card rarity-${cd.rarity}${sel}" onclick="window.gameApp.selectCard(${i})"><div class="lvl">Lv${cd.level}</div><div class="emoji">${cd.emoji}</div><div class="name">${cd.name}</div><div class="stars">${sh}</div><div class="stats-row">⚔️${cd.atk} 🛡️${cd.def} ❤️${cd.hp}</div><div class="hunger-bar"><div class="hunger-fill" style="width:${hu}%;background:${hc}"></div></div><div class="xp-bar"><div class="xp-fill" style="width:${xpPct}%"></div></div><span style="font-size:7px;color:#64748b">🍖${hu}% | XP ${cd.xp||0}/${cd.level*100}</span></div>`})}h+=`</div><button class="btn btn-green" onclick="window.gameApp.cards.evolve(window.gameApp.state.selected[0])" ${s.selected.length!==1?'disabled':''}>✨ Evolve (⭐5 + 50💰)</button><button class="btn btn-red" onclick="window.gameApp.cards.sell(window.gameApp.state.selected)">💵 Sell Selected</button>`;c.innerHTML=h}
   
-  renderCards(c){
-    const s=this.game.state;
-    let h=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-      <span style="font-size:11px;color:#94a3b8;font-weight:700">Total: ${s.cards.length} cards</span>
-      <span style="font-size:11px;color:#facc15;font-weight:700">Selected: ${s.selected.length}/2</span>
-    </div><div class="grid">`;
-    
-    if(!s.cards.length){
-      h+=`<div style="grid-column:1/-1;text-align:center;padding:40px;color:#64748b;font-size:12px">No cards yet. Open a pack!</div>`;
-    } else {
-      s.cards.forEach((cd,i)=>{
-        const sel=s.selected.includes(i)?' selected':'';
-        const sh=Array(5).fill(0).map((_,si)=>`<span class="${si<(cd.stars||0)?'on':'off'}">${si<(cd.stars||0)?'⭐':'☆'}</span>`).join('');
-        const hu=cd.hunger||100;
-        const hc=hu>=70?'#22c55e':hu>=30?'#f59e0b':'#ef4444';
-        const xpPct=Math.min(100,((cd.xp||0)/(cd.level*100))*100);
-        
-        h+=`<div class="card rarity-${cd.rarity}${sel}" onclick="window.gameApp.selectCard(${i})">
-          <div class="lvl">Lv${cd.level}</div>
-          <div class="emoji">${cd.emoji}</div>
-          <div class="name">${cd.name}</div>
-          <div class="stars">${sh}</div>
-          <div class="stats-row">⚔️${cd.atk} 🛡️${cd.def} ❤️${cd.hp}</div>
-          <div class="hunger-bar"><div class="hunger-fill" style="width:${hu}%;background:${hc}"></div></div>
-          <div class="xp-bar"><div class="xp-fill" style="width:${xpPct}%"></div></div>
-          <span style="font-size:7px;color:#64748b">🍖${hu}% | XP ${cd.xp||0}/${cd.level*100}</span>
-        </div>`;
-      });
-    }
-    h+=`</div>
-    <button class="btn btn-green" onclick="window.gameApp.cards.evolve(window.gameApp.state.selected[0])" ${s.selected.length!==1?'disabled':''}>✨ Evolve (⭐5 + 50💰)</button>
-    <button class="btn btn-red" onclick="window.gameApp.cards.sell(window.gameApp.state.selected)">💵 Sell Selected</button>`;
-    c.innerHTML=h;
-  }
+  renderFeed(c){const s=this.game.state;let h=`<div class="section-title">🍖 Feeding Center</div>`;if(!s.cards.length){c.innerHTML=h+'<p class="info-text">No cards to feed!</p>';return}h+=`<select id="feedTarget" onchange="window.gameApp.ui.updateFeedPreview()"><option value="">Select pet...</option>`;s.cards.forEach((cd,i)=>{h+=`<option value="${i}">${cd.emoji} ${cd.name} Lv${cd.level} 🍖${cd.hunger}%</option>`});h+=`</select><div id="feedPreview" class="panel" style="display:none;text-align:center"></div><div class="feed-opt"><button class="btn" onclick="window.gameApp.ui.doFeed('bread')">🍞 Bread<br>10💰 +25🍖</button><button class="btn btn-primary" onclick="window.gameApp.ui.doFeed('meat')">🥩 Meat<br>25💰 +50🍖</button><button class="btn btn-blue" onclick="window.gameApp.ui.doFeed('premium')">🍰 Premium<br>2💎 +100🍖</button></div>`;c.innerHTML=h}
+  updateFeedPreview(){const idx=parseInt(document.getElementById('feedTarget').value);const el=document.getElementById('feedPreview');if(isNaN(idx)){el.style.display='none';return}const c=this.game.state.cards[idx];el.style.display='block';el.innerHTML=`<div class="emoji" style="font-size:48px">${c.emoji}</div><div style="font-weight:900">${c.name} Lv${c.level}</div><div style="color:#94a3b8;font-size:11px">Hunger: ${c.hunger}% | Stars: ${c.stars}/5 | XP: ${c.xp}/${c.level*100}</div>`}
+  doFeed(type){const idx=parseInt(document.getElementById('feedTarget').value);if(isNaN(idx)){this.game.log('❌ Pilih pet!');return}if(this.game.cards.feed(idx,type)){this.game.quests.checkQuest('feed');this.updateFeedPreview()}}
   
-  renderFeed(c){
-    const s=this.game.state;
-    let h=`<div class="section-title">🍖 Feeding Center</div>`;
-    if(!s.cards.length){c.innerHTML=h+'<p class="info-text">No cards to feed!</p>'; return;}
-    
-    h+=`<select id="feedTarget" onchange="window.gameApp.ui.updateFeedPreview()"><option value="">Select pet...</option>`;
-    s.cards.forEach((cd,i)=>{h+=`<option value="${i}">${cd.emoji} ${cd.name} Lv${cd.level} 🍖${cd.hunger}%</option>`;});
-    h+=`</select><div id="feedPreview" class="panel" style="display:none;text-align:center"></div>
-    <div class="feed-opt">
-      <button class="btn" onclick="window.gameApp.ui.doFeed('bread')">🍞 Bread<br>10💰 +25🍖</button>
-      <button class="btn btn-primary" onclick="window.gameApp.ui.doFeed('meat')">🥩 Meat<br>25💰 +50🍖</button>
-      <button class="btn btn-blue" onclick="window.gameApp.ui.doFeed('premium')">🍰 Premium<br>2💎 +100🍖</button>
-    </div>`;
-    c.innerHTML=h;
-  }
+  renderBreed(c){const s=this.game.state;let h=`<div class="section-title">🧬 Breeding Lab</div><div class="panel"><p class="info-text">Pilih 2 kartu di tab 🃏Kartu, lalu tekan Breed. Biaya: ${CONFIG.BREED_COST_ENERGY}⚡ | Min Hunger: ${CONFIG.BREED_MIN_HUNGER}%</p></div>`;if(s.selected.length===2){const c1=s.cards[s.selected[0]],c2=s.cards[s.selected[1]];h+=`<div style="display:flex;justify-content:center;align-items:center;gap:20px;margin:16px 0"><div style="text-align:center"><div class="emoji" style="font-size:48px">${c1.emoji}</div><div style="font-size:12px;font-weight:900">${c1.name}</div><div style="font-size:10px;color:#94a3b8">Lv${c1.level} ⭐${c1.stars}</div></div><div style="font-size:24px;font-weight:900;color:#facc15">+</div><div style="text-align:center"><div class="emoji" style="font-size:48px">${c2.emoji}</div><div style="font-size:12px;font-weight:900">${c2.name}</div><div style="font-size:10px;color:#94a3b8">Lv${c2.level} ⭐${c2.stars}</div></div></div>`}h+=`<button class="btn btn-purple" onclick="window.gameApp.cards.breed(window.gameApp.state.selected[0],window.gameApp.state.selected[1])" ${s.selected.length!==2?'disabled':''}>🧬 Breed Now (${CONFIG.BREED_COST_ENERGY}⚡)</button>`;c.innerHTML=h}
   
-  updateFeedPreview(){
-    const idx=parseInt(document.getElementById('feedTarget').value);
-    const el=document.getElementById('feedPreview');
-    if(isNaN(idx)){el.style.display='none'; return;}
-    const c=this.game.state.cards[idx];
-    el.style.display='block';
-    el.innerHTML=`<div class="emoji" style="font-size:48px">${c.emoji}</div><div style="font-weight:900">${c.name} Lv${c.level}</div><div style="color:#94a3b8;font-size:11px">Hunger: ${c.hunger}% | Stars: ${c.stars}/5 | XP: ${c.xp}/${c.level*100}</div>`;
-  }
+  renderBattle(c){const s=this.game.state;const today=new Date().toDateString();if(s.battleDate!==today){s.battleDate=today;s.battleCount=0}let h=`<div class="section-title">⚔️ Battle Arena</div><div class="panel" style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:16px;font-weight:900;color:#facc15">${s.battleCount}/${CONFIG.MAX_BATTLE_DAY}</div><div style="font-size:10px;color:#94a3b8">Battles Today</div></div><div><div style="font-size:16px;font-weight:900">${CONFIG.BATTLE_COST}⚡</div><div style="font-size:10px;color:#94a3b8">Cost</div></div></div>`;if(!s.cards.length){c.innerHTML=h+'<p class="info-text">No cards available!</p>';return}h+=`<select id="battleTarget"><option value="">Select fighter...</option>`;s.cards.forEach((cd,i)=>{h+=`<option value="${i}">${cd.emoji} ${cd.name} (PWR:${this.game.battle.calculatePower(cd)})</option>`});h+=`</select><button class="btn btn-green" onclick="window.gameApp.ui.doBattle()">⚔️ Battle! (${CONFIG.BATTLE_COST}⚡)</button><div id="battleResult"></div>`;c.innerHTML=h}
+  doBattle(){const idx=parseInt(document.getElementById('battleTarget').value);if(isNaN(idx)){this.game.log('❌ Pilih fighter!');return}const result=this.game.battle.simulateBattle(idx);if(!result)return;this.game.quests.checkQuest('battle',result.win?1:0);const el=document.getElementById('battleResult');const color=result.win?'#22c55e':'#ef4444';el.innerHTML=`<div class="battle-arena" style="border-color:${color}"><div style="font-size:28px;font-weight:900;color:${color};margin-bottom:8px">${result.win?'🏆 VICTORY!':'💀 DEFEAT'}</div><div style="font-size:12px;color:#94a3b8">Rounds: ${result.rounds} | Reward: ${result.rewardGold}💰 ${result.rewardGem>0?result.rewardGem+'💎':''}</div><div class="battle-log">${result.logs.slice(-6).map(l=>`<div>${l}</div>`).join('')}</div></div>`}
   
-  doFeed(type){
-    const idx=parseInt(document.getElementById('feedTarget').value);
-    if(isNaN(idx)){this.game.log('❌ Pilih pet!'); return;}
-    if(this.game.cards.feed(idx,type)){
-      this.game.quests.checkQuest('feed');
-      this.updateFeedPreview();
-    }
-  }
+  renderMarket(c){const s=this.game.state;let h=`<div class="section-title">🏪 Global Market</div><div class="panel"><p class="info-text">Jual kartu dengan harga 💎. Tax: ${CONFIG.MARKET_TAX_RATE*100}% untuk seller. Pilih kartu di tab 🃏Kartu lalu list di sini.</p></div>`;if(s.selected.length){h+=`<div style="margin:8px 0"><input type="number" id="listPrice" placeholder="Harga 💎..." value="10" min="1" max="999"></div><button class="btn btn-primary" onclick="window.gameApp.ui.listMarket()">📤 List ${s.selected.length} kartu</button>`}h+=`<div style="margin-top:12px"><div style="font-size:12px;font-weight:900;color:#94a3b8;margin-bottom:8px">📦 Listings (${s.market.length})</div>`;if(!s.market.length){h+=`<p class="info-text">Market kosong. Jadilah yang pertama!</p>`}else{s.market.forEach((l,i)=>{h+=`<div class="battle-card"><div>${l.emoji} ${l.name} Lv${l.level} ⭐${l.stars}</div><div>💎${l.price} <button class="btn btn-green" style="padding:4px 8px;font-size:10px;width:auto" onclick="window.gameApp.ui.buyMarket(${i})">Beli</button></div></div>`})}h+=`</div>`;c.innerHTML=h}
+  listMarket(){const price=parseInt(document.getElementById('listPrice').value)||10;const s=this.game.state Kode terpotong lagi. Berikut **bagian akhir yang lengkap** untuk menutup semua class dan inisialisasi:
+
+```javascript
+    if(!s.selected.length)return;const removed=this.game.cards.removeByIndex(s.selected);removed.forEach(card=>{s.market.push({...card,price:Math.max(1,price),seller:'player',listed:Date.now()})});s.selected=[];this.game.log(`📤 ${removed.length} kartu listed!`);this.game.saveState();this.renderTab('market')}
+  buyMarket(idx){const s=this.game.state;const item=s.market[idx];if(!item)return;if(s.gem<item.price){this.game.log('❌ 💎 tidak cukup!');return}s.gem-=item.price;const tax=this.game.economy.processMarketTax(item.price);s.cards.push({...item,uid:'c_'+Math.random().toString(36).slice(2,9)});s.market.splice(idx,1);this.game.log(`🛒 Dibeli! Tax: ${tax}💰`);this.game.saveState();this.renderTab('market')}
   
-  renderBreed(c){
-    const s=this.game.state;
-    let h=`<div class="section-title">🧬 Breeding Lab</div>
-    <div class="panel"><p class="info-text">Pilih 2 kartu di tab 🃏Kartu, lalu tekan Breed. Biaya: ${CONFIG.BREED_COST_ENERGY}⚡ | Min Hunger: ${CONFIG.BREED_MIN_HUNGER}%</p></div>`;
-    
-    if(s.selected.length===2){
-      const c1=s.cards[s.selected[0]], c2=s.cards[s.selected[1]];
-      h+=`<div style="display:flex;justify-content:center;align-items:center;gap:20px;margin:16px 0">
-        <div style="text-align:center"><div class="emoji" style="font-size:48px">${c1.emoji}</div><div style="font-size:12px;font-weight:900">${c1.name}</div><div style="font-size:10px;color:#94a3b8">Lv${c1.level} ⭐${c1.stars}</div></div>
-        <div style="font-size:24px;font-weight:900;color:#facc15">+</div>
-        <div style="text-align:center"><div class="emoji" style="font-size:48px">${c2.emoji}</div><div style="font-size:12px;font-weight:900">${c2.name}</div><div style="font-size:10px;color:#94a3b8">Lv${c2.level} ⭐${c2.stars}</div></div>
-      </div>`;
-    }
-    
-    h+=`<button class="btn btn-purple" onclick="window.gameApp.cards.breed(window.gameApp.state.selected[0],window.gameApp.state.selected[1])" ${s.selected.length!==2?'disabled':''}>🧬 Breed Now (${CONFIG.BREED_COST_ENERGY}⚡)</button>`;
-    c.innerHTML=h;
-  }
+  renderEarn(c){const s=this.game.state;const refCode=this.game.monetize.generateReferralCode();const today=new Date().toDateString();const canClaim=s.lastDailyClaim!==today;let h=`<div class="section-title">💰 Earn & Monetize</div><div class="section-title" style="font-size:12px">📺 Watch Ads</div><div class="ad-banner" onclick="window.gameApp.monetize.watchAd('energy')"><div class="ad-label">Sponsored</div><div class="ad-text">⚡ Tonton Iklan → +${CONFIG.AD_REWARD_ENERGY} Energy (${s.adWatchedToday||0}/10)</div></div><div class="ad-banner" onclick="window.gameApp.monetize.watchAd('gold')"><div class="ad-label">Sponsored</div><div class="ad-text">💰 Tonton Iklan → +${CONFIG.AD_REWARD_GOLD} Gold</div></div><div class="section-title" style="font-size:12px">🔥 Daily Streak</div><div class="daily-streak">`;for(let i=1;i<=7;i++){const active=i===s.dailyStreak?'active':i<s.dailyStreak?'claimed':'';const rw=[50,75,100,150,200,300,500];h+=`<div class="streak-day ${active}"><div class="day-num">D${i}</div><div class="day-reward">${rw[i-1]}💰</div></div>`}h+=`</div><button class="btn btn-gold" onclick="window.gameApp.monetize.claimDailyStreak()" ${!canClaim?'disabled':''}>🔥 Claim Daily Reward</button><div class="section-title" style="font-size:12px">🎯 Daily Quests</div><div>`;(s.quests||[]).forEach(q=>{h+=`<div class="quest-item ${q.completed?'completed':''}"><div><div style="font-weight:700">${q.text}</div><div style="font-size:9px;color:#64748b">${q.progress}/${q.target}</div></div><div class="reward">+${q.rewardGold}💰 +${q.rewardGem}💎</div></div>`});h+=`</div><div class="section-title" style="font-size:12px">🤝 Referral Program</div><div class="referral-box"><div style="font-size:10px;color:#94a3b8;margin-bottom:4px">Your Code</div><div class="referral-code">${refCode}</div><div style="font-size:10px;color:#64748b;margin-top:8px">Invite friends → +${CONFIG.REFERRAL_REWARD_GEM}💎 each!</div></div><input type="text" id="refInput" placeholder="Masukkan kode referral..."><button class="btn btn-blue" onclick="window.gameApp.ui.useReferral()">🎁 Claim Referral</button>`;c.innerHTML=h}
+  useReferral(){const code=document.getElementById('refInput').value.trim();if(code)this.game.monetize.processReferral(code)}
   
-  renderBattle(c){
-    const s=this.game.state;
-    const today=new Date().toDateString();
-    if(s.battleDate!==today){s.battleDate=today; s.battleCount=0;}
-    
-    let h=`<div class="section-title">⚔️ Battle Arena</div>
-    <div class="panel" style="display:flex;justify-content:space-between;align-items:center">
-      <div><div style="font-size:16px;font-weight:900;color:#facc15">${s.battleCount}/${CONFIG.MAX_BATTLE_DAY}</div><div style="font-size:10px;color:#94a3b8">Battles Today</div></div>
-      <div><div style="font-size:16px;font-weight:900">${CONFIG.BATTLE_COST}⚡</div><div style="font-size:10px;color:#94a3b8">Cost</div></div>
-    </div>`;
-    
-    if(!s.cards.length){c.innerHTML=h+'<p class="info-text">No cards available!</p>'; return;}
-    
-    h+=`<select id="battleTarget"><option value="">Select fighter...</option>`;
-    s.cards.forEach((cd,i)=>{h+=`<option value="${i}">${cd.emoji} ${cd.name} (PWR:${this.game.battle.calculatePower(cd)})</option>`;});
-    h+=`</select><button class="btn btn-green" onclick="window.gameApp.ui.doBattle()">⚔️ Battle! (${CONFIG.BATTLE_COST}⚡)</button>
-    <div id="battleResult"></div>`;
-    c.innerHTML=h;
-  }
+  renderAdmin(c){const s=this.game.state;const pendingCount=s.pendingTx?s.pendingTx.filter(t=>t.status==='pending').length:0;let h=`<div class="section-title">🏦 Admin Market</div><div class="admin-market"><div style="text-align:center;margin-bottom:12px"><div style="font-size:12px;color:#94a3b8">Official P2C Exchange</div><div style="font-size:10px;color:#f43f5e;font-weight:900">TERDEPAN & TERPERCAYA</div></div><div class="balance-display"><div><div class="bal-label">Diamond Anda</div><div class="bal-value">${s.gem.toLocaleString()}💎</div></div><div style="text-align:right"><div class="bal-label">Pending</div><div style="font-size:14px;font-weight:900;color:${pendingCount>0?'#f59e0b':'#94a3b8'}">${pendingCount} TX</div></div></div><div class="rate-box"><div class="rate-label">💎 BELI DARI ADMIN</div><div class="rate-value">Rp${CONFIG.ADMIN_BUY_RATE.toLocaleString()}</div><div class="rate-desc">per 1.000 Diamond | Transfer → OTP → Verifikasi</div></div><div class="rate-box"><div class="rate-label">💸 JUAL KE ADMIN</div><div class="rate-value">Rp${CONFIG.ADMIN_SELL_RATE.toLocaleString()}</div><div class="rate-desc">per 1.000 Diamond | OTP → Verifikasi → Dana Masuk</div></div><div style="display:flex;gap:8px;margin-top:12px"><button class="btn btn-green" style="flex:1" onclick="window.gameApp.ui.showBuyDiamond()">💎 Beli Diamond</button><button class="btn btn-red" style="flex:1" onclick="window.gameApp.ui.showSellDiamond()">💸 Jual Diamond</button></div></div><div class="section-title" style="font-size:12px">📜 Riwayat Transaksi</div>`;const txHistory=this.game.adminMarket.getTxHistory(5);if(!txHistory.length){h+=`<p class="info-text">Belum ada transaksi terverifikasi.</p>`}else{h+=`<div class="tx-history">`;txHistory.forEach(tx=>{const date=new Date(tx.date).toLocaleDateString('id-ID',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});h+=`<div class="tx-item ${tx.type}"><div><span class="tx-type">${tx.type==='buy'?'🟢 BELI':'🔴 JUAL'}</span> ${tx.amount.toLocaleString()}💎</div><div style="text-align:right"><div class="tx-amount">Rp${tx.rupiah.toLocaleString()}</div><div style="font-size:9px;color:#64748b">${date}</div></div></div>`});h+=`</div>`}h+=`<div class="panel" style="margin-top:12px"><div class="info-text" style="margin:0"><b>🔐 Cara Kerja OTP:</b><br>1. Pilih Beli/Jual & masukkan jumlah<br>2. OTP 6 digit digenerate otomatis<br>3. Kirim OTP ke WA admin untuk verifikasi<br>4. Admin masukkan OTP di panel tersembunyi<br>5. Transaksi diproses & notifikasi muncul<br><br><b>⚠️ OTP berlaku ${CONFIG.OTP_EXPIRY_MINUTES} menit!</b></div></div>`;c.innerHTML=h}
+  showBuyDiamond(){const amount=parseInt(prompt(`💎 BELI DIAMOND\n\nMasukkan jumlah (kelipatan 1000):\nRate: Rp${CONFIG.ADMIN_BUY_RATE.toLocaleString()}/1000💎\nMin: ${CONFIG.ADMIN_MIN_BUY} | Max: ${CONFIG.ADMIN_MAX_BUY}`));if(!amount||isNaN(amount))return;this.game.adminMarket.buyDiamond(amount);this.renderTab('admin')}
+  showSellDiamond(){const amount=parseInt(prompt(`💸 JUAL DIAMOND\n\nMasukkan jumlah (kelipatan 1000):\nRate: Rp${CONFIG.ADMIN_SELL_RATE.toLocaleString()}/1000💎\nMin: ${CONFIG.ADMIN_MIN_SELL} | Max: ${CONFIG.ADMIN_MAX_SELL}\nAnda punya: ${this.game.state.gem}💎`));if(!amount||isNaN(amount))return;this.game.adminMarket.sellDiamond(amount);this.renderTab('admin')}
   
-  doBattle(){
-    const idx=parseInt(document.getElementById('battleTarget').value);
-    if(isNaN(idx)){this.game.log('❌ Pilih fighter!'); return;}
-    const result=this.game.battle.simulateBattle(idx);
-    if(!result) return;
-    
-    this.game.quests.checkQuest('battle',result.win?1:0);
-    
-    const el=document.getElementById('battleResult');
-    const color=result.win?'#22c55e':'#ef4444';
-    el.innerHTML=`<div class="battle-arena" style="border-color:${color}">
-      <div style="font-size:28px;font-weight:900;color:${color};margin-bottom:8px">${result.win?'🏆 VICTORY!':'💀 DEFEAT'}</div>
-      <div style="font-size:12px;color:#94a3b8">Rounds: ${result.rounds} | Reward: ${result.rewardGold}💰 ${result.rewardGem>0?result.rewardGem+'💎':''}</div>
-      <div class="battle-log">${result.logs.slice(-6).map(l=>`<div>${l}</div>`).join('')}</div>
-    </div>`;
-  }
-  
-  renderMarket(c){
-    const s=this.game.state;
-    let h=`<div class="section-title">🏪 Global Market</div>
-    <div class="panel"><p class="info-text">Jual kartu dengan harga 💎. Tax: ${CONFIG.MARKET_TAX_RATE*100}% untuk seller. Pilih kartu di tab 🃏Kartu lalu list di sini.</p></div>`;
-    
-    if(s.selected.length){
-      h+=`<div style="margin:8px 0"><input type="number" id="listPrice" placeholder="Harga 💎..." value="10" min="1" max="999"></div>
-      <button class="btn btn-primary" onclick="window.gameApp.ui.listMarket()">📤 List ${s.selected.length} kartu</button>`;
-    }
-    
-    h+=`<div style="margin-top:12px"><div style="font-size:12px;font-weight:900;color:#94a3b8;margin-bottom:8px">📦 Listings (${s.market.length})</div>`;
-    if(!s.market.length){h+=`<p class="info-text">Market kosong. Jadilah yang pertama!</p>`;}
-    else{
-      s.market.forEach((l,i)=>{
-        h+=`<div class="battle-card"><div>${l.emoji} ${l.name} Lv${l.level} ⭐${l.stars}</div><div>💎${l.price} <button class="btn btn-green" style="padding:4px 8px;font-size:10px;width:auto" onclick="window.gameApp.ui.buyMarket(${i})">Beli</button></div></div>`;
-      });
-    }
-    h+=`</div>`;
-    c.innerHTML=h;
-  }
-  
-  listMarket(){
-    const price=parseInt(document.getElementById('listPrice').value)||10;
-    const s=this.game.state;
-    if(!s.selected.length) return;
-    
-    const removed=this.game.cards.removeByIndex(s.selected);
-    removed.forEach(card=>{
-      s.market.push({...card,price:Math.max(1,price),seller:'player',listed:Date.now()});
-    });
-    s.selected=[];
-    this.game.log(`📤 ${removed.length} kartu listed!`);
-    this.game.saveState();
-    this.renderTab('market');
-  }
-  
-  buyMarket(idx){
-    const s=this.game.state;
-    const item=s.market[idx];
-    if(!item) return;
-    if(s.gem<item.price){this.game.log('❌ 💎 tidak cukup!'); return;}
-    
-    s.gem-=item.price;
-    const tax=this.game.economy.processMarketTax(item.price);
-    s.cards.push({...item,uid:'c_'+Math.random().toString(36).slice(2,9)});
-    s.market.splice(idx,1);
-    this.game.log(`🛒 Dibeli! Tax: ${tax}💰`);
-    this.game.saveState();
-    this.renderTab('market');
-  }
-  
-  renderEarn(c){
-    const s=this.game.state;
-    const refCode=this.game.monetize.generateReferralCode();
-    const today=new Date().toDateString();
-    const canClaim=s.lastDailyClaim!==today;
-    
-    let h=`<div class="section-title">💰 Earn & Monetize</div>
-    
-    <div class="section-title" style="font-size:12px">📺 Watch Ads</div>
-    <div class="ad-banner" onclick="window.gameApp.monetize.watchAd('energy')">
-      <div class="ad-label">Sponsored</div>
-      <div class="ad-text">⚡ Tonton Iklan → +${CONFIG.AD_REWARD_ENERGY} Energy (${s.adWatchedToday||0}/10)</div>
-    </div>
-    <div class="ad-banner" onclick="window.gameApp.monetize.watchAd('gold')">
-      <div class="ad-label">Sponsored</div>
-      <div class="ad-text">💰 Tonton Iklan → +${CONFIG.AD_REWARD_GOLD} Gold</div>
-    </div>
-    
-    <div class="section-title" style="font-size:12px">🔥 Daily Streak</div>
-    <div class="daily-streak">`;
-    for(let i=1;i<=7;i++){
-      const active=i===s.dailyStreak?'active':i<s.dailyStreak?'claimed':'';
-      const rw=[50,75,100,150,200,300,500];
-      h+=`<div class="streak-day ${active}"><div class="day-num">D${i}</div><div class="day-reward">${rw[i-1]}💰</div></div>`;
-    }
-    h+=`</div>
-    <button class="btn btn-gold" onclick="window.gameApp.monetize.claimDailyStreak()" ${!canClaim?'disabled':''}>🔥 Claim Daily Reward</button>
-    
-    <div class="section-title" style="font-size:12px">🎯 Daily Quests</div>
-    <div>`;
-    (s.quests||[]).forEach(q=>{
-      h+=`<div class="quest-item ${q.completed?'completed':''}">
-        <div><div style="font-weight:700">${q.text}</div><div style="font-size:9px;color:#64748b">${q.progress}/${q.target}</div></div>
-        <div class="reward">+${q.rewardGold}💰 +${q.rewardGem}💎</div>
-      </div>`;
-    });
-    h+=`</div>
-    
-    <div class="section-title" style="font-size:12px">🤝 Referral Program</div>
-    <div class="referral-box">
-      <div style="font-size:10px;color:#94a3b8;margin-bottom:4px">Your Code</div>
-      <div class="referral-code">${refCode}</div>
-      <div style="font-size:10px;color:#64748b;margin-top:8px">Invite friends → +${CONFIG.REFERRAL_REWARD_GEM}💎 each!</div>
-    </div>
-    <input type="text" id="refInput" placeholder="Masukkan kode referral...">
-    <button class="btn btn-blue" onclick="window.gameApp.ui.useReferral()">🎁 Claim Referral</button>
-    
-    <div class="section-title" style="font-size:12px">💸 Withdraw</div>
-    <div class="panel">
-      <div class="info-text">Min withdraw: 500💎 → Rp50.000 (Rate: 1💎 = Rp100)</div>
-      <button class="btn btn-red" onclick="window.gameApp.ui.withdraw()">💸 Withdraw</button>
-    </div>`;
-    
-    c.innerHTML=h;
-  }
-  
-  useReferral(){
-    const code=document.getElementById('refInput').value.trim();
-    if(code) this.game.monetize.processReferral(code);
-  }
-  
-  withdraw(){
-    const s=this.game.state;
-    if(s.gem<500){this.game.log('❌ Min 500💎!'); return;}
-    const amt=Math.floor(s.gem/500)*500;
-    const rp=(amt/500)*50000;
-    const rek=prompt(`Withdraw ${amt}💎 = Rp${rp.toLocaleString()}\n\nMasukkan nomor GoPay/Dana:`);
-    if(rek && confirm(`Konfirmasi withdraw Rp${rp.toLocaleString()} ke ${rek}?`)){
-      s.gem-=amt;
-      this.game.saveState();
-      this.game.log('✅ Withdrawal diproses (1x24 jam)');
-      this.game.showToast('Withdrawal submitted!');
-    }
-  }
-  
-  renderShop(c){
-    const s=this.game.state;
-    let h=`<div class="section-title">🛒 Premium Shop</div>
-    
-    <div class="section-title" style="font-size:12px">🎁 Booster Packs</div>
-    <div class="panel" style="text-align:center">
-      <div style="font-size:48px;margin:8px 0">🎲</div>
-      <div class="pity-counter">Pity: ${s.pityCounter}/${CONFIG.PITY_LEGENDARY} (Legendary)</div>
-    </div>
-    <button class="btn" onclick="window.gameApp.ui.openPack('bronze',1,10)">🥉 Bronze Pack — 1 Card — 10💎</button>
-    <button class="btn btn-primary" onclick="window.gameApp.ui.openPack('silver',3,25)">🥈 Silver Pack — 3 Cards — 25💎</button>
-    <button class="btn btn-gold" onclick="window.gameApp.ui.openPack('gold',5,45)">🥇 Gold Pack — 5 Cards — 45💎</button>
-    <button class="btn btn-purple" onclick="window.gameApp.ui.openPack('platinum',5,80)">💎 Platinum — 5+1 Epic+ — 80💎</button>
-    
-    <div class="section-title" style="font-size:12px">⚡ Resources</div>
-    <button class="btn btn-blue" onclick="window.gameApp.ui.buyResource('energy')">⚡ +20 Energy — 5💎</button>
-    <button class="btn btn-green" onclick="window.gameApp.ui.buyResource('gold')">💰 +1000 Gold — 15💎</button>
-    
-    <div class="section-title" style="font-size:12px">🎟️ Redeem Code</div>
-    <input type="text" id="redeemCode" placeholder="Enter code...">
-    <button class="btn btn-premium" onclick="window.gameApp.ui.redeem()">🎟️ Redeem</button>
-    
-    <div id="packResult" class="pack-opening"></div>`;
-    
-    c.innerHTML=h;
-  }
-  
-  openPack(type,count,cost){
-    const result=this.game.cards.openPack(count,cost,type);
-    if(!result) return;
-    
-    const el=document.getElementById('packResult');
-    el.innerHTML=result.map((card,i)=>`<div class="pack-card" style="animation-delay:${i*0.1}s">${card.emoji}</div>`).join('')+(result.find(c=>c.isBonus)?'<div style="width:100%;margin-top:8px;font-size:12px;color:#facc15;font-weight:900">🎁 BONUS CARD!</div>':'');
-    
-    this.game.quests.checkQuest('openPack');
-    setTimeout(()=>{if(el) el.innerHTML='';},4000);
-  }
-  
-  buyResource(type){
-    if(type==='energy'){
-      if(this.game.economy.spend(0,5,0,'Buy Energy')){
-        this.game.state.energy=Math.min(this.game.state.maxEnergy,this.game.state.energy+20);
-        this.game.saveState();
-      }
-    }else if(type==='gold'){
-      if(this.game.economy.spend(0,15,0,'Buy Gold')){
-        this.game.economy.earn(1000,0,0,'Shop');
-      }
-    }
-  }
-  
-  redeem(){
-    const code=document.getElementById('redeemCode').value.trim().toUpperCase();
-    if(!code){this.game.log('❌ Masukkan kode!'); return;}
-    
-    const now=Date.now();
-    const key='evo9_redeem_'+code;
-    const last=parseInt(localStorage.getItem(key+'_last')||0);
-    if(now-last < 60000){this.game.log('⏱️ Tunggu 1 menit!'); return;}
-    localStorage.setItem(key+'_last',now.toString());
-    
-    let gem=5, gold=0;
-    if(code.startsWith('VIP')){gem=50; gold=500;}
-    else if(code.startsWith('MEGA')){gem=100; gold=1000;}
-    else if(code.length < 6){this.game.log('❌ Kode invalid!'); return;}
-    
-    const used=JSON.parse(localStorage.getItem('evo9_used_codes')||'[]');
-    if(used.includes(code)){this.game.log('⚠️ Kode sudah digunakan!'); return;}
-    
-    used.push(code);
-    localStorage.setItem('evo9_used_codes',JSON.stringify(used));
-    
-    this.game.economy.earn(gold,gem,0,'Redeem Code');
-    this.game.saveState();
-    this.game.showToast(`🎉 +${gem}💎 +${gold}💰`,'premium');
-  }
+  renderShop(c){const s=this.game.state;let h=`<div class="section-title">🛒 Premium Shop</div><div class="section-title" style="font-size:12px">🎁 Booster Packs</div><div class="panel" style="text-align:center"><div style="font-size:48px;margin:8px 0">🎲</div><div class="pity-counter">Pity: ${s.pityCounter}/${CONFIG.PITY_LEGENDARY} (Legendary)</div></div><button class="btn" onclick="window.gameApp.ui.openPack('bronze',1,10)">🥉 Bronze Pack — 1 Card — 10💎</button><button class="btn btn-primary" onclick="window.gameApp.ui.openPack('silver',3,25)">🥈 Silver Pack — 3 Cards — 25💎</button><button class="btn btn-gold" onclick="window.gameApp.ui.openPack('gold',5,45)">🥇 Gold Pack — 5 Cards — 45💎</button><button class="btn btn-purple" onclick="window.gameApp.ui.openPack('platinum',5,80)">💎 Platinum — 5+1 Epic+ — 80💎</button><div class="section-title" style="font-size:12px">⚡ Resources</div><button class="btn btn-blue" onclick="window.gameApp.ui.buyResource('energy')">⚡ +20 Energy — 5💎</button><button class="btn btn-green" onclick="window.gameApp.ui.buyResource('gold')">💰 +1000 Gold — 15💎</button><div class="section-title" style="font-size:12px">🎟️ Redeem Code</div><input type="text" id="redeemCode" placeholder="Enter code..."><button class="btn btn-premium" onclick="window.gameApp.ui.redeem()">🎟️ Redeem</button><div id="packResult" class="pack-opening"></div>`;c.innerHTML=h}
+  openPack(type,count,cost){const result=this.game.cards.openPack(count,cost,type);if(!result)return;const el=document.getElementById('packResult');el.innerHTML=result.map((card,i)=>`<div class="pack-card" style="animation-delay:${i*0.1}s">${card.emoji}</div>`).join('')+(result.find(c=>c.isBonus)?'<div style="width:100%;margin-top:8px;font-size:12px;color:#facc15;font-weight:900">🎁 BONUS CARD!</div>':'');this.game.quests.checkQuest('openPack');setTimeout(()=>{if(el)el.innerHTML=''},4000)}
+  buyResource(type){if(type==='energy'){if(this.game.economy.spend(0,5,0,'Buy Energy')){this.game.state.energy=Math.min(this.game.state.maxEnergy,this.game.state.energy+20);this.game.saveState()}}else if(type==='gold'){if(this.game.economy.spend(0,15,0,'Buy Gold')){this.game.economy.earn(1000,0,0,'Shop')}}}
+  redeem(){const code=document.getElementById('redeemCode').value.trim().toUpperCase();if(!code){this.game.log('❌ Masukkan kode!');return}const now=Date.now();const key='evo9_redeem_'+code;const last=parseInt(localStorage.getItem(key+'_last')||0);if(now-last<60000){this.game.log('⏱️ Tunggu 1 menit!');return}localStorage.setItem(key+'_last',now.toString());let gem=5,gold=0;if(code.startsWith('VIP')){gem=50;gold=500}else if(code.startsWith('MEGA')){gem=100;gold=1000}else if(code.length<6){this.game.log('❌ Kode invalid!');return}const used=JSON.parse(localStorage.getItem('evo9_used_codes')||'[]');if(used.includes(code)){this.game.log('⚠️ Kode sudah digunakan!');return}used.push(code);localStorage.setItem('evo9_used_codes',JSON.stringify(used));this.game.economy.earn(gold,gem,0,'Redeem Code');this.game.saveState();this.game.showToast(`🎉 +${gem}💎 +${gold}💰`,'premium')}
 }
 
 // ============================================
 // MAIN GAME ENGINE
 // ============================================
-
 class GameEngine {
   constructor(){
     this.state=SecurityManager.getDefaultState();
@@ -949,135 +634,53 @@ class GameEngine {
     this.battle=new BattleSystem(this);
     this.quests=new QuestManager(this);
     this.monetize=new MonetizationManager(this);
+    this.adminMarket=new AdminMarketManager(this);
+    this.adminPanel=new AdminPanelManager(this);
     this.ui=new UIManager(this);
     this.currentTab='cards';
   }
-  
   init(){
     this.loadState();
-    
-    // Starter cards if empty
-    if(!this.state.cards || !this.state.cards.length){
-      this.state.cards=[
-        this.cards.createCard('sprout',1,0),
-        this.cards.createCard('cactus',1,0),
-        this.cards.createCard('sprout',2,1)
-      ];
-      this.log('🎁 Starter pack diberikan!');
+    if(!this.state.cards||!this.state.cards.length){
+      this.state.cards=[this.cards.createCard('sprout',1,0),this.cards.createCard('cactus',1,0),this.cards.createCard('sprout',2,1)];
+      this.log('🎁 Starter pack diberikan!')
     }
-    
     this.monetize.generateReferralCode();
     this.quests.initQuests();
     this.saveState();
     this.startLoops();
+    this.adminPanel.startAutoRefresh();
     this.ui.renderTab('cards');
     this.updateUI();
-    this.log('✅ v9.0 Ready! Pilih tab untuk mulai.');
+    this.log('✅ v9.2 Ready! Tab 🏦Admin untuk Beli/Jual Diamond.')
   }
-  
   startLoops(){
-    // Energy regen
-    setInterval(()=>{
-      if(this.state.energy < this.state.maxEnergy){
-        this.state.energy=Math.min(this.state.maxEnergy,this.state.energy+1);
-        this.saveState(); this.updateUI();
-      }
-    },CONFIG.ENERGY_REGEN_MINUTES*60000);
-    
-    // Hunger decay
-    setInterval(()=>{
-      this.state.cards.forEach(c=>{c.hunger=Math.max(0,c.hunger-CONFIG.HUNGER_DECAY_AMOUNT)});
-      this.saveState(); this.updateUI();
-    },CONFIG.HUNGER_DECAY_MINUTES*60000);
+    setInterval(()=>{if(this.state.energy<this.state.maxEnergy){this.state.energy=Math.min(this.state.maxEnergy,this.state.energy+1);this.saveState();this.updateUI()}},CONFIG.ENERGY_REGEN_MINUTES*60000);
+    setInterval(()=>{this.state.cards.forEach(c=>{c.hunger=Math.max(0,c.hunger-CONFIG.HUNGER_DECAY_AMOUNT)});this.saveState();this.updateUI()},CONFIG.HUNGER_DECAY_MINUTES*60000)
   }
-  
-  saveState(){
-    this.state.checksum=SecurityManager.generateChecksum(this.state);
-    localStorage.setItem('evo9_state',JSON.stringify(this.state));
-  }
-  
-  loadState(){
-    try{
-      const raw=localStorage.getItem('evo9_state');
-      if(raw){
-        const parsed=JSON.parse(raw);
-        this.state=SecurityManager.sanitizeState(parsed);
-        this.log('✅ Save loaded!');
-      }
-    }catch(e){
-      this.log('⚠️ New game started!');
-    }
-  }
-  
-  selectCard(idx){
-    const p=this.state.selected.indexOf(idx);
-    if(p>=0) this.state.selected.splice(p,1);
-    else if(this.state.selected.length<2) this.state.selected.push(idx);
-    this.ui.renderTab(this.currentTab);
-  }
-  
-  log(msg){document.getElementById('log').textContent=msg;}
-  
-  showToast(msg,type=''){
-    const t=document.getElementById('toast');
-    t.textContent=msg;
-    t.className='toast '+(type==='error'?'error':'')+' show';
-    setTimeout(()=>t.className='toast',2500);
-  }
-  
-  showModal(title,html,btnText='OK',callback=null){
-    const m=document.getElementById('modal'), c=document.getElementById('modalContent');
-    c.innerHTML=`<div class="modal-title">${title}</div><div class="modal-text">${html}</div><button class="btn btn-primary" onclick="window.gameApp.closeModal()">${btnText}</button>`;
-    m.classList.add('active');
-    this._modalCallback=callback;
-  }
-  
-  closeModal(){
-    document.getElementById('modal').classList.remove('active');
-    if(this._modalCallback){
-      this._modalCallback();
-      this._modalCallback=null;
-    }
-  }
-  
-  updateUI(){
-    document.getElementById('res-gold').textContent=this.state.gold;
-    document.getElementById('res-gem').textContent=this.state.gem;
-    document.getElementById('res-energy').textContent=this.state.energy;
-    document.getElementById('res-maxenergy').textContent=this.state.maxEnergy;
-  }
+  saveState(){this.state.checksum=SecurityManager.generateChecksum(this.state);localStorage.setItem('evo9_state',JSON.stringify(this.state))}
+  loadState(){try{const raw=localStorage.getItem('evo9_state');if(raw){const parsed=JSON.parse(raw);this.state=SecurityManager.sanitizeState(parsed);this.log('✅ Save loaded!')}}catch(e){this.log('⚠️ New game started!')}}
+  selectCard(idx){const p=this.state.selected.indexOf(idx);if(p>=0)this.state.selected.splice(p,1);else if(this.state.selected.length<2)this.state.selected.push(idx);this.ui.renderTab(this.currentTab)}
+  log(msg){document.getElementById('log').textContent=msg}
+  showToast(msg,type=''){const t=document.getElementById('toast');t.textContent=msg;t.className='toast '+(type==='error'?'error':'')+(type==='info'?'info':'')+' show';setTimeout(()=>t.className='toast',2500)}
+  showModal(title,html,btnText='OK',callback=null){const m=document.getElementById('modal'),c=document.getElementById('modalContent');c.innerHTML=`<div class="modal-title">${title}</div><div class="modal-text">${html}</div><button class="btn btn-primary" onclick="window.gameApp.closeModal()">${btnText}</button>`;m.classList.add('active');this._modalCallback=callback}
+  closeModal(){document.getElementById('modal').classList.remove('active');if(this._modalCallback){this._modalCallback();this._modalCallback=null}}
+  updateUI(){document.getElementById('res-gold').textContent=this.state.gold;document.getElementById('res-gem').textContent=this.state.gem;document.getElementById('res-energy').textContent=this.state.energy;document.getElementById('res-maxenergy').textContent=this.state.maxEnergy}
 }
 
 // ============================================
 // INITIALIZATION
 // ============================================
-
-let tg = window.Telegram?.WebApp;
-if(tg){
-  tg.expand();
-  tg.ready();
-}
-
-// Global reference untuk onclick handlers
-window.gameApp = null;
-
+let tg=window.Telegram?.WebApp;if(tg){tg.expand();tg.ready()}
+window.gameApp=null;
 document.addEventListener('DOMContentLoaded',()=>{
-  window.gameApp = new GameEngine();
-  
-  // Tab switching
-  document.getElementById('tabBar').addEventListener('click',(e)=>{
-    if(e.target.classList.contains('tab')){
-      window.gameApp.ui.renderTab(e.target.dataset.tab);
-    }
-  });
-  
-  // Modal close on backdrop
-  document.getElementById('modal').addEventListener('click',(e)=>{
-    if(e.target.id==='modal') window.gameApp.closeModal();
-  });
-  
-  // Start game
-  window.gameApp.init();
+  window.gameApp=new GameEngine();
+  document.getElementById('tabBar').addEventListener('click',(e)=>{if(e.target.classList.contains('tab'))window.gameApp.ui.renderTab(e.target.dataset.tab)});
+  document.getElementById('modal').addEventListener('click',(e)=>{if(e.target.id==='modal')window.gameApp.closeModal()});
+  document.getElementById('logoBtn').addEventListener('click',()=>window.gameApp.adminPanel.handleLogoClick());
+  document.getElementById('adminPass').addEventListener('keypress',(e)=>{if(e.key==='Enter')window.gameApp.adminPanel.login()});
+  document.getElementById('verifyOtpInput').addEventListener('keypress',(e)=>{if(e.key==='Enter')window.gameApp.adminPanel.verifyOtp()});
+  window.gameApp.init()
 });
 </script>
 </body>
