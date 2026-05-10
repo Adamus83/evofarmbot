@@ -3,17 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Evo Cards v9.0 — Monetized</title>
+<title>Evo Cards v9.0 — Fixed</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
 body{background:#0b0f19;color:#e2e8f0;display:flex;justify-content:center;min-height:100vh}
-.app{width:100%;max-width:480px;background:#151b2b;min-height:100vh;display:flex;flex-direction:column;position:relative;overflow:hidden}
-.top{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:#0f172a;border-bottom:2px solid #1e293b;position:sticky;top:0;z-index:100}
+.app{width:100%;max-width:480px;background:#151b2b;min-height:100vh;display:flex;flex-direction:column;position:relative}
+.top{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:#0f172a;border-bottom:2px solid #1e293b}
 .logo{font-weight:900;font-size:18px;background:linear-gradient(135deg,#facc15,#f59e0b);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.stats{display:flex;gap:6px;flex-wrap:wrap}
+.stats{display:flex;gap:6px}
 .badge{background:#1e293b;padding:6px 10px;border-radius:12px;font-size:11px;font-weight:800;display:flex;align-items:center;gap:4px;color:#facc15;font-family:monospace;border:1px solid #334155}
 .badge span{color:#fff;font-family:monospace;font-weight:900}
 .badge.premium{background:linear-gradient(135deg,#4c1d95,#6d28d9);border-color:#8b5cf6;color:#fff}
@@ -21,73 +19,64 @@ body{background:#0b0f19;color:#e2e8f0;display:flex;justify-content:center;min-he
 .tabs::-webkit-scrollbar{display:none}
 .tab{flex:1;padding:10px 6px;text-align:center;font-weight:800;font-size:11px;cursor:pointer;color:#64748b;border-bottom:3px solid transparent;white-space:nowrap;min-width:55px;transition:all .2s}
 .tab.active{color:#facc15;border-color:#facc15;background:#1e293b}
-.content{flex:1;overflow-y:auto;padding:12px;position:relative}
+.content{flex:1;overflow-y:auto;padding:12px}
 .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.card{background:linear-gradient(160deg,#1e293b,#0f172a);border:2px solid;border-radius:14px;padding:8px;text-align:center;position:relative;cursor:pointer;transition:all .2s;overflow:hidden}
+.card{background:linear-gradient(160deg,#1e293b,#0f172a);border:2px solid;border-radius:14px;padding:8px;text-align:center;position:relative;cursor:pointer;transition:all .2s}
 .card:active{transform:scale(0.95)}
 .card.selected{border-color:#facc15!important;box-shadow:0 0 20px rgba(250,204,21,.4);transform:translateY(-2px)}
-.card .shine{position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:linear-gradient(45deg,transparent 40%,rgba(255,255,255,.1) 50%,transparent 60%);transform:rotate(30deg);transition:all .5s;pointer-events:none}
-.card:hover .shine{left:100%}
-.rarity-common{border-color:#475569}.rarity-rare{border-color:#60a5fa;box-shadow:0 0 8px rgba(96,165,250,.2)}.rarity-epic{border-color:#a78bfa;box-shadow:0 0 10px rgba(167,139,250,.3)}.rarity-legendary{border-color:#facc15;box-shadow:0 0 15px rgba(250,204,21,.4)}.rarity-mythic{border-color:#f43f5e;box-shadow:0 0 20px rgba(244,63,94,.5);animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{box-shadow:0 0 15px rgba(244,63,94,.4)}50%{box-shadow:0 0 25px rgba(244,63,94,.7)}}
-.emoji{font-size:32px;display:block;margin:4px 0;filter:drop-shadow(0 2px 4px rgba(0,0,0,.3))}.name{font-size:10px;font-weight:900;margin:3px 0;white-space:nowrap;overflow:hidden;text-overflow:uppercase;letter-spacing:.5px}
+.rarity-common{border-color:#475569}.rarity-rare{border-color:#60a5fa}.rarity-epic{border-color:#a78bfa}.rarity-legendary{border-color:#facc15;box-shadow:0 0 15px rgba(250,204,21,.4)}.rarity-mythic{border-color:#f43f5e;box-shadow:0 0 20px rgba(244,63,94,.5)}
+.emoji{font-size:32px;display:block;margin:4px 0}.name{font-size:10px;font-weight:900;margin:3px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-transform:uppercase;letter-spacing:.5px}
 .stats-row{font-size:9px;color:#94a3b8;font-weight:600}.lvl{position:absolute;top:4px;left:4px;background:#0f172a;padding:2px 6px;border-radius:6px;font-size:9px;font-weight:900;border:1px solid #334155}
-.stars{display:flex;gap:2px;justify-content:center;margin-top:3px}.stars span{font-size:9px}.stars .on{color:#facc15;text-shadow:0 0 4px rgba(250,204,21,.6)}.stars .off{color:#334155}
+.stars{display:flex;gap:2px;justify-content:center;margin-top:3px}.stars span{font-size:9px}.stars .on{color:#facc15}.stars .off{color:#334155}
 .hunger-bar{width:100%;height:4px;background:#334155;border-radius:2px;margin-top:4px;overflow:hidden}.hunger-fill{height:100%;border-radius:2px;transition:width .3s}
 .xp-bar{width:100%;height:3px;background:#1e293b;border-radius:2px;margin-top:2px;overflow:hidden}.xp-fill{height:100%;background:#3b82f6;border-radius:2px;transition:width .3s}
-.btn{width:100%;padding:12px;border:none;border-radius:10px;font-weight:900;font-size:12px;cursor:pointer;background:#334155;color:#e2e8f0;margin:4px 0;transition:all .2s;position:relative;overflow:hidden}
+.btn{width:100%;padding:12px;border:none;border-radius:10px;font-weight:900;font-size:12px;cursor:pointer;background:#334155;color:#e2e8f0;margin:4px 0;transition:all .2s}
 .btn:active{transform:scale(0.98)}.btn:disabled{opacity:.5;cursor:not-allowed}
-.btn-primary{background:linear-gradient(135deg,#facc15,#f59e0b);color:#0f172a;box-shadow:0 4px 12px rgba(250,204,21,.3)}
-.btn-green{background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;box-shadow:0 4px 12px rgba(34,197,94,.3)}
-.btn-red{background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;box-shadow:0 4px 12px rgba(239,68,68,.3)}
-.btn-blue{background:linear-gradient(135deg,#3b82f6,#2563eb);color:#fff;box-shadow:0 4px 12px rgba(59,130,246,.3)}
-.btn-gold{background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;box-shadow:0 4px 12px rgba(245,158,11,.3)}
-.btn-purple{background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:#fff;box-shadow:0 4px 12px rgba(139,92,246,.3)}
-.btn-premium{background:linear-gradient(135deg,#ec4899,#db2777);color:#fff;box-shadow:0 4px 12px rgba(236,72,153,.3)}
+.btn-primary{background:linear-gradient(135deg,#facc15,#f59e0b);color:#0f172a}
+.btn-green{background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff}
+.btn-red{background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff}
+.btn-blue{background:linear-gradient(135deg,#3b82f6,#2563eb);color:#fff}
+.btn-gold{background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff}
+.btn-purple{background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:#fff}
+.btn-premium{background:linear-gradient(135deg,#ec4899,#db2777);color:#fff}
 .log{text-align:center;padding:8px;font-size:10px;color:#94a3b8;background:#0f172a;border-top:1px solid #1e293b;font-weight:600;min-height:36px;display:flex;align-items:center;justify-content:center}
-.hidden{display:none!important}
-.feed-opt{display:flex;gap:6px;margin:6px 0}.feed-opt button{flex:1;padding:10px 4px;font-size:10px}
-.battle-card{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:10px;margin:4px 0;display:flex;justify-content:space-between;align-items:center;font-size:11px;transition:all .2s}
-.battle-card:hover{border-color:#475569}
-.section-title{font-size:14px;font-weight:900;margin:12px 0 8px;color:#facc15;display:flex;align-items:center;gap:6px}
+.section-title{font-size:14px;font-weight:900;margin:12px 0 8px;color:#facc15}
 .panel{background:#0f172a;border:1px solid #1e293b;border-radius:12px;padding:12px;margin:8px 0}
 .info-text{font-size:11px;color:#64748b;line-height:1.5;margin:6px 0}
-.progress-ring{width:60px;height:60px;position:relative}.progress-ring svg{transform:rotate(-90deg)}.progress-ring circle{fill:none;stroke-width:4}
-.timer{display:flex;align-items:center;gap:8px;font-size:12px;color:#94a3b8;font-weight:700}
+.feed-opt{display:flex;gap:6px;margin:6px 0}.feed-opt button{flex:1;padding:10px 4px;font-size:10px}
+.battle-card{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:10px;margin:4px 0;display:flex;justify-content:space-between;align-items:center;font-size:11px}
+.battle-arena{background:#0f172a;border:2px solid #334155;border-radius:16px;padding:16px;margin:12px 0;text-align:center}
+.fighter{display:inline-block;text-align:center;margin:0 20px}.fighter .f-emoji{font-size:48px;display:block}.fighter .f-name{font-size:12px;font-weight:900;margin-top:4px}
+.vs{font-size:24px;font-weight:900;color:#ef4444;display:inline-block;vertical-align:middle}
+.battle-log{font-size:11px;color:#94a3b8;margin-top:12px;height:80px;overflow-y:auto;text-align:left;font-family:monospace;background:#0b0f19;border-radius:8px;padding:8px}
+.ad-banner{background:linear-gradient(135deg,#1e293b,#0f172a);border:2px solid #f59e0b;border-radius:12px;padding:12px;margin:8px 0;text-align:center;cursor:pointer}
+.ad-banner .ad-label{font-size:9px;color:#f59e0b;text-transform:uppercase;letter-spacing:1px;font-weight:900;margin-bottom:4px}
+.ad-banner .ad-text{font-size:13px;font-weight:700;color:#fff}
+.daily-streak{display:flex;justify-content:space-between;margin:12px 0;gap:4px}
+.streak-day{flex:1;text-align:center;padding:8px 4px;background:#1e293b;border-radius:8px;font-size:10px;border:2px solid transparent}
+.streak-day.active{border-color:#facc15;background:#0f172a}.streak-day.claimed{border-color:#22c55e;opacity:.6}
+.streak-day .day-num{font-weight:900;font-size:12px}.streak-day .day-reward{color:#facc15;font-size:9px}
 .quest-item{display:flex;justify-content:space-between;align-items:center;padding:8px;background:#1e293b;border-radius:8px;margin:4px 0;font-size:11px;border-left:3px solid #334155}
 .quest-item.completed{border-left-color:#22c55e;opacity:.7}.quest-item .reward{color:#facc15;font-weight:900}
+.referral-box{background:linear-gradient(135deg,#1e293b,#0f172a);border:2px dashed #facc15;border-radius:12px;padding:16px;text-align:center;margin:12px 0}
+.referral-code{font-size:24px;font-weight:900;color:#facc15;font-family:monospace;letter-spacing:2px}
+input,select{width:100%;padding:10px;background:#1e293b;border:1px solid #334155;border-radius:8px;color:#fff;font-size:13px;margin:4px 0}
+input:focus,select:focus{outline:none;border-color:#facc15}
 .modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.8);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px;opacity:0;pointer-events:none;transition:opacity .3s}.modal.active{opacity:1;pointer-events:all}
 .modal-content{background:#1e293b;border:2px solid #334155;border-radius:16px;padding:20px;max-width:360px;width:100%;max-height:80vh;overflow-y:auto;text-align:center}
 .modal-title{font-size:18px;font-weight:900;margin-bottom:12px;color:#facc15}
 .modal-text{font-size:13px;color:#94a3b8;margin-bottom:16px;line-height:1.6}
-.referral-box{background:linear-gradient(135deg,#1e293b,#0f172a);border:2px dashed #facc15;border-radius:12px;padding:16px;text-align:center;margin:12px 0}
-.referral-code{font-size:24px;font-weight:900;color:#facc15;font-family:monospace;letter-spacing:2px}
-.battle-arena{background:#0f172a;border:2px solid #334155;border-radius:16px;padding:16px;margin:12px 0;text-align:center;position:relative;overflow:hidden}
-.battle-arena::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#facc15,transparent)}
-.fighter{display:inline-block;text-align:center;margin:0 20px}.fighter .f-emoji{font-size:48px;display:block;animation:float 3s ease-in-out infinite}.fighter .f-name{font-size:12px;font-weight:900;margin-top:4px}
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
-.vs{font-size:24px;font-weight:900;color:#ef4444;display:inline-block;vertical-align:middle;animation:pulse 1s infinite}
-.battle-log{font-size:11px;color:#94a3b8;margin-top:12px;height:80px;overflow-y:auto;text-align:left;font-family:monospace;background:#0b0f19;border-radius:8px;padding:8px}
-.battle-log .dmg{color:#ef4444}.battle-log .heal{color:#22c55e}.battle-log .crit{color:#facc15;font-weight:900}
-.ad-banner{background:linear-gradient(135deg,#1e293b,#0f172a);border:2px solid #f59e0b;border-radius:12px;padding:12px;margin:8px 0;text-align:center;cursor:pointer;transition:all .2s}
-.ad-banner:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(245,158,11,.3)}
-.ad-banner .ad-label{font-size:9px;color:#f59e0b;text-transform:uppercase;letter-spacing:1px;font-weight:900;margin-bottom:4px}
-.ad-banner .ad-text{font-size:13px;font-weight:700;color:#fff}
-.daily-streak{display:flex;justify-content:space-between;margin:12px 0;gap:4px}
-.streak-day{flex:1;text-align:center;padding:8px 4px;background:#1e293b;border-radius:8px;font-size:10px;border:2px solid transparent;transition:all .2s}
-.streak-day.active{border-color:#facc15;background:#0f172a}.streak-day.claimed{border-color:#22c55e;opacity:.6}.streak-day .day-num{font-weight:900;font-size:12px}.streak-day .day-reward{color:#facc15;font-size:9px}
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-100px);background:#0f172a;border:2px solid #22c55e;color:#22c55e;padding:12px 24px;border-radius:12px;font-weight:900;font-size:13px;z-index:2000;transition:transform .3s}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.toast.error{border-color:#ef4444;color:#ef4444}
+.pack-opening{display:flex;justify-content:center;gap:12px;margin:20px 0;min-height:80px;align-items:center}
+.pack-card{font-size:48px;animation:packPop .5s ease-out}
+@keyframes packPop{0%{transform:scale(0) rotate(-180deg);opacity:0}70%{transform:scale(1.2) rotate(10deg)}100%{transform:scale(1) rotate(0);opacity:1}}
+.pity-counter{font-size:10px;color:#64748b;text-align:center;margin-top:4px}
 .leaderboard-item{display:flex;align-items:center;gap:10px;padding:8px;background:#1e293b;border-radius:8px;margin:4px 0;font-size:12px}
 .leaderboard-rank{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:12px;background:#334155;color:#94a3b8}
-.leaderboard-rank.gold{background:linear-gradient(135deg,#facc15,#f59e0b);color:#0f172a}.leaderboard-rank.silver{background:linear-gradient(135deg,#94a3b8,#64748b);color:#0f172a}.leaderboard-rank.bronze{background:linear-gradient(135deg,#cd7f32,#a0522d);color:#fff}
-.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-100px);background:#0f172a;border:2px solid #22c55e;color:#22c55e;padding:12px 24px;border-radius:12px;font-weight:900;font-size:13px;z-index:2000;transition:transform .3s;box-shadow:0 4px 20px rgba(34,197,94,.3)}
-.toast.show{transform:translateX(-50%) translateY(0)}
-.toast.error{border-color:#ef4444;color:#ef4444;box-shadow:0 4px 20px rgba(239,68,68,.3)}
-.pack-opening{display:flex;justify-content:center;gap:12px;margin:20px 0;min-height:80px;align-items:center}
-.pack-card{font-size:48px;animation:packBounce .6s ease-out}
-@keyframes packBounce{0%{transform:scale(0) rotate(-180deg);opacity:0}60%{transform:scale(1.2) rotate(10deg)}100%{transform:scale(1) rotate(0);opacity:1}}
-input,select{width:100%;padding:10px;background:#1e293b;border:1px solid #334155;border-radius:8px;color:#fff;font-size:13px;margin:4px 0}
-input:focus,select:focus{outline:none;border-color:#facc15}
-.pity-counter{font-size:10px;color:#64748b;text-align:center;margin-top:4px}
+.leaderboard-rank.gold{background:linear-gradient(135deg,#facc15,#f59e0b);color:#0f172a}
+.hidden{display:none!important}
 .version-tag{position:fixed;bottom:4px;right:8px;font-size:9px;color:#334155;font-weight:700;z-index:50}
 </style>
 </head>
@@ -114,8 +103,8 @@ input:focus,select:focus{outline:none;border-color:#facc15}
   </div>
   
   <div class="content" id="content"></div>
-  <div class="log" id="log">✅ v9.0 Ready — Tap any tab to begin</div>
-  <div class="version-tag">v9.0 MONETIZED</div>
+  <div class="log" id="log">⏳ Loading...</div>
+  <div class="version-tag">v9.0 FIXED</div>
 </div>
 
 <div class="modal" id="modal"><div class="modal-content" id="modalContent"></div></div>
@@ -123,8 +112,7 @@ input:focus,select:focus{outline:none;border-color:#facc15}
 
 <script>
 // ============================================
-// EVO CARDS v9.0 — MONETIZED EDITION
-// Architecture: Class-based, modular, anti-cheat ready
+// EVO CARDS v9.0 — FULLY WORKING VERSION
 // ============================================
 
 const CONFIG = {
@@ -147,7 +135,7 @@ const CONFIG = {
   PITY_MYTHIC: 200,
   REFERRAL_REWARD_GEM: 10,
   REFERRAL_REWARD_GOLD: 100,
-  QUEST_DAILY_RESET: 24 // hours
+  QUEST_DAILY_RESET: 24
 };
 
 const PETS_BASE = [
@@ -164,30 +152,29 @@ const PETS_BASE = [
 
 const RARITY_WEIGHTS = {common:50,rare:30,epic:15,legendary:4.5,mythic:0.5};
 
+// ============================================
+// SECURITY & STATE MANAGEMENT
+// ============================================
+
 class SecurityManager {
   static generateChecksum(obj) {
-    const str = JSON.stringify(obj,(k,v)=>{if(k==='checksum')return undefined;return v});
+    const str = JSON.stringify(obj,(k,v)=>k==='checksum'?undefined:v);
     let hash = 0;
     for(let i=0;i<str.length;i++){const c=str.charCodeAt(i);hash=((hash<<5)-hash)+c;hash|=0}
     return Math.abs(hash).toString(36);
   }
   
-  static verifyState(state) {
-    if(!state||!state.checksum)return false;
-    const expected = this.generateChecksum({...state,checksum:undefined});
-    return state.checksum === expected;
-  }
-  
   static sanitizeState(state) {
     if(!state) return this.getDefaultState();
-    // Anti-tamper: clamp values
     state.gold = Math.max(0,Math.min(999999,Math.floor(state.gold||0)));
     state.gem = Math.max(0,Math.min(99999,Math.floor(state.gem||0)));
-    state.energy = Math.max(0,Math.min(CONFIG.MAX_ENERGY,Math.floor(state.energy||0)));
+    state.energy = Math.max(0,Math.min(50,Math.floor(state.energy||CONFIG.MAX_ENERGY)));
     state.maxEnergy = Math.max(10,Math.min(50,Math.floor(state.maxEnergy||CONFIG.MAX_ENERGY)));
-    if(!Array.isArray(state.cards))state.cards=[];
-    if(!Array.isArray(state.market))state.market=[];
-    if(!Array.isArray(state.selected))state.selected=[];
+    if(!Array.isArray(state.cards)) state.cards=[];
+    if(!Array.isArray(state.market)) state.market=[];
+    if(!Array.isArray(state.selected)) state.selected=[];
+    if(!Array.isArray(state.quests)) state.quests=[];
+    if(!state.questProgress) state.questProgress={};
     state.cards.forEach(c=>{
       c.level=Math.max(1,Math.min(10,Math.floor(c.level||1)));
       c.stars=Math.max(0,Math.min(5,Math.floor(c.stars||0)));
@@ -205,106 +192,108 @@ class SecurityManager {
       lastHungerDecay:Date.now(),dailyStreak:0,lastDailyClaim:'',
       quests:[],questProgress:{},referralCode:'',referredBy:'',
       referrals:[],totalSpent:0,totalEarned:0,pityCounter:0,
-      adWatchedToday:0,adDate:'',version:'9.0'
+      adWatchedToday:0,adDate:'',version:'9.0',checksum:''
     };
   }
 }
+
+// ============================================
+// ECONOMY MANAGER
+// ============================================
 
 class EconomyManager {
   constructor(game){this.game=game;}
   
   canAfford(gold=0,gem=0,energy=0){
     const s=this.game.state;
-    return s.gold>=gold&&s.gem>=gem&&s.energy>=energy;
+    return s.gold>=gold && s.gem>=gem && s.energy>=energy;
   }
   
   spend(gold=0,gem=0,energy=0,reason=''){
     const s=this.game.state;
-    if(!this.canAfford(gold,gem,energy))return false;
-    s.gold-=gold;s.gem-=gem;s.energy-=energy;
-    if(gem>0)s.totalSpent+=gem;
+    if(!this.canAfford(gold,gem,energy)){
+      this.game.log(`❌ Tidak cukup! Butuh ${gold>0?gold+'💰':''}${gem>0?gem+'💎':''}${energy>0?energy+'⚡':''}`);
+      return false;
+    }
+    s.gold-=gold; s.gem-=gem; s.energy-=energy;
+    if(gem>0) s.totalSpent+=gem;
     this.game.log(`💸 ${reason}: -${gold>0?gold+'💰':''}${gem>0?gem+'💎':''}${energy>0?energy+'⚡':''}`);
+    this.game.updateUI();
     return true;
   }
   
   earn(gold=0,gem=0,energy=0,reason=''){
     const s=this.game.state;
-    s.gold+=gold;s.gem+=gem;s.energy=Math.min(s.maxEnergy,s.energy+energy);
-    if(gold>0)s.totalEarned+=gold;
+    s.gold+=gold; s.gem+=gem; s.energy=Math.min(s.maxEnergy,s.energy+energy);
+    if(gold>0) s.totalEarned+=gold;
     this.game.log(`🎉 ${reason}: +${gold>0?gold+'💰':''}${gem>0?gem+'💎':''}${energy>0?energy+'⚡':''}`);
-    this.game.showToast(`+${gold+gem+energy>0?gold+'💰':''}${gem>0?gem+'💎':''}`,gem>0?'premium':'');
-  }
-  
-  processMarketTax(price){
-    const tax = Math.floor(price*CONFIG.MARKET_TAX_RATE);
-    this.game.state.gold+=tax;
-    return tax;
+    this.game.showToast(`+${gold>0?gold+'💰':''}${gem>0?gem+'💎':''}${energy>0?energy+'⚡':''}`, gem>0?'premium':'');
+    this.game.updateUI();
+    return true;
   }
 }
+
+// ============================================
+// CARD MANAGER
+// ============================================
 
 class CardManager {
   constructor(game){this.game=game;}
   
   createCard(baseId,level=1,bonusStars=0){
     const base = PETS_BASE.find(p=>p.id===baseId);
-    if(!base)return null;
+    if(!base) return null;
     const mult = 1+(level-1)*0.1;
     return {
       uid: 'c_'+Math.random().toString(36).substr(2,9)+'_'+Date.now().toString(36),
-      baseId:base.id,name:base.name,emoji:base.emoji,rarity:base.rarity,
-      stage:base.stage,level:level,
-      atk:Math.floor(base.atk*mult),def:Math.floor(base.def*mult),hp:Math.floor(base.hp*mult),
-      maxHp:Math.floor(base.hp*mult),stars:bonusStars,hunger:100,xp:0,
-      created:Date.now()
+      baseId:base.id, name:base.name, emoji:base.emoji, rarity:base.rarity,
+      stage:base.stage, level:level,
+      atk:Math.floor(base.atk*mult), def:Math.floor(base.def*mult), 
+      hp:Math.floor(base.hp*mult), maxHp:Math.floor(base.hp*mult),
+      stars:bonusStars, hunger:100, xp:0, created:Date.now()
     };
   }
   
   getRarityRoll(){
     const s=this.game.state;
     s.pityCounter++;
-    // Pity system for monetization
-    if(s.pityCounter>=CONFIG.PITY_MYTHIC){
-      s.pityCounter=0;
-      return 'mythic';
+    if(s.pityCounter >= CONFIG.PITY_MYTHIC){s.pityCounter=0; return 'mythic';}
+    if(s.pityCounter >= CONFIG.PITY_LEGENDARY && Math.random()<0.3){s.pityCounter=0; return 'legendary';}
+    const r=Math.random()*100; let cum=0;
+    for(const[rar,w] of Object.entries(RARITY_WEIGHTS)){
+      cum+=w; if(r<=cum) return rar;
     }
-    if(s.pityCounter>=CONFIG.PITY_LEGENDARY&&Math.random()<0.3){
-      s.pityCounter=0;
-      return 'legendary';
-    }
-    const r=Math.random()*100;let cum=0;
-    for(const[rar,w]of Object.entries(RARITY_WEIGHTS)){cum+=w;if(r<=cum)return rar}
     return 'common';
   }
   
   openPack(count,costGem,type='silver'){
-    if(!this.game.economy.spend(0,costGem,0,`Pack ${type}`))return null;
+    if(!this.game.economy.spend(0,costGem,0,`Pack ${type}`)) return null;
     const results=[];
     for(let i=0;i<count;i++){
       const rarity=this.getRarityRoll();
       const pool=PETS_BASE.filter(p=>p.rarity===rarity);
       const base=pool.length?pool[Math.floor(Math.random()*pool.length)]:PETS_BASE[0];
-      const bonus=Math.random()<0.15?1:0; // 15% chance bonus star
+      const bonus=Math.random()<0.15?1:0;
       const card=this.createCard(base.id,1,bonus);
       this.game.state.cards.push(card);
       results.push(card);
     }
-    // Bonus card for premium packs
-    if(type==='platinum'&&count>=5){
+    if(type==='platinum' && count>=5){
       const rarePool=PETS_BASE.filter(p=>['epic','legendary'].includes(p.rarity));
       const bonusBase=rarePool[Math.floor(Math.random()*rarePool.length)]||PETS_BASE[6];
       const bonusCard=this.createCard(bonusBase.id,Math.floor(Math.random()*2)+2,1);
       this.game.state.cards.push(bonusCard);
       results.push({...bonusCard,isBonus:true});
     }
+    this.game.saveState();
     return results;
   }
   
   removeByIndex(indices){
-    // FIX CRITICAL BUG: Sort descending to avoid index shift
     const sorted=[...indices].sort((a,b)=>b-a);
     const removed=[];
     sorted.forEach(idx=>{
-      if(idx>=0&&idx<this.game.state.cards.length){
+      if(idx>=0 && idx<this.game.state.cards.length){
         removed.push(this.game.state.cards[idx]);
         this.game.state.cards.splice(idx,1);
       }
@@ -314,158 +303,83 @@ class CardManager {
   
   breed(idx1,idx2){
     const s=this.game.state;
-    if(idx1===idx2||idx1<0||idx2<0||idx1>=s.cards.length||idx2>=s.cards.length){
+    if(idx1===idx2 || idx1<0 || idx2<0 || idx1>=s.cards.length || idx2>=s.cards.length){
       this.game.log('❌ Pilih 2 kartu berbeda!');
       return null;
     }
-    if(!this.game.economy.spend(0,0,CONFIG.BREED_COST_ENERGY,'Breed'))return null;
+    if(!this.game.economy.spend(0,0,CONFIG.BREED_COST_ENERGY,'Breed')) return null;
     
-    const p1=s.cards[idx1],p2=s.cards[idx2];
-    if(p1.hunger<CONFIG.BREED_MIN_HUNGER||p2.hunger<CONFIG.BREED_MIN_HUNGER){
+    const p1=s.cards[idx1], p2=s.cards[idx2];
+    if(p1.hunger<CONFIG.BREED_MIN_HUNGER || p2.hunger<CONFIG.BREED_MIN_HUNGER){
       this.game.log('❌ Kartu terlalu lapar! Feed dulu.');
       return null;
     }
     
-    // Remove both parents (FIXED: proper index handling)
     const removed=this.removeByIndex([idx1,idx2]);
-    if(removed.length!==2)return null;
+    if(removed.length!==2) return null;
     
     const [parent1,parent2]=removed;
-    const newStage=Math.min(5,Math.max(paren
-redeem(){
-    const code = document.getElementById('redeemCode').value.trim().toUpperCase();
-    if(!code){this.game.log('❌ Masukkan kode!');return;}
+    const newStage=Math.min(5,Math.max(parent1.stage,parent2.stage)+1);
+    const pool=PETS_BASE.filter(p=>p.stage===newStage);
+    const candidates=pool.length?pool:PETS_BASE.filter(p=>p.stage>=newStage-1);
+    const base=candidates[Math.floor(Math.random()*candidates.length)];
+    const avgLevel=Math.floor((parent1.level+parent2.level)/2);
+    const inheritStars=Math.floor((parent1.stars+parent2.stars)/4);
     
-    // Rate limiting
-    const now = Date.now();
-    const key = 'evo9_redeem_'+code;
-    const last = parseInt(localStorage.getItem(key+'_last')||0);
-    if(now - last < 60000){this.game.log('⏱️ Tunggu 1 menit!');return;}
-    localStorage.setItem(key+'_last',now.toString());
-    
-    // Validation (HMAC-like client side - production harus server side)
-    const valid = this.validateCode(code);
-    if(!valid){
-      this.game.log('❌ Kode invalid/expired!');
-      this.game.showToast('Invalid code!','error');
-      return;
-    }
-    
-    const used = JSON.parse(localStorage.getItem('evo9_used_codes')||'[]');
-    if(used.includes(code)){this.game.log('⚠️ Kode sudah digunakan!');return;}
-    
-    used.push(code);
-    localStorage.setItem('evo9_used_codes',JSON.stringify(used));
-    
-    // Reward based on code prefix
-    let gem = 5, gold = 0;
-    if(code.startsWith('VIP')){gem=50;gold=500;}
-    else if(code.startsWith('MEGA')){gem=100;gold=1000;}
-    
-    this.game.economy.earn(gold,gem,0,'Redeem Code');
+    const child=this.createCard(base.id,Math.max(1,avgLevel),inheritStars);
+    s.cards.push(child);
+    s.selected=[];
+    this.game.log(`🧬 ${parent1.emoji} + ${parent2.emoji} = ${child.emoji} ${child.name}!`);
     this.game.saveState();
-    this.game.showToast(`🎉 +${gem}💎 +${gold}💰`,'premium');
+    return child;
   }
   
-  validateCode(code){
-    // Simple checksum validation - replace with server call in production
-    let hash = 0;
-    for(let i=0;i<code.length;i++){
-      hash = ((hash<<5)-hash)+code.charCodeAt(i);
-      hash |= 0;
+  evolve(idx){
+    const s=this.game.state;
+    if(idx<0 || idx>=s.cards.length) return null;
+    const c=s.cards[idx];
+    if(c.stars<CONFIG.EVOLVE_STARS_REQ){
+      this.game.log(`❌ Butuh ${CONFIG.EVOLVE_STARS_REQ}⭐ (punya ${c.stars})`);
+      return null;
     }
-    return Math.abs(hash)%7 === 0 && code.length >= 6; // 1/7 chance for demo
-  }
-}
-
-// ============================================
-// TELEGRAM WEBAPP INTEGRATION
-// ============================================
-let tg = window.Telegram?.WebApp;
-if(tg){
-  tg.expand();
-  tg.ready();
-  // Enable closing confirmation untuk retention
-  tg.enableClosingConfirmation();
-}
-
-// ============================================
-// ANTI-CHEAT: Periodic integrity check
-// ============================================
-setInterval(()=>{
-  if(game && game.state){
-    const expected = SecurityManager.generateChecksum(game.state);
-    if(game.state.checksum !== expected){
-      console.warn('State tampering detected!');
-      // In production: flag account, reset state, or ban
+    if(!this.game.economy.spend(CONFIG.EVOLVE_COST,0,0,'Evolve')) return null;
+    
+    const base=PETS_BASE.find(p=>p.id===c.baseId);
+    if(base && base.evoTo){
+      const newBase=PETS_BASE.find(p=>p.id===base.evoTo);
+      if(newBase){
+        c.baseId=newBase.id; c.name=newBase.name; c.emoji=newBase.emoji;
+        c.rarity=newBase.rarity; c.stage=newBase.stage;
+      }
     }
+    c.level=Math.min(10,c.level+1); c.stars=0; c.hunger=100; c.xp=0;
+    const mult=1+(c.level-1)*0.1;
+    const currentBase=PETS_BASE.find(p=>p.id===c.baseId)||base;
+    c.atk=Math.floor(currentBase.atk*mult);
+    c.def=Math.floor(currentBase.def*mult);
+    c.hp=Math.floor(currentBase.hp*mult); c.maxHp=c.hp;
+    s.selected=[];
+    this.game.log(`✨ ${c.emoji} Evolved → Lv${c.level} ${c.name}!`);
+    this.game.saveState();
+    return c;
   }
-},30000);
-
-// ============================================
-// INIT GAME
-// ============================================
-const game = new GameEngine();
-
-// Tab switching
-document.getElementById('tabBar').addEventListener('click',(e)=>{
-  if(e.target.classList.contains('tab')){
-    game.ui.renderTab(e.target.dataset.tab);
+  
+  sell(indices){
+    const cards=this.removeByIndex(indices);
+    let total=0;
+    cards.forEach(c=>{
+      const val=Math.floor((c.atk+c.def+c.hp/5)*(1+c.level*0.2)*(1+c.stars*0.5));
+      total+=val;
+    });
+    if(total>0) this.game.economy.earn(total,0,0,'Sell Cards');
+    this.game.state.selected=[];
+    this.game.saveState();
+    return total;
   }
-});
-
-// Modal close on backdrop click
-document.getElementById('modal').addEventListener('click',(e)=>{
-  if(e.target.id==='modal')game.closeModal();
-});
-
-// Start
-game.init();
-
-// ============================================
-// MONETIZATION STRATEGIES (untuk developer)
-// ============================================
-/*
-1. AD NETWORKS: Integrasi AdMob/Unity Ads untuk rewarded video
-   - 10x/hari limit mencegah abuse tapi tetap revenue
-   - $2-5 RPM untuk rewarded video di Indonesia
-
-2. IN-APP PURCHASES: Via Telegram Payments API
-   - Gem packs: 100💎($0.99), 550💎($4.99), 1200💎($9.99)
-   - Monthly Pass: $4.99 → +50💎/hari + exclusive skin
-   - Remove Ads: $2.99 (one-time)
-
-3. OFFER WALL: Tapjoy/IronSource
-   - Complete survey/install app → reward gems
-   - Higher payout than ads di emerging markets
-
-4. REFERRAL VIRAL: 
-   - Setiap invite = +10💎 untuk kedua belah pihak
-   - Telegram WebApp share ke grup/channel
-
-5. SEASONAL EVENTS:
-   - Limited time pets (FOMO)
-   - Double reward weekends
-
-6. PITY SYSTEM:
-   - 50 pull = guaranteed legendary
-   - Whales akan spend untuk reach pity
-
-7. WITHDRAW MECHANIC:
-   - Min 500💎 = Rp50.000
-   - Exchange rate: 1💎 = Rp100
-   - Tax 10% untuk developer
-   - Ini membuat game jadi "play-to-earn" yang legal
-   - Revenue dari spread dan ad views sebelum withdraw
-
-ESTIMATED REVENUE (1000 DAU):
-- Ads: $2-5/hari × 1000 × 30% watch rate = $600-1500/bulan
-- IAP: 2% conversion × $5 avg × 1000 = $100/bulan (conservative)
-- Offer Wall: $300-800/bulan
-- Withdraw spread: Rp5000 per withdraw × 100 withdraw/bulan = Rp500K
-TOTAL POTENSIAL: $1000-2500/bulan untuk 1000 DAU
-*/
-</script>
-</body>
-    </html>
-      
+  
+  feed(idx,foodType){
+    const s=this.game.state;
+    if(idx<0 || idx>=s.cards.length) return false;
+    const c=s.cards[idx];
+    const foods={
+      bread:{cost:10,h
