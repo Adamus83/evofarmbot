@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Evo Cards v9.5 — WD & Dynamic Rate</title>
+<title>Evo Cards v9.6 — Bot Market</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
 :root {
@@ -28,51 +28,34 @@ body{background:var(--bg-primary);color:var(--text-primary);display:flex;justify
 .nav::-webkit-scrollbar{display:none}
 .nav-item{flex:1;min-width:50px;padding:10px 4px;text-align:center;font-weight:800;font-size:9px;cursor:pointer;color:var(--text-muted);border-bottom:3px solid transparent;white-space:nowrap;transition:all 0.2s;position:relative}
 .nav-item.active{color:var(--gold);border-color:var(--gold);background:var(--bg-card)}
-.badge-notif{position:absolute;top:2px;right:2px;background:var(--red);color:white;font-size:7px;width:14px;height:14px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900}
 .content{flex:1;overflow-y:auto;padding:10px}
 .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
 .card{background:linear-gradient(160deg,var(--bg-card),var(--bg-tertiary));border:2px solid var(--border-secondary);border-radius:12px;padding:6px;text-align:center;position:relative;cursor:pointer;transition:all 0.2s}
-.card:active{transform:scale(0.95)}
-.card.selected{border-color:var(--gold)!important;box-shadow:0 0 15px rgba(250,204,21,0.4);transform:translateY(-2px)}
-.rarity-common{border-color:#475569}.rarity-rare{border-color:#60a5fa}.rarity-epic{border-color:#a78bfa}.rarity-legendary{border-color:#facc15;box-shadow:0 0 12px rgba(250,204,21,0.3)}.rarity-mythic{border-color:#f43f5e}
-.card-emoji{font-size:28px;display:block;margin:3px 0}
-.card-name{font-size:9px;font-weight:900;margin:2px 0;text-transform:uppercase;white-space:nowrap;overflow:hidden}
-.card-stats{font-size:8px;color:var(--text-secondary)}
-.card-level{position:absolute;top:3px;left:3px;background:var(--bg-tertiary);padding:1px 5px;border-radius:5px;font-size:8px;font-weight:900;border:1px solid var(--border-secondary)}
-.card-stars{display:flex;gap:1px;justify-content:center;margin-top:2px}
-.card-stars span{font-size:8px}.star-on{color:var(--gold)}.star-off{color:var(--border-secondary)}
+.card:active{transform:scale(0.95)}.card.selected{border-color:var(--gold)!important;box-shadow:0 0 15px rgba(250,204,21,0.4);transform:translateY(-2px)}
+.rarity-common{border-color:#475569}.rarity-rare{border-color:#60a5fa}.rarity-epic{border-color:#a78bfa}.rarity-legendary{border-color:#facc15}.rarity-mythic{border-color:#f43f5e}
+.card-emoji{font-size:28px;display:block;margin:3px 0}.card-name{font-size:9px;font-weight:900;margin:2px 0}.card-stats{font-size:8px;color:var(--text-secondary)}
+.card-level{position:absolute;top:3px;left:3px;background:var(--bg-tertiary);padding:1px 5px;border-radius:5px;font-size:8px;font-weight:900}
+.card-stars{display:flex;gap:1px;justify-content:center;margin-top:2px}.card-stars span{font-size:8px}.star-on{color:var(--gold)}.star-off{color:var(--border-secondary)}
 .progress-bar{width:100%;height:3px;background:var(--border-secondary);border-radius:2px;margin-top:3px;overflow:hidden}
-.progress-fill{height:100%;border-radius:2px}
-.hunger-fill{background:var(--green)}.hunger-fill.warning{background:var(--gold-dark)}.hunger-fill.danger{background:var(--red)}
-.btn{width:100%;padding:10px;border:none;border-radius:10px;font-weight:900;font-size:12px;cursor:pointer;background:var(--bg-card);color:var(--text-primary);margin:3px 0;transition:all 0.2s}
+.progress-fill{height:100%;border-radius:2px}.hunger-fill{background:var(--green)}.hunger-fill.warning{background:var(--gold-dark)}.hunger-fill.danger{background:var(--red)}
+.btn{width:100%;padding:10px;border:none;border-radius:10px;font-weight:900;font-size:12px;cursor:pointer;background:var(--bg-card);color:var(--text-primary);margin:3px 0}
 .btn:active{transform:scale(0.98)}.btn:disabled{opacity:0.5}
-.btn-primary{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:var(--bg-tertiary)}
-.btn-green{background:linear-gradient(135deg,#22c55e,#16a34a);color:white}
-.btn-red{background:linear-gradient(135deg,#ef4444,#dc2626);color:white}
-.btn-blue{background:linear-gradient(135deg,#3b82f6,#2563eb);color:white}
-.btn-purple{background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:white}
-.btn-pink{background:linear-gradient(135deg,#ec4899,#db2777);color:white}
-.btn-gold{background:linear-gradient(135deg,#f59e0b,#d97706);color:white}
-.panel{background:var(--bg-tertiary);border:1px solid var(--border-primary);border-radius:10px;padding:10px;margin:6px 0}
-.section-title{font-size:13px;font-weight:900;margin:12px 0 6px;color:var(--gold);display:flex;align-items:center;gap:6px}
-.section-title::after{content:'';flex:1;height:1px;background:var(--border-primary)}
-.rate-display{display:flex;gap:8px;margin:8px 0;text-align:center}
-.rate-card{flex:1;background:var(--bg-card);border-radius:10px;padding:10px;border:2px solid var(--border-secondary)}
-.rate-card .rate-arrow{font-size:20px}.rate-card .rate-value{font-size:16px;font-weight:900}.rate-card .rate-label{font-size:9px;color:var(--text-muted)}
-.wd-form{background:var(--bg-card);border-radius:10px;padding:12px;margin:8px 0}
-.wd-history{max-height:200px;overflow-y:auto}
-.wd-item{background:var(--bg-tertiary);border-radius:8px;padding:8px;margin:4px 0;font-size:10px;border-left:3px solid var(--border-secondary)}
-.wd-item.approved{border-left-color:var(--green)}.wd-item.rejected{border-left-color:var(--red)}.wd-item.pending{border-left-color:var(--gold-dark)}
-.hidden{display:none!important}
+.btn-primary{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#000}
+.btn-green{background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff}
+.btn-red{background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff}
+.btn-blue{background:linear-gradient(135deg,#3b82f6,#2563eb);color:#fff}
+.btn-purple{background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:#fff}
+.btn-pink{background:linear-gradient(135deg,#ec4899,#db2777);color:#fff}
+.btn-gold{background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff}
+.section-title{font-size:13px;font-weight:900;margin:12px 0 6px;color:var(--gold)}
 .footer{text-align:center;padding:6px;font-size:9px;color:var(--text-muted);background:var(--bg-tertiary);border-top:1px solid var(--border-primary);min-height:30px}
+.hidden{display:none!important}
+input,select{width:100%;padding:10px;background:var(--bg-card);border:2px solid var(--border-secondary);border-radius:8px;color:var(--text-primary);font-size:13px;margin:3px 0}
+.toast-container{position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:2000;pointer-events:none}
+.toast{background:var(--bg-tertiary);border:2px solid var(--green);color:var(--green);padding:10px 20px;border-radius:10px;font-weight:900;font-size:12px;margin:4px 0}
 .admin-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);z-index:3000;display:none;align-items:center;justify-content:center;padding:20px}
 .admin-overlay.active{display:flex}
 .admin-panel{background:var(--bg-tertiary);border:2px solid var(--red);border-radius:16px;width:100%;max-width:420px;max-height:90vh;overflow-y:auto;padding:20px}
-input,select{width:100%;padding:10px;background:var(--bg-card);border:2px solid var(--border-secondary);border-radius:8px;color:var(--text-primary);font-size:13px;margin:3px 0}
-input:focus,select:focus{outline:none;border-color:var(--gold)}
-.toast-container{position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:2000;display:flex;flex-direction:column;gap:6px;pointer-events:none}
-.toast{background:var(--bg-tertiary);border:2px solid var(--green);color:var(--green);padding:10px 20px;border-radius:10px;font-weight:900;font-size:12px;transform:translateY(-100px);opacity:0;transition:all 0.3s;white-space:nowrap}
-.toast.show{transform:translateY(0);opacity:1}.toast.error{border-color:var(--red);color:var(--red)}.toast.warning{border-color:var(--gold-dark);color:var(--gold-dark)}
 </style>
 </head>
 <body>
@@ -80,7 +63,7 @@ input:focus,select:focus{outline:none;border-color:var(--gold)}
 <div class="app" id="app">
   <div class="header">
     <div class="header-top">
-      <div class="logo" id="logoBtn">⚡ EVO CARDS v9.5<span class="logo-badge">WD</span></div>
+      <div class="logo" id="logoBtn">⚡ EVO CARDS v9.6<span class="logo-badge">BOT</span></div>
       <span class="premium-badge hidden" id="premiumBadge">👑 PREMIUM</span>
     </div>
     <div class="resource-bar">
@@ -96,391 +79,179 @@ input:focus,select:focus{outline:none;border-color:var(--gold)}
     <div class="nav-item" data-tab="breed">🧬</div>
     <div class="nav-item" data-tab="battle">⚔️</div>
     <div class="nav-item" data-tab="market">🏪</div>
-    <div class="nav-item" data-tab="wd">💸WD</div>
-    <div class="nav-item" data-tab="diamond">💎Beli</div>
+    <div class="nav-item" data-tab="bot">🤖BOT</div>
     <div class="nav-item" data-tab="shop">🛒</div>
   </nav>
 
   <main class="content" id="content"></main>
-  <div class="footer" id="footerLog">⏳ Loading v9.5...</div>
+  <div class="footer" id="footerLog">⏳ v9.6 Bot Market Ready</div>
 </div>
 
 <div class="toast-container" id="toastContainer"></div>
 
-<!-- ADMIN PANEL -->
 <div class="admin-overlay" id="adminOverlay">
   <div class="admin-panel">
-    <div style="text-align:center;margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid var(--border-primary);">
-      <div style="font-size:20px;font-weight:900;color:var(--red);">🔐 PANEL ADMIN</div>
-    </div>
+    <div style="text-align:center;margin-bottom:16px;"><div style="font-size:20px;font-weight:900;color:var(--red);">🔐 ADMIN</div></div>
     <div id="adminLoginSection">
-      <div style="text-align:center;padding:20px;">
-        <div style="font-size:48px;">🔒</div>
-        <input type="password" id="adminPasswordInput" placeholder="Password..." style="text-align:center;font-size:18px;letter-spacing:4px;margin:12px 0;">
-        <button class="btn btn-red" id="adminLoginBtn">🔓 Buka Panel</button>
-        <button class="btn btn-dark" id="adminCloseBtn">❌ Tutup</button>
-      </div>
+      <input type="password" id="adminPassInput" placeholder="Password" style="text-align:center;font-size:18px;">
+      <button class="btn btn-red" id="adminLoginBtn">🔓 Buka</button>
+      <button class="btn btn-dark" id="adminCloseBtn">❌ Tutup</button>
     </div>
-    <div id="adminDashboardSection" class="hidden">
-      <div style="background:var(--bg-card);border-radius:8px;padding:10px;margin:8px 0;">
-        <b>📊 Ekonomi</b>
-        <div id="economyStats" style="font-size:10px;margin-top:4px;"></div>
-      </div>
-      <div style="background:var(--bg-card);border-radius:8px;padding:10px;margin:8px 0;">
-        <b>⏳ WD Pending</b>
-        <div id="wdPendingList" style="font-size:10px;"></div>
-      </div>
-      <div style="background:var(--bg-card);border-radius:8px;padding:10px;margin:8px 0;">
-        <b>✅ Verifikasi OTP</b>
-        <input type="text" id="otpVerifyInput" placeholder="6 digit OTP..." style="text-align:center;font-size:16px;letter-spacing:4px;">
-        <div style="display:flex;gap:6px;margin-top:6px;">
-          <button class="btn btn-green" id="approveOtpBtn">✅ Approve</button>
-          <button class="btn btn-red" id="rejectOtpBtn">❌ Reject</button>
-        </div>
-      </div>
+    <div id="adminDashboard" class="hidden">
+      <div style="background:var(--bg-card);padding:10px;border-radius:8px;margin:6px 0;"><b>📊 Stats</b><div id="adminStats"></div></div>
+      <div style="background:var(--bg-card);padding:10px;border-radius:8px;margin:6px 0;"><b>⏳ WD Pending</b><div id="wdPending"></div></div>
+      <input type="text" id="otpInput" placeholder="6 digit OTP" style="text-align:center;font-size:16px;">
+      <div style="display:flex;gap:6px;margin-top:6px;"><button class="btn btn-green" id="approveOtpBtn">✅ Approve</button><button class="btn btn-red" id="rejectOtpBtn">❌ Reject</button></div>
       <button class="btn btn-red" id="adminLogoutBtn">🚪 Logout</button>
     </div>
   </div>
 </div>
 
 <script>
-// ==================== CONFIG ====================
-var CFG = {
-  MAX_ENERGY: 20, ENERGY_REGEN_MIN: 5, HUNGER_DECAY_MIN: 10, HUNGER_DECAY_AMT: 5,
-  MAX_BATTLE_DAY: 30, BATTLE_COST: 3, BATTLE_REWARD_BASE: 10,
-  EVOLVE_COST: 50, EVOLVE_STARS_REQ: 5, BREED_COST: 3, BREED_MIN_HUNGER: 30,
-  PREMIUM_PRICE: 50, PREMIUM_DURATION: 30, PREMIUM_ENERGY_BONUS: 10, PREMIUM_REWARD_BONUS: 0.2,
-  ADMIN_PASS: '727277', OTP_EXPIRY_MIN: 5,
-  
-  // 🔥 ECONOMY
-  MAX_DIAMOND_DEFAULT: 5000,
-  MAX_DIAMOND_PREMIUM: 25000,
-  MAX_WD_PER_DAY: 500,
-  MIN_WD: 100,
-  WD_FEE: 0.05, // 5% fee WD
-  BASE_BUY_RATE: 12500, // Rp per 1000💎
-  BASE_SELL_RATE: 10000, // Rp per 1000💎
-  TOTAL_SUPPLY_TARGET: 500000, // Target total diamond beredar
+var CFG={
+  ME:20,ERM:5,HDM:10,HDA:5,MBD:30,BC:3,BRB:10,EC:50,ESR:5,BRC:3,BMH:30,
+  PP:50,PD:30,PEB:10,PRB:0.2,AP:'529274',OEM:5,
+  MDD:5000,MDP:25000,MWD:500,MWDM:100,WDF:0.05,
+  BBR:12500,BSR:10000,TST:500000,
 };
+var PETS=[{id:'sprout',name:'Sprout',emoji:'🌱',rarity:'common',atk:8,def:3,hp:35,stage:1},{id:'bloom',name:'Bloom',emoji:'🌸',rarity:'common',atk:15,def:6,hp:55,stage:2},{id:'cactus',name:'Cactus',emoji:'🌵',rarity:'common',atk:10,def:10,hp:45,stage:1},{id:'treant',name:'Treant',emoji:'🌳',rarity:'rare',atk:25,def:15,hp:90,stage:3},{id:'wolf',name:'Wolf',emoji:'🐺',rarity:'rare',atk:32,def:10,hp:75,stage:2},{id:'dragon',name:'Dragon',emoji:'🐉',rarity:'epic',atk:45,def:22,hp:130,stage:4},{id:'phoenix',name:'Phoenix',emoji:'🔥',rarity:'epic',atk:50,def:18,hp:120,stage:3},{id:'zeus',name:'Zeus',emoji:'⚡',rarity:'legendary',atk:70,def:25,hp:150,stage:4}];
+var RW={common:50,rare:30,epic:15,legendary:4.5,mythic:0.5};
+var S={gold:100,gem:20,energy:15,maxEnergy:CFG.ME,cards:[],selected:[],market:[],battleCount:0,battleDate:'',premium:false,premiumExpiry:0,wdHistory:[],wdPending:[],otpList:[],totalSpent:0,totalEarned:0,serverTotalSupply:parseInt(localStorage.getItem('evosup')||'0'),serverBuyRate:CFG.BBR,serverSellRate:CFG.BSR,_lastRecharge:Date.now(),_wdDate:'',_wdToday:0};
+function uid(){return 'c'+Date.now().toString(36)+Math.random().toString(36).substr(2,6)}
+function txId(){return 'WD'+Date.now().toString(36).toUpperCase()}
+function fmt(n){return (n||0).toLocaleString('id-ID')}
+function fmtRp(n){return 'Rp'+(n||0).toLocaleString('id-ID')}
+function save(){localStorage.setItem('evo96',JSON.stringify(S));localStorage.setItem('evosup',S.serverTotalSupply.toString())}
+function log(m){document.getElementById('footerLog').textContent=m}
+function toast(m,t){t=t||'success';var c=document.getElementById('toastContainer');var e=document.createElement('div');e.className='toast '+t;e.textContent=m;c.appendChild(e);setTimeout(function(){e.remove()},2500)}
+function updateUI(){document.getElementById('goldDisplay').textContent=fmt(S.gold);document.getElementById('gemDisplay').textContent=fmt(S.gem);document.getElementById('energyDisplay').textContent=S.energy;document.getElementById('maxEnergyDisplay').textContent=S.maxEnergy;document.getElementById('premiumBadge').classList.toggle('hidden',!S.premium)}
+function getMaxDiamond(){return S.premium?CFG.MDP:CFG.MDD}
+function getCurrentRates(){var r=S.serverTotalSupply/CFG.TST;if(r>0.8){S.serverBuyRate=Math.floor(CFG.BBR*0.85);S.serverSellRate=Math.floor(CFG.BSR*0.9)}else if(r<0.3){S.serverBuyRate=Math.floor(CFG.BBR*1.2);S.serverSellRate=Math.floor(CFG.BSR*0.7)}else{S.serverBuyRate=CFG.BBR;S.serverSellRate=CFG.BSR}return{buy:S.serverBuyRate,sell:S.serverSellRate}}
+function canAddDiamond(a){var m=getMaxDiamond();if(S.gem+a>m){toast('❌ Max '+fmt(m)+'💎','error');return false}return true}
+function canWD(a){var t=new Date().toDateString();if(S._wdDate!==t){S._wdToday=0;S._wdDate=t}if((S._wdToday||0)+a>CFG.MWD){toast('❌ Max '+CFG.MWD+'💎/hari','error');return false}if(a<CFG.MWDM){toast('❌ Min '+CFG.MWDM+'💎','error');return false}return true}
+function spend(g,dm,en,r){if(S.gold<g||S.gem<dm||S.energy<en){toast('❌ Resource cukup','error');return false}S.gold-=g;S.gem-=dm;S.energy-=en;if(dm>0){S.totalSpent+=dm;S.serverTotalSupply=Math.max(0,S.serverTotalSupply-dm)}log(r);updateUI();save();return true}
+function earn(g,dm,en,r){if(dm>0&&!canAddDiamond(dm))return false;var b=S.premium?CFG.PRB:0;var tg=Math.floor(g*(1+b)),td=Math.floor(dm*(1+b));S.gold+=tg;S.gem+=td;S.energy=Math.min(S.maxEnergy,S.energy+en);S.totalEarned+=tg;S.serverTotalSupply+=td;if(tg>0||td>0)toast('+'+fmt(tg)+'💰 +'+td+'💎');log(r);updateUI();save();return true}
+function rechargeEnergy(){var n=Date.now();var e=Math.floor((n-S._lastRecharge)/60000);var r=Math.floor(e/CFG.ERM);if(r>0&&S.energy<S.maxEnergy){S.energy=Math.min(S.maxEnergy,S.energy+r);S._lastRecharge=n;save();updateUI()}}
 
-var PETS = [
-  { id: 'sprout', name: 'Sprout', emoji: '🌱', rarity: 'common', atk: 8, def: 3, hp: 35, stage: 1 },
-  { id: 'bloom', name: 'Bloom', emoji: '🌸', rarity: 'common', atk: 15, def: 6, hp: 55, stage: 2 },
-  { id: 'cactus', name: 'Cactus', emoji: '🌵', rarity: 'common', atk: 10, def: 10, hp: 45, stage: 1 },
-  { id: 'treant', name: 'Treant', emoji: '🌳', rarity: 'rare', atk: 25, def: 15, hp: 90, stage: 3 },
-  { id: 'wolf', name: 'Wolf', emoji: '🐺', rarity: 'rare', atk: 32, def: 10, hp: 75, stage: 2 },
-  { id: 'dragon', name: 'Dragon', emoji: '🐉', rarity: 'epic', atk: 45, def: 22, hp: 130, stage: 4 },
-  { id: 'phoenix', name: 'Phoenix', emoji: '🔥', rarity: 'epic', atk: 50, def: 18, hp: 120, stage: 3 },
-  { id: 'zeus', name: 'Zeus', emoji: '⚡', rarity: 'legendary', atk: 70, def: 25, hp: 150, stage: 4 },
-];
-var RARITY_W = { common: 50, rare: 30, epic: 15, legendary: 4.5, mythic: 0.5 };
+// ==================== CARDS ====================
+function createCard(bid,lvl){lvl=lvl||1;var b=PETS.find(function(p){return p.id===bid});if(!b)return null;var m=1+(lvl-1)*0.1;return{uid:uid(),baseId:b.id,name:b.name,emoji:b.emoji,rarity:b.rarity,stage:b.stage,level:lvl,atk:Math.floor(b.atk*m),def:Math.floor(b.def*m),hp:Math.floor(b.hp*m),maxHp:Math.floor(b.hp*m),stars:0,hunger:100,xp:0}}
+function selectCard(i){var p=S.selected.indexOf(i);if(p>=0)S.selected.splice(p,1);else if(S.selected.length<2)S.selected.push(i);renderTab(curTab)}
 
-// ==================== STATE ====================
-var S = {
-  gold: 100, gem: 20, energy: 15, maxEnergy: CFG.MAX_ENERGY,
-  cards: [], selected: [], market: [], battleCount: 0, battleDate: '',
-  premium: false, premiumExpiry: 0, dailyStreak: 0, lastDailyClaim: '',
-  wdHistory: [], wdPending: [],
-  totalSpent: 0, totalEarned: 0,
-  // 🔥 Server-side economy (disimulasikan di localStorage)
-  serverTotalSupply: parseInt(localStorage.getItem('evo_supply')||'0'),
-  serverBuyRate: CFG.BASE_BUY_RATE,
-  serverSellRate: CFG.BASE_SELL_RATE,
-};
-
-// ==================== UTILS ====================
-function uid(){ return 'c'+Date.now().toString(36)+Math.random().toString(36).substr(2,6); }
-function txId(){ return 'WD'+Date.now().toString(36).toUpperCase(); }
-function clamp(v,min,max){ return Math.max(min,Math.min(max,v)); }
-function fmt(n){ return (n||0).toLocaleString('id-ID'); }
-function fmtRp(n){ return 'Rp'+(n||0).toLocaleString('id-ID'); }
-function save(){ 
-  localStorage.setItem('evo95', JSON.stringify(S));
-  localStorage.setItem('evo_supply', S.serverTotalSupply.toString());
-}
-function log(m){ document.getElementById('footerLog').textContent = m; }
-function toast(m,t){
-  t=t||'success'; var c=document.getElementById('toastContainer');
-  var el=document.createElement('div'); el.className='toast '+t; el.textContent=m;
-  c.appendChild(el); setTimeout(function(){el.classList.add('show')},10);
-  setTimeout(function(){el.classList.remove('show');setTimeout(function(){el.remove()},300)},2500);
-}
-function updateUI(){
-  document.getElementById('goldDisplay').textContent=fmt(S.gold);
-  document.getElementById('gemDisplay').textContent=fmt(S.gem);
-  document.getElementById('energyDisplay').textContent=S.energy;
-  document.getElementById('maxEnergyDisplay').textContent=S.maxEnergy;
-  document.getElementById('premiumBadge').classList.toggle('hidden',!S.premium);
-}
-
-// ==================== ECONOMY ENGINE ====================
-function getMaxDiamond(){ return S.premium ? CFG.MAX_DIAMOND_PREMIUM : CFG.MAX_DIAMOND_DEFAULT; }
-function getCurrentRates(){
-  // Dynamic rate based on supply
-  var supply = S.serverTotalSupply;
-  var target = CFG.TOTAL_SUPPLY_TARGET;
-  var ratio = supply / target;
-  
-  if (ratio > 0.8) {
-    // Over supply → turunkan rate beli, naikkan rate jual
-    S.serverBuyRate = Math.floor(CFG.BASE_BUY_RATE * 0.85);
-    S.serverSellRate = Math.floor(CFG.BASE_SELL_RATE * 0.9);
-  } else if (ratio < 0.3) {
-    // Under supply → naikkan rate beli
-    S.serverBuyRate = Math.floor(CFG.BASE_BUY_RATE * 1.2);
-    S.serverSellRate = Math.floor(CFG.BASE_SELL_RATE * 0.7);
-  } else {
-    S.serverBuyRate = CFG.BASE_BUY_RATE;
-    S.serverSellRate = CFG.BASE_SELL_RATE;
-  }
-  
-  return { buy: S.serverBuyRate, sell: S.serverSellRate };
-}
-
-function canAddDiamond(amount){
-  var max = getMaxDiamond();
-  if (S.gem + amount > max) { toast('❌ Max diamond: '+fmt(max)+'💎! Upgrade ke Premium untuk '+fmt(CFG.MAX_DIAMOND_PREMIUM)+'💎', 'error'); return false; }
-  return true;
-}
-
-function canWD(amount){
-  var today = new Date().toDateString();
-  if (S._wdDate !== today) { S._wdToday = 0; S._wdDate = today; }
-  if ((S._wdToday||0) + amount > CFG.MAX_WD_PER_DAY) { toast('❌ Max WD '+fmt(CFG.MAX_WD_PER_DAY)+'💎/hari!', 'error'); return false; }
-  if (amount < CFG.MIN_WD) { toast('❌ Min WD '+fmt(CFG.MIN_WD)+'💎!', 'error'); return false; }
-  return true;
-}
-
-function spend(g,dm,en,reason){
-  if (S.gold<g||S.gem<dm||S.energy<en) { toast('❌ Resource tidak cukup!', 'error'); return false; }
-  S.gold-=g; S.gem-=dm; S.energy-=en;
-  if (dm>0) { S.totalSpent+=dm; S.serverTotalSupply = Math.max(0, S.serverTotalSupply - dm); }
-  log(reason); updateUI(); save(); return true;
-}
-
-function earn(g,dm,en,reason){
-  if (dm>0 && !canAddDiamond(dm)) return false;
-  var bonus = S.premium ? CFG.PREMIUM_REWARD_BONUS : 0;
-  var tg = Math.floor(g*(1+bonus)), td = Math.floor(dm*(1+bonus));
-  S.gold+=tg; S.gem+=td; S.energy=Math.min(S.maxEnergy,S.energy+en);
-  S.totalEarned+=tg; S.serverTotalSupply += td;
-  if (tg>0||td>0) toast('+'+fmt(tg)+'💰 +'+td+'💎','success');
-  log(reason); updateUI(); save(); return true;
-}
-
-// ==================== CARD HELPERS ====================
-function createCard(bid, lvl){
-  lvl=lvl||1; var b=PETS.find(function(p){return p.id===bid}); if(!b)return null;
-  var m=1+(lvl-1)*0.1;
-  return {uid:uid(),baseId:b.id,name:b.name,emoji:b.emoji,rarity:b.rarity,stage:b.stage,level:lvl,atk:Math.floor(b.atk*m),def:Math.floor(b.def*m),hp:Math.floor(b.hp*m),maxHp:Math.floor(b.hp*m),stars:0,hunger:100,xp:0};
-}
-function selectCard(i){ var p=S.selected.indexOf(i); if(p>=0)S.selected.splice(p,1); else if(S.selected.length<2)S.selected.push(i); renderTab(curTab); }
-
-// ==================== RENDER ====================
 var curTab='cards';
 function renderTab(tab){
-  curTab=tab;
-  document.querySelectorAll('.nav-item').forEach(function(el){el.classList.toggle('active',el.dataset.tab===tab)});
-  var c=document.getElementById('content');
-  var renders={
-    cards: function(){
-      var h='<div style="display:flex;justify-content:space-between;margin-bottom:6px;"><span style="font-size:10px;color:var(--text-muted);">Total: '+S.cards.length+'</span><span style="font-size:10px;color:var(--gold);">Dipilih: '+S.selected.length+'/2</span></div><div class="grid">';
-      if(!S.cards.length)h+='<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-muted);"><div style="font-size:40px;">🃏</div><div>Kosong</div></div>';
-      else S.cards.forEach(function(cd,i){
-        var sel=S.selected.indexOf(i)>=0?' selected':'',stars='';
-        for(var s=0;s<5;s++)stars+='<span class="'+(s<cd.stars?'star-on':'star-off')+'">'+(s<cd.stars?'⭐':'☆')+'</span>';
-        var hc=cd.hunger>=70?'':cd.hunger>=30?'warning':'danger';
-        h+='<div class="card rarity-'+cd.rarity+sel+'" onclick="selectCard('+i+')"><div class="card-level">Lv'+cd.level+'</div><div class="card-emoji">'+cd.emoji+'</div><div class="card-name">'+cd.name+'</div><div class="card-stars">'+stars+'</div><div class="card-stats">⚔'+cd.atk+' 🛡'+cd.def+'</div><div class="progress-bar"><div class="progress-fill hunger-fill '+hc+'" style="width:'+cd.hunger+'%"></div></div></div>';
-      });
-      h+='</div><button class="btn btn-green" onclick="evolveCard()" '+(S.selected.length!==1?'disabled':'')+'>✨ Evolve (⭐5)</button><button class="btn btn-red" onclick="sellCards()">💵 Jual Terpilih</button>';
-      c.innerHTML=h;
-    },
-    feed: function(){
-      var h='<div class="section-title">🍖 Feeding</div><select id="feedTarget"><option value="">Pilih pet...</option>';
-      S.cards.forEach(function(cd,i){h+='<option value="'+i+'">'+cd.emoji+' '+cd.name+' 🍖'+cd.hunger+'%</option>'});
-      h+='</select><div style="display:flex;gap:6px;margin-top:6px;"><button class="btn" onclick="doFeed(\'bread\')">🍞10💰</button><button class="btn btn-primary" onclick="doFeed(\'meat\')">🥩25💰</button><button class="btn btn-blue" onclick="doFeed(\'premium\')">🍰2💎</button></div>';
-      c.innerHTML=h;
-    },
-    breed: function(){
-      var h='<div class="section-title">🧬 Breeding</div><p style="font-size:10px;color:var(--text-muted);">Biaya: '+CFG.BREED_COST+'⚡</p>';
-      if(S.selected.length===2){var c1=S.cards[S.selected[0]],c2=S.cards[S.selected[1]];h+='<div style="display:flex;justify-content:center;align-items:center;gap:16px;margin:16px 0;"><div style="text-align:center;"><div style="font-size:40px;">'+c1.emoji+'</div><div>'+c1.name+'</div></div><div style="font-size:24px;color:var(--gold);">+</div><div style="text-align:center;"><div style="font-size:40px;">'+c2.emoji+'</div><div>'+c2.name+'</div></div></div>';}
-      h+='<button class="btn btn-purple" onclick="breedCards()" '+(S.selected.length!==2?'disabled':'')+'>🧬 Breed! ('+CFG.BREED_COST+'⚡)</button>';
-      c.innerHTML=h;
-    },
-    battle: function(){
-      var today=new Date().toDateString();if(S.battleDate!==today){S.battleDate=today;S.battleCount=0;}
-      var h='<div class="section-title">⚔️ Battle ('+S.battleCount+'/'+CFG.MAX_BATTLE_DAY+')</div>';
-      if(S.cards.length){h+='<select id="battleTarget"><option value="">Pilih petarung...</option>';S.cards.forEach(function(cd,i){h+='<option value="'+i+'">'+cd.emoji+' '+cd.name+' (⚔'+cd.atk+')</option>'});h+='</select><button class="btn btn-green" onclick="doBattle()">⚔️ Bertarung! ('+CFG.BATTLE_COST+'⚡)</button><div id="battleResult"></div>';}
-      c.innerHTML=h;
-    },
-    market: function(){
-      var h='<div class="section-title">🏪 Pasar</div>';
-      if(S.selected.length)h+='<input type="number" id="listPrice" placeholder="Harga 💎..." value="10"><button class="btn btn-primary" onclick="listToMarket()">📤 List '+S.selected.length+' Kartu</button>';
-      h+='<div class="section-title" style="font-size:11px;">📦 Listing ('+S.market.length+')</div>';
-      if(!S.market.length)h+='<p style="text-align:center;color:var(--text-muted);">Kosong</p>';
-      else S.market.forEach(function(it,i){h+='<div class="tx-item" style="display:flex;justify-content:space-between;padding:6px;background:var(--bg-card);border-radius:6px;margin:3px 0;font-size:10px;"><div>'+it.emoji+' <b>'+it.name+'</b> Lv'+it.level+'</div><div style="text-align:right;">'+it.price+'💎 <button class="btn btn-green" style="padding:2px 8px;font-size:9px;width:auto;" onclick="buyFromMarket('+i+')">Beli</button></div></div>';});
-      c.innerHTML=h;
-    },
-    wd: function(){
-      var rates=getCurrentRates();
-      var h='<div class="section-title">💸 Tarik Tunai (WD)</div>';
-      h+='<div class="rate-display"><div class="rate-card"><div class="rate-label">💎 Kamu</div><div class="rate-value">'+fmt(S.gem)+'</div></div><div class="rate-card"><div class="rate-label">💰 Rate Jual</div><div class="rate-value">'+fmtRp(rates.sell)+'</div><div class="rate-label">/1000💎</div></div></div>';
-      h+='<div class="wd-form"><b>Ajukan Withdraw</b><input type="number" id="wdAmount" placeholder="Jumlah 💎 (min '+CFG.MIN_WD+')"><input type="text" id="wdRek" placeholder="No. Rekening / E-Wallet"><p style="font-size:9px;color:var(--text-muted);">Fee: '+(CFG.WD_FEE*100)+'% | Max: '+CFG.MAX_WD_PER_DAY+'💎/hari</p><button class="btn btn-gold" onclick="submitWD()">💸 Ajukan WD</button></div>';
-      h+='<div class="section-title" style="font-size:11px;">📋 Riwayat WD</div><div class="wd-history">';
-      var all=S.wdHistory.concat(S.wdPending);
-      if(!all.length)h+='<p style="text-align:center;color:var(--text-muted);">Belum ada</p>';
-      else all.slice(-20).reverse().forEach(function(w){h+='<div class="wd-item '+w.status+'"><b>'+w.id+'</b> | '+fmt(w.amount)+'💎 → '+fmtRp(w.rupiah)+' | '+w.rek+'<br><span style="color:'+(w.status==='approved'?'var(--green)':w.status==='rejected'?'var(--red)':'var(--gold-dark)')+';">'+w.status.toUpperCase()+'</span> <span style="font-size:8px;">'+w.time+'</span></div>';});
-      h+='</div>';
-      c.innerHTML=h;
-    },
-    diamond: function(){
-      var rates=getCurrentRates();
-      var h='<div class="section-title">💎 Beli Diamond</div>';
-      h+='<div class="rate-display"><div class="rate-card"><div class="rate-label">🟢 Rate Beli</div><div class="rate-value">'+fmtRp(rates.buy)+'</div><div class="rate-label">/1000💎</div></div><div class="rate-card"><div class="rate-label">🔴 Rate Jual</div><div class="rate-value">'+fmtRp(rates.sell)+'</div><div class="rate-label">/1000💎</div></div></div>';
-      h+='<p style="font-size:9px;color:var(--text-muted);text-align:center;">💡 Rate fluktuatif berdasarkan supply</p>';
-      h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">';
-      h+='<div class="rate-card" onclick="buyDiamond(1000)" style="cursor:pointer;"><div style="font-size:20px;">💎</div><div>1.000💎</div><div style="color:var(--gold);">'+fmtRp(rates.buy)+'</div></div>';
-      h+='<div class="rate-card" onclick="buyDiamond(3000)" style="cursor:pointer;"><div style="font-size:20px;">💎💎</div><div>3.000💎</div><div style="color:var(--gold);">'+fmtRp(rates.buy*3)+'</div></div>';
-      h+='</div>';
-      c.innerHTML=h;
-    },
-    shop: function(){
-      var h='<div class="section-title">🛒 Shop</div>';
-      if(!S.premium){h+='<div style="background:linear-gradient(135deg,#ec4899,#be185d);border-radius:12px;padding:16px;text-align:center;cursor:pointer;margin:8px 0;" onclick="buyPremium()"><div style="font-size:40px;">👑</div><div style="font-weight:900;">PREMIUM</div><div>'+CFG.PREMIUM_PRICE+'💎/'+CFG.PREMIUM_DURATION+'hr</div><div style="font-size:10px;">Max 💎: '+fmt(CFG.MAX_DIAMOND_PREMIUM)+' | +'+CFG.PREMIUM_ENERGY_BONUS+'⚡ | +'+(CFG.PREMIUM_REWARD_BONUS*100)+'% Reward</div></div>';}
-      else{var d=Math.ceil((S.premiumExpiry-Date.now())/86400000);h+='<div style="background:linear-gradient(135deg,#ec4899,#be185d);border-radius:12px;padding:16px;text-align:center;opacity:0.8;margin:8px 0;"><div style="font-size:40px;">👑</div><div style="font-weight:900;">PREMIUM AKTIF</div><div>'+d+' hari tersisa</div></div>';}
-      h+='<div class="section-title" style="font-size:11px;">🎁 Booster</div>';
-      h+='<button class="btn btn-primary" onclick="openPack(1,10)">🥉 Silver (1) 10💎</button>';
-      h+='<button class="btn btn-gold" onclick="openPack(3,25)">🥈 Gold (3) 25💎</button>';
-      h+='<button class="btn btn-purple" onclick="openPack(5,50)">🥇 Platinum (5+1) 50💎</button>';
-      h+='<div id="packResult" style="text-align:center;min-height:30px;margin-top:6px;"></div>';
-      c.innerHTML=h;
-    },
-  };
-  if(renders[tab])renders[tab]();
-  updateUI();
+  curTab=tab;document.querySelectorAll('.nav-item').forEach(function(e){e.classList.toggle('active',e.dataset.tab===tab)});
+  var c=document.getElementById('content');rechargeEnergy();
+  if(tab==='cards'){
+    var h='<div style="display:flex;justify-content:space-between;margin-bottom:6px;"><span style="font-size:10px;color:var(--text-muted);">Total: '+S.cards.length+'</span><span style="font-size:10px;color:var(--gold);">Dipilih: '+S.selected.length+'/2</span></div><div class="grid">';
+    if(!S.cards.length)h+='<div style="grid-column:1/-1;text-align:center;padding:40px;">🃏 Kosong</div>';
+    else S.cards.forEach(function(cd,i){var sel=S.selected.indexOf(i)>=0?' selected':'',stars='';for(var s=0;s<5;s++)stars+='<span class="'+(s<cd.stars?'star-on':'star-off')+'">'+(s<cd.stars?'⭐':'☆')+'</span>';var hc=cd.hunger>=70?'':cd.hunger>=30?'warning':'danger';h+='<div class="card rarity-'+cd.rarity+sel+'" onclick="selectCard('+i+')"><div class="card-level">Lv'+cd.level+'</div><div class="card-emoji">'+cd.emoji+'</div><div class="card-name">'+cd.name+'</div><div class="card-stars">'+stars+'</div><div class="card-stats">⚔'+cd.atk+' 🛡'+cd.def+'</div><div class="progress-bar"><div class="progress-fill hunger-fill '+hc+'" style="width:'+cd.hunger+'%"></div></div></div>';});
+    h+='</div><button class="btn btn-green" onclick="evolveCard()" '+(S.selected.length!==1?'disabled':'')+'>✨ Evolve (⭐5)</button><button class="btn btn-red" onclick="sellCards()">💵 Jual</button>';
+    c.innerHTML=h;
+  }else if(tab==='feed'){
+    var h='<div class="section-title">🍖 Feeding</div><select id="feedTarget"><option value="">Pilih...</option>';
+    S.cards.forEach(function(cd,i){h+='<option value="'+i+'">'+cd.emoji+' '+cd.name+' 🍖'+cd.hunger+'%</option>'});
+    h+='</select><div style="display:flex;gap:6px;margin-top:6px;"><button class="btn" onclick="doFeed(\'bread\')">🍞10💰</button><button class="btn btn-primary" onclick="doFeed(\'meat\')">🥩25💰</button><button class="btn btn-blue" onclick="doFeed(\'premium\')">🍰2💎</button></div>';
+    c.innerHTML=h;
+  }else if(tab==='breed'){
+    var h='<div class="section-title">🧬 Breed</div>';
+    if(S.selected.length===2){var c1=S.cards[S.selected[0]],c2=S.cards[S.selected[1]];h+='<div style="display:flex;justify-content:center;align-items:center;gap:16px;margin:16px 0;"><div style="text-align:center;"><div style="font-size:40px;">'+c1.emoji+'</div><div>'+c1.name+'</div></div><div style="font-size:24px;color:var(--gold);">+</div><div style="text-align:center;"><div style="font-size:40px;">'+c2.emoji+'</div><div>'+c2.name+'</div></div></div>';}
+    h+='<button class="btn btn-purple" onclick="breedCards()" '+(S.selected.length!==2?'disabled':'')+'>🧬 Breed!</button>';
+    c.innerHTML=h;
+  }else if(tab==='battle'){
+    var t=new Date().toDateString();if(S.battleDate!==t){S.battleDate=t;S.battleCount=0}
+    var h='<div class="section-title">⚔️ Battle ('+S.battleCount+'/'+CFG.MBD+')</div>';
+    if(S.cards.length){h+='<select id="battleTarget"><option value="">Pilih...</option>';S.cards.forEach(function(cd,i){h+='<option value="'+i+'">'+cd.emoji+' '+cd.name+' (⚔'+cd.atk+')</option>'});h+='</select><button class="btn btn-green" onclick="doBattle()">⚔️ Fight!</button><div id="battleResult"></div>';}
+    c.innerHTML=h;
+  }else if(tab==='market'){
+    var h='<div class="section-title">🏪 Pasar</div>';
+    if(S.selected.length)h+='<input type="number" id="listPrice" placeholder="Harga" value="10"><button class="btn btn-primary" onclick="listToMarket()">📤 List '+S.selected.length+' Kartu</button>';
+    h+='<div class="section-title">📦 Listing</div>';
+    if(!S.market.length)h+='<p>Kosong</p>';
+    else S.market.forEach(function(it,i){h+='<div style="display:flex;justify-content:space-between;padding:6px;background:var(--bg-card);border-radius:6px;margin:3px 0;">'+it.emoji+' '+it.name+' Lv'+it.level+' | '+it.price+'💎 <button class="btn btn-green" style="padding:2px 8px;width:auto;" onclick="buyFromMarket('+i+')">Beli</button></div>';});
+    c.innerHTML=h;
+  }else if(tab==='bot'){
+    var rates=getCurrentRates();
+    var h='<div class="section-title">🤖 Beli dari Bot</div>';
+    h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">';
+    h+='<div style="background:var(--bg-card);border-radius:10px;padding:12px;text-align:center;cursor:pointer;" onclick="buyFromBot(\'gold\',1000,10)"><div style="font-size:28px;">🪙</div><div>1.000 💰</div><div style="color:var(--gold);">10💎</div></div>';
+    h+='<div style="background:var(--bg-card);border-radius:10px;padding:12px;text-align:center;cursor:pointer;" onclick="buyFromBot(\'gold\',5000,40)"><div style="font-size:28px;">🪙🪙</div><div>5.000 💰</div><div style="color:var(--gold);">40💎</div></div>';
+    h+='<div style="background:var(--bg-card);border-radius:10px;padding:12px;text-align:center;cursor:pointer;" onclick="buyFromBot(\'energy\',10,5)"><div style="font-size:28px;">⚡</div><div>10 Energi</div><div style="color:var(--gold);">5💎</div></div>';
+    h+='<div style="background:var(--bg-card);border-radius:10px;padding:12px;text-align:center;cursor:pointer;" onclick="buyFromBot(\'energy\',30,12)"><div style="font-size:28px;">⚡⚡</div><div>30 Energi</div><div style="color:var(--gold);">12💎</div></div>';
+    h+='</div>';
+    h+='<div class="section-title">💎 Beli Diamond</div>';
+    h+='<p style="font-size:10px;">Rate: 🟢'+fmtRp(rates.buy)+'/1000💎</p>';
+    h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">';
+    h+='<div style="background:var(--bg-card);border-radius:10px;padding:12px;text-align:center;cursor:pointer;" onclick="buyDiamond(1000)"><div>1.000💎</div><div style="color:var(--gold);">'+fmtRp(rates.buy)+'</div></div>';
+    h+='<div style="background:var(--bg-card);border-radius:10px;padding:12px;text-align:center;cursor:pointer;" onclick="buyDiamond(3000)"><div>3.000💎</div><div style="color:var(--gold);">'+fmtRp(rates.buy*3)+'</div></div>';
+    h+='</div>';
+    c.innerHTML=h;
+  }else if(tab==='shop'){
+    var h='<div class="section-title">🛒 Shop</div>';
+    if(!S.premium)h+='<div style="background:linear-gradient(135deg,#ec4899,#be185d);border-radius:12px;padding:16px;text-align:center;cursor:pointer;margin:8px 0;" onclick="buyPremium()"><div style="font-size:40px;">👑</div><div>PREMIUM '+CFG.PP+'💎</div></div>';
+    else{var d=Math.ceil((S.premiumExpiry-Date.now())/86400000);h+='<div style="background:linear-gradient(135deg,#ec4899,#be185d);border-radius:12px;padding:16px;text-align:center;opacity:0.8;">👑 PREMIUM '+d+'hari</div>';}
+    h+='<button class="btn btn-primary" onclick="openPack(1,10)">🥉 Silver 10💎</button><button class="btn btn-gold" onclick="openPack(3,25)">🥈 Gold 25💎</button><button class="btn btn-purple" onclick="openPack(5,50)">🥇 Platinum 50💎</button><div id="packResult" style="text-align:center;min-height:30px;"></div>';
+    c.innerHTML=h;
+  }
 }
 
 // ==================== ACTIONS ====================
-function evolveCard(){
-  if(S.selected.length!==1)return; var cd=S.cards[S.selected[0]];
-  if(cd.stars<CFG.EVOLVE_STARS_REQ)return toast('Butuh '+CFG.EVOLVE_STARS_REQ+'⭐!','error');
-  if(!spend(CFG.EVOLVE_COST,0,0,'Evolve'))return;
-  cd.level=Math.min(10,cd.level+1);cd.stars=0;cd.hunger=100;
-  var b=PETS.find(function(p){return p.id===cd.baseId});var m=1+(cd.level-1)*0.1;
-  if(b){cd.atk=Math.floor(b.atk*m);cd.def=Math.floor(b.def*m);cd.hp=Math.floor(b.hp*m);cd.maxHp=cd.hp;}
-  S.selected=[];save();toast('✨ '+cd.name+' Lv'+cd.level+'!');renderTab('cards');
+function evolveCard(){if(S.selected.length!==1)return;var cd=S.cards[S.selected[0]];if(cd.stars<CFG.ESR)return toast('Butuh '+CFG.ESR+'⭐','error');if(!spend(CFG.EC,0,0,'Evolve'))return;cd.level++;cd.stars=0;cd.hunger=100;var b=PETS.find(function(p){return p.id===cd.baseId});if(b){var m=1+(cd.level-1)*0.1;cd.atk=Math.floor(b.atk*m);cd.def=Math.floor(b.def*m);cd.hp=Math.floor(b.hp*m)}S.selected=[];save();toast('✨ Lv'+cd.level);renderTab('cards')}
+function sellCards(){if(!S.selected.length)return;var ix=S.selected.slice().sort(function(a,b){return b-a});var t=0;ix.forEach(function(i){t+=Math.floor((S.cards[i].atk+S.cards[i].def)/2);S.cards.splice(i,1)});S.gold+=t;S.selected=[];save();toast('💵 +'+t);renderTab('cards')}
+function doFeed(tp){var i=parseInt(document.getElementById('feedTarget')?.value);if(isNaN(i))return;var cd=S.cards[i],fd={bread:{c:10,h:25,ct:'gold'},meat:{c:25,h:50,ct:'gold'},premium:{c:2,h:100,ct:'gem'}};var f=fd[tp];if(!f)return;if(f.ct==='gold'&&!spend(f.c,0,0,'Feed'))return;if(f.ct==='gem'&&!spend(0,f.c,0,'Feed'))return;cd.hunger=Math.min(100,cd.hunger+f.h);if(Math.random()<0.25)cd.stars=Math.min(5,cd.stars+1);save();toast('🍖 +'+f.h);renderTab('feed')}
+function breedCards(){if(S.selected.length!==2)return;if(!spend(0,0,CFG.BRC,'Breed'))return;var ix=S.selected.slice().sort(function(a,b){return b-a});var p1=S.cards[ix[0]],p2=S.cards[ix[1]];if(p1.hunger<30||p2.hunger<30)return toast('Lapar!','error');S.cards.splice(ix[0],1);S.cards.splice(ix[1],1);var ns=Math.min(5,Math.max(p1.stage,p2.stage)+1);var pool=PETS.filter(function(p){return p.stage===ns});var b=pool.length?pool[Math.floor(Math.random()*pool.length)]:PETS[0];var ch=createCard(b.id,Math.floor((p1.level+p2.level)/2));S.cards.push(ch);S.selected=[];save();toast('🧬 '+ch.emoji+' '+ch.name);renderTab('cards')}
+function doBattle(){var i=parseInt(document.getElementById('battleTarget')?.value);if(isNaN(i))return;var cd=S.cards[i];if(cd.hunger<20)return toast('Lapar!','error');if(!spend(0,0,CFG.BC,'Battle'))return;if(S.battleCount>=CFG.MBD)return toast('Max!','error');var pp=Math.floor(cd.atk*1.5+cd.def),ep=Math.floor(pp*(0.7+Math.random()*0.6));var ph=cd.hp,eh=Math.floor(ep*0.6),r=0,logs=[];while(ph>0&&eh>0&&r<20){r++;var pd=Math.max(1,Math.floor(cd.atk*(0.8+Math.random()*0.4)));eh-=pd;logs.push('R'+r+':⚔️-'+pd);if(eh<=0)break;var ed=Math.max(1,Math.floor(ep*0.3*(0.7+Math.random()*0.6)));ph-=ed;logs.push('R'+r+':🛡️+'+ed)}var w=ph>0;var rg=w?Math.floor(CFG.BRB*(1+cd.level*0.2)):Math.floor(CFG.BRB*0.3);var rd=w?Math.floor(1+cd.stars*0.5):0;S.battleCount++;cd.hunger=Math.max(0,cd.hunger-15);earn(rg,rd,0,w?'Menang':'Kalah');if(w&&Math.random()<0.3&&cd.stars<5){cd.stars++;log('⭐ Star')}save();document.getElementById('battleResult').innerHTML='<div style="padding:12px;margin-top:8px;border-radius:10px;border:2px solid '+(w?'var(--green)':'var(--red)')+';text-align:center;"><b>'+(w?'🏆 MENANG':'💀 KALAH')+'</b><br>+'+rg+'💰 +'+rd+'💎</div>'}
+function listToMarket(){var p=parseInt(document.getElementById('listPrice')?.value)||10;var ix=S.selected.slice().sort(function(a,b){return b-a});ix.forEach(function(i){S.market.push({...S.cards[i],price:p});S.cards.splice(i,1)});S.selected=[];save();toast('📤 Listed');renderTab('market')}
+function buyFromMarket(i){var it=S.market[i];if(!it)return;if(!spend(0,it.price,0,'Beli'))return;S.market.splice(i,1);S.cards.push({...it,uid:uid()});save();toast('🛒 Dibeli');renderTab('market')}
+function buyPremium(){if(S.gem<CFG.PP)return toast('Butuh '+CFG.PP+'💎','error');S.gem-=CFG.PP;S.premium=true;S.premiumExpiry=Date.now()+CFG.PD*86400000;S.maxEnergy=CFG.ME+CFG.PEB;S.energy=S.maxEnergy;document.getElementById('premiumBadge').classList.remove('hidden');save();updateUI();toast('👑 Premium!');renderTab('shop')}
+function openPack(n,cost){if(S.gem<cost)return toast('💎 Kurang','error');S.gem-=cost;var res='';for(var i=0;i<n;i++){var r=Math.random()*100,rar='common',cum=0;for(var k in RW){cum+=RW[k];if(r<=cum){rar=k;break}}var pool=PETS.filter(function(p){return p.rarity===rar});var b=pool.length?pool[Math.floor(Math.random()*pool.length)]:PETS[0];var cd=createCard(b.id);S.cards.push(cd);res+='<span style="font-size:20px;">'+cd.emoji+'</span> '}if(n>=5){var rp=PETS.filter(function(p){return p.rarity==='epic'||p.rarity==='legendary'});var bn=createCard(rp[Math.floor(Math.random()*rp.length)].id);S.cards.push(bn);res+='<br>🎁 Bonus: '+bn.emoji}document.getElementById('packResult').innerHTML=res;save();toast('🎁 '+n+' pet!')}
+
+// ==================== BOT MARKET ====================
+function buyFromBot(type,amount,cost){
+  if(type==='gold'){
+    if(!spend(0,cost,0,'Beli Gold dari Bot'))return;
+    S.gold+=amount;save();updateUI();toast('🪙 +'+fmt(amount)+'💰');
+  }else if(type==='energy'){
+    if(!spend(0,cost,0,'Beli Energi dari Bot'))return;
+    S.energy=Math.min(S.maxEnergy,S.energy+amount);save();updateUI();toast('⚡ +'+amount+' Energi');
+  }
 }
-function sellCards(){
-  if(!S.selected.length)return;var ix=S.selected.slice().sort(function(a,b){return b-a});var t=0;
-  ix.forEach(function(i){t+=Math.floor((S.cards[i].atk+S.cards[i].def)/2);S.cards.splice(i,1);});
-  S.gold+=t;S.selected=[];save();toast('💵 +'+t+'💰');renderTab('cards');
-}
-function doFeed(tp){
-  var i=parseInt(document.getElementById('feedTarget')?.value);if(isNaN(i))return;
-  var cd=S.cards[i],fd={bread:{c:10,h:25,ct:'gold'},meat:{c:25,h:50,ct:'gold'},premium:{c:2,h:100,ct:'gem'}};
-  var f=fd[tp];if(!f)return;
-  if(f.ct==='gold'&&!spend(f.c,0,0,'Feed'))return;if(f.ct==='gem'&&!spend(0,f.c,0,'Feed'))return;
-  cd.hunger=Math.min(100,cd.hunger+f.h);if(Math.random()<0.25)cd.stars=Math.min(5,cd.stars+1);
-  save();toast('🍖 +'+f.h+'%');renderTab('feed');
-}
-function breedCards(){
-  if(S.selected.length!==2)return;if(!spend(0,0,CFG.BREED_COST,'Breed'))return;
-  var ix=S.selected.slice().sort(function(a,b){return b-a});var p1=S.cards[ix[0]],p2=S.cards[ix[1]];
-  if(p1.hunger<30||p2.hunger<30)return toast('Lapar!','error');
-  S.cards.splice(ix[0],1);S.cards.splice(ix[1],1);
-  var ns=Math.min(5,Math.max(p1.stage,p2.stage)+1);var pool=PETS.filter(function(p){return p.stage===ns});
-  var b=pool.length?pool[Math.floor(Math.random()*pool.length)]:PETS[0];
-  var ch=createCard(b.id,Math.floor((p1.level+p2.level)/2));S.cards.push(ch);S.selected=[];
-  save();toast('🧬 '+ch.emoji+' '+ch.name+'!');renderTab('cards');
-}
-function doBattle(){
-  var i=parseInt(document.getElementById('battleTarget')?.value);if(isNaN(i))return;
-  var cd=S.cards[i];if(cd.hunger<20)return toast('Lapar!','error');
-  if(!spend(0,0,CFG.BATTLE_COST,'Battle'))return;if(S.battleCount>=CFG.MAX_BATTLE_DAY)return toast('Max '+CFG.MAX_BATTLE_DAY+'/hari!','error');
-  var pp=Math.floor(cd.atk*1.5+cd.def),ep=Math.floor(pp*(0.7+Math.random()*0.6));
-  var ph=cd.hp,eh=Math.floor(ep*0.6),r=0,logs=[];
-  while(ph>0&&eh>0&&r<20){r++;var pd=Math.max(1,Math.floor(cd.atk*(0.8+Math.random()*0.4)));eh-=pd;logs.push('R'+r+':⚔️-'+pd);if(eh<=0)break;var ed=Math.max(1,Math.floor(ep*0.3*(0.7+Math.random()*0.6)));ph-=ed;logs.push('R'+r+':🛡️+'+ed);}
-  var w=ph>0;var rg=w?Math.floor(CFG.BATTLE_REWARD_BASE*(1+cd.level*0.2)):Math.floor(CFG.BATTLE_REWARD_BASE*0.3);
-  var rd=w?Math.floor(1+cd.stars*0.5):0;S.battleCount++;cd.hunger=Math.max(0,cd.hunger-15);
-  earn(rg,rd,0,w?'Menang!':'Kalah');if(w&&Math.random()<0.3&&cd.stars<5){cd.stars++;log('⭐ Battle Star!');}
-  save();document.getElementById('battleResult').innerHTML='<div style="background:var(--bg-tertiary);border-radius:10px;padding:12px;margin-top:8px;text-align:center;border:2px solid '+(w?'var(--green)':'var(--red)')+';"><div style="font-size:18px;font-weight:900;color:'+(w?'var(--green)':'var(--red)')+';">'+(w?'🏆 MENANG!':'💀 KALAH')+'</div><div>+'+rg+'💰 '+rd+'💎</div><div style="font-size:10px;max-height:100px;overflow-y:auto;text-align:left;">'+logs.map(function(l){return'<div>'+l+'</div>'}).join('')+'</div></div>';
-}
-function listToMarket(){var p=parseInt(document.getElementById('listPrice')?.value)||10;var ix=S.selected.slice().sort(function(a,b){return b-a});ix.forEach(function(i){S.market.push({...S.cards[i],price:clamp(p,1,999)});S.cards.splice(i,1);});S.selected=[];save();toast('📤 Listed!');renderTab('market');}
-function buyFromMarket(i){var it=S.market[i];if(!it)return;if(!spend(0,it.price,0,'Beli'))return;S.market.splice(i,1);S.cards.push({...it,uid:uid()});save();toast('🛒 Dibeli!');renderTab('market');}
-function buyPremium(){if(S.gem<CFG.PREMIUM_PRICE)return toast('💎 Butuh '+CFG.PREMIUM_PRICE+'!','error');S.gem-=CFG.PREMIUM_PRICE;S.premium=true;S.premiumExpiry=Date.now()+CFG.PREMIUM_DURATION*86400000;S.maxEnergy=CFG.MAX_ENERGY+CFG.PREMIUM_ENERGY_BONUS;S.energy=S.maxEnergy;document.getElementById('premiumBadge').classList.remove('hidden');save();updateUI();toast('👑 Premium Aktif!');renderTab('shop');}
-function openPack(n,cost){if(S.gem<cost)return toast('💎 Kurang!','error');S.gem-=cost;var res='';for(var i=0;i<n;i++){var r=Math.random()*100,rar='common',cum=0;for(var k in RARITY_W){cum+=RARITY_W[k];if(r<=cum){rar=k;break;}}var pool=PETS.filter(function(p){return p.rarity===rar});var b=pool.length?pool[Math.floor(Math.random()*pool.length)]:PETS[0];var cd=createCard(b.id);S.cards.push(cd);res+='<span style="font-size:24px;">'+cd.emoji+'</span> ';}if(n>=5){var rp=PETS.filter(function(p){return p.rarity==='epic'||p.rarity==='legendary'});var bn=createCard(rp[Math.floor(Math.random()*rp.length)].id);S.cards.push(bn);res+='<br><b>🎁 Bonus:</b> '+bn.emoji+' '+bn.name;}document.getElementById('packResult').innerHTML=res;save();toast('🎁 '+n+' pet!');}
-function buyDiamond(amount){var rates=getCurrentRates();var rp=Math.floor(amount/1000)*rates.buy;var nm=prompt('Nama/ID:');if(!nm)return;var otp=Math.floor(100000+Math.random()*900000).toString();var tid=txId();S.otpList=S.otpList||[];S.otpList.unshift({id:tid,otp:otp,type:'buy',amount:amount,rupiah:rp,note:nm,expiry:Date.now()+CFG.OTP_EXPIRY_MIN*60000,status:'pending'});save();alert('🔐 OTP: '+otp+'\n\nTransfer Rp'+fmt(rp)+'\nKirim OTP ke WA Admin');}
-function submitWD(){
-  if(!canWD(parseInt(document.getElementById('wdAmount')?.value||0)))return;
-  var amt=parseInt(document.getElementById('wdAmount').value);var rek=document.getElementById('wdRek').value;
-  if(!amt||amt<CFG.MIN_WD)return toast('Min '+CFG.MIN_WD+'💎!','error');if(!rek)return toast('Isi rekening!','error');
-  if(S.gem<amt)return toast('💎 Tidak cukup!','error');
-  var rates=getCurrentRates();var fee=Math.floor(amt*CFG.WD_FEE);var net=amt-fee;var rp=Math.floor(net/1000)*rates.sell;
-  if(!confirm('WD '+amt+'💎\nFee: '+fee+'💎\nTerima: '+fmtRp(rp)+'\nKe: '+rek))return;
-  S.gem-=amt;S._wdToday=(S._wdToday||0)+amt;var tid=txId();
-  S.wdPending.unshift({id:tid,amount:amt,fee:fee,net:net,rupiah:rp,rek:rek,time:new Date().toLocaleString(),status:'pending'});
-  save();toast('✅ WD #'+tid+' diajukan!');renderTab('wd');
+
+function buyDiamond(amount){
+  var rates=getCurrentRates();var rp=Math.floor(amount/1000)*rates.buy;
+  var nm=prompt('Nama/ID:');if(!nm)return;
+  var otp=Math.floor(100000+Math.random()*900000).toString();
+  S.otpList=S.otpList||[];S.otpList.unshift({id:txId(),otp:otp,type:'buy',amount:amount,rupiah:rp,note:nm,expiry:Date.now()+CFG.OEM*60000,status:'pending'});
+  save();alert('🔐 OTP: '+otp+'\n\nTransfer: '+fmtRp(rp)+'\nKirim OTP ke WA Admin');
 }
 
 // ==================== ADMIN ====================
 var adC=0,adT=0;
-function handleLogo(){var n=Date.now();if(n-adT>2000)adC=0;adT=n;adC++;if(adC>=5){adC=0;document.getElementById('adminOverlay').classList.add('active');document.getElementById('adminPasswordInput').value='';}}
-function closeAdmin(){document.getElementById('adminOverlay').classList.remove('active');}
-function adminLogin(){
-  if(document.getElementById('adminPasswordInput').value===CFG.ADMIN_PASS){
-    document.getElementById('adminLoginSection').classList.add('hidden');
-    document.getElementById('adminDashboardSection').classList.remove('hidden');
-    refreshAdmin();
-  }
-}
-function adminLogout(){document.getElementById('adminLoginSection').classList.remove('hidden');document.getElementById('adminDashboardSection').classList.add('hidden');closeAdmin();}
-function approveOtp(){
-  var inp=document.getElementById('otpVerifyInput').value.trim();if(inp.length!==6)return;
-  var found=(S.otpList||[]).find(function(o){return o.otp===inp&&o.status==='pending'});
-  if(!found)return toast('OTP tidak ditemukan!','error');if(Date.now()>found.expiry)return toast('Expired!','error');
-  found.status='approved';if(found.type==='buy'){S.gem+=found.amount;S.serverTotalSupply+=found.amount;log('✅ Beli '+found.amount+'💎');}
-  // Also check WD
-  var wd=S.wdPending.find(function(w){return w.id===found.id});
-  if(wd){wd.status='approved';S.wdHistory.push(wd);S.wdPending=S.wdPending.filter(function(w){return w.id!==found.id});}
-  save();refreshAdmin();document.getElementById('otpVerifyInput').value='';toast('✅ Approved!');
-}
-function rejectOtp(){
-  var inp=document.getElementById('otpVerifyInput').value.trim();if(inp.length!==6)return;
-  var found=(S.otpList||[]).find(function(o){return o.otp===inp&&o.status==='pending'});
-  if(!found)return toast('OTP tidak ditemukan!','error');
-  found.status='rejected';
-  var wd=S.wdPending.find(function(w){return w.id===found.id});
-  if(wd){wd.status='rejected';S.gem+=wd.amount;S.wdHistory.push(wd);S.wdPending=S.wdPending.filter(function(w){return w.id!==found.id});}
-  save();refreshAdmin();document.getElementById('otpVerifyInput').value='';toast('❌ Rejected');
-}
-function refreshAdmin(){
-  var rates=getCurrentRates();
-  document.getElementById('economyStats').innerHTML='💎 Supply: <b>'+fmt(S.serverTotalSupply)+'</b> | Target: '+fmt(CFG.TOTAL_SUPPLY_TARGET)+'<br>🟢 Buy: '+fmtRp(rates.buy)+'/1000💎 | 🔴 Sell: '+fmtRp(rates.sell)+'/1000💎';
-  var wd=S.wdPending.filter(function(w){return w.status==='pending'});
-  document.getElementById('wdPendingList').innerHTML=wd.length?wd.map(function(w){return'<div style="padding:4px;background:var(--bg-tertiary);border-radius:4px;margin:2px 0;">#'+w.id+' | '+fmt(w.amount)+'💎 → '+fmtRp(w.rupiah)+' | '+w.rek+'</div>'}).join(''):'<span style="color:var(--text-muted);">Tidak ada</span>';
-}
+function handleLogo(){var n=Date.now();if(n-adT>2000)adC=0;adT=n;adC++;if(adC>=5){adC=0;document.getElementById('adminOverlay').classList.add('active')}}
+function closeAdmin(){document.getElementById('adminOverlay').classList.remove('active')}
+function adminLogin(){if(document.getElementById('adminPassInput').value===CFG.AP){document.getElementById('adminLoginSection').classList.add('hidden');document.getElementById('adminDashboard').classList.remove('hidden');refreshAdmin()}}
+function adminLogout(){document.getElementById('adminLoginSection').classList.remove('hidden');document.getElementById('adminDashboard').classList.add('hidden');closeAdmin()}
+function approveOtp(){var inp=document.getElementById('otpInput').value.trim();if(inp.length!==6)return;var f=(S.otpList||[]).find(function(o){return o.otp===inp&&o.status==='pending'});if(!f)return toast('OTP tidak ada','error');if(Date.now()>f.expiry)return toast('Expired','error');f.status='approved';if(f.type==='buy'){S.gem+=f.amount;S.serverTotalSupply+=f.amount;log('✅ +'+f.amount+'💎')}save();refreshAdmin();toast('✅ Approved')}
+function rejectOtp(){var inp=document.getElementById('otpInput').value.trim();if(inp.length!==6)return;var f=(S.otpList||[]).find(function(o){return o.otp===inp&&o.status==='pending'});if(!f)return;f.status='rejected';save();refreshAdmin();toast('❌ Rejected')}
+function refreshAdmin(){var rates=getCurrentRates();document.getElementById('adminStats').innerHTML='Supply: <b>'+fmt(S.serverTotalSupply)+'</b> | Target: '+fmt(CFG.TST)+'<br>Buy: '+fmtRp(rates.buy)+' | Sell: '+fmtRp(rates.sell);document.getElementById('wdPending').innerHTML=(S.wdPending||[]).filter(function(w){return w.status==='pending'}).map(function(w){return'<div>#'+w.id+' '+w.amount+'💎</div>'}).join('')||'Tidak ada'}
 
 // ==================== INIT ====================
-var tg2=window.Telegram?.WebApp;if(tg2){tg2.expand();tg2.ready();}
+var tg2=window.Telegram?.WebApp;if(tg2){tg2.expand();tg2.ready()}
 document.addEventListener('DOMContentLoaded',function(){
-  var saved=JSON.parse(localStorage.getItem('evo95')||'null');if(saved)S=saved;
+  var saved=JSON.parse(localStorage.getItem('evo96')||'null');if(saved)S=saved;
   if(!S.cards||!S.cards.length)S.cards=[createCard('sprout',1),createCard('cactus',1),createCard('sprout',2)];
-  if(!S.maxEnergy)S.maxEnergy=CFG.MAX_ENERGY;if(S.energy>S.maxEnergy)S.energy=S.maxEnergy;
-  if(S.premium&&Date.now()>S.premiumExpiry){S.premium=false;S.maxEnergy=CFG.MAX_ENERGY;}
-  if(S.premium){S.maxEnergy=CFG.MAX_ENERGY+CFG.PREMIUM_ENERGY_BONUS;document.getElementById('premiumBadge').classList.remove('hidden');}
-  save();renderTab('cards');updateUI();
-  log('✅ v9.5 WD + Dynamic Rate Ready');
-  
-  setInterval(function(){if(S.energy<S.maxEnergy){S.energy++;save();updateUI();}},CFG.ENERGY_REGEN_MIN*60000);
-  setInterval(function(){S.cards.forEach(function(c){if(c.hunger>0)c.hunger=Math.max(0,c.hunger-CFG.HUNGER_DECAY_AMT)});save();},CFG.HUNGER_DECAY_MIN*60000);
-  
+  if(!S.maxEnergy)S.maxEnergy=CFG.ME;if(S.energy>S.maxEnergy)S.energy=S.maxEnergy;
+  if(S.premium&&Date.now()>S.premiumExpiry){S.premium=false;S.maxEnergy=CFG.ME}
+  if(S.premium){S.maxEnergy=CFG.ME+CFG.PEB;document.getElementById('premiumBadge').classList.remove('hidden')}
+  save();renderTab('cards');updateUI();log('✅ v9.6 Bot Market');
+  setInterval(function(){rechargeEnergy()},30000);
+  setInterval(function(){S.cards.forEach(function(c){if(c.hunger>0)c.hunger=Math.max(0,c.hunger-CFG.HDA)});save()},CFG.HDM*60000);
   document.getElementById('logoBtn').addEventListener('click',handleLogo);
   document.getElementById('adminLoginBtn').addEventListener('click',adminLogin);
   document.getElementById('adminCloseBtn').addEventListener('click',closeAdmin);
   document.getElementById('adminLogoutBtn').addEventListener('click',adminLogout);
   document.getElementById('approveOtpBtn').addEventListener('click',approveOtp);
   document.getElementById('rejectOtpBtn').addEventListener('click',rejectOtp);
-  document.getElementById('navBar').addEventListener('click',function(e){var t=e.target.closest('.nav-item');if(t)renderTab(t.dataset.tab);});
+  document.getElementById('navBar').addEventListener('click',function(e){var t=e.target.closest('.nav-item');if(t)renderTab(t.dataset.tab)});
   if(window.location.href.indexOf('?admin=true')>=0)setTimeout(function(){document.getElementById('adminOverlay').classList.add('active')},1000);
 });
 </script>
