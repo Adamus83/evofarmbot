@@ -3,31 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Evo Cards v9.4 — Premium Shop</title>
+<title>Evo Cards v9.5 — WD & Dynamic Rate</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
 :root {
-  --bg-primary: #0b0f19;
-  --bg-secondary: #151b2b;
-  --bg-tertiary: #0f172a;
-  --bg-card: #1e293b;
-  --border-primary: #1e293b;
-  --border-secondary: #334155;
-  --text-primary: #e2e8f0;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
-  --gold: #facc15;
-  --gold-dark: #f59e0b;
-  --red: #f43f5e;
-  --green: #22c55e;
-  --blue: #3b82f6;
-  --purple: #8b5cf6;
-  --premium: #ec4899;
+  --bg-primary: #0b0f19; --bg-secondary: #151b2b; --bg-tertiary: #0f172a; --bg-card: #1e293b;
+  --border-primary: #1e293b; --border-secondary: #334155; --text-primary: #e2e8f0;
+  --text-secondary: #94a3b8; --text-muted: #64748b; --gold: #facc15; --gold-dark: #f59e0b;
+  --red: #f43f5e; --green: #22c55e; --blue: #3b82f6; --purple: #8b5cf6; --premium: #ec4899;
 }
-
 *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
 body{background:var(--bg-primary);color:var(--text-primary);display:flex;justify-content:center;min-height:100vh;overscroll-behavior:none}
-.app{width:100%;max-width:480px;background:var(--bg-secondary);min-height:100vh;display:flex;flex-direction:column;position:relative;overflow:hidden}
+.app{width:100%;max-width:480px;background:var(--bg-secondary);min-height:100vh;display:flex;flex-direction:column}
 .header{background:linear-gradient(180deg,var(--bg-tertiary),var(--bg-secondary));padding:12px 16px;border-bottom:2px solid var(--border-primary);position:sticky;top:0;z-index:100}
 .header-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
 .logo{font-weight:900;font-size:18px;background:linear-gradient(135deg,var(--gold),var(--gold-dark));-webkit-background-clip:text;-webkit-text-fill-color:transparent;cursor:pointer;position:relative}
@@ -35,33 +22,30 @@ body{background:var(--bg-primary);color:var(--text-primary);display:flex;justify
 .premium-badge{background:linear-gradient(135deg,var(--premium),#be185d);color:white;padding:2px 8px;border-radius:10px;font-size:8px;font-weight:900;margin-left:8px;-webkit-text-fill-color:white;display:inline-block}
 .resource-bar{display:flex;gap:8px;flex-wrap:wrap}
 .resource{background:var(--bg-card);padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;display:flex;align-items:center;gap:4px;border:1px solid var(--border-secondary);font-family:monospace}
-.resource.gold{color:var(--gold)}
-.resource.gem{background:linear-gradient(135deg,#4c1d95,#6d28d9);border-color:var(--purple);color:white}
-.resource.energy{color:var(--blue)}
+.resource.gold{color:var(--gold)}.resource.gem{background:linear-gradient(135deg,#4c1d95,#6d28d9);border-color:var(--purple);color:white}.resource.energy{color:var(--blue)}
 .resource span{color:var(--text-primary);font-family:monospace;font-weight:900}
 .nav{display:flex;background:var(--bg-tertiary);border-bottom:1px solid var(--border-primary);overflow-x:auto;scrollbar-width:none}
 .nav::-webkit-scrollbar{display:none}
-.nav-item{flex:1;min-width:55px;padding:10px 6px;text-align:center;font-weight:800;font-size:10px;cursor:pointer;color:var(--text-muted);border-bottom:3px solid transparent;white-space:nowrap;transition:all 0.2s;position:relative}
+.nav-item{flex:1;min-width:50px;padding:10px 4px;text-align:center;font-weight:800;font-size:9px;cursor:pointer;color:var(--text-muted);border-bottom:3px solid transparent;white-space:nowrap;transition:all 0.2s;position:relative}
 .nav-item.active{color:var(--gold);border-color:var(--gold);background:var(--bg-card)}
-.badge-notif{position:absolute;top:2px;right:2px;background:var(--red);color:white;font-size:8px;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900}
-.content{flex:1;overflow-y:auto;padding:12px;-webkit-overflow-scrolling:touch}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.card{background:linear-gradient(160deg,var(--bg-card),var(--bg-tertiary));border:2px solid var(--border-secondary);border-radius:14px;padding:8px;text-align:center;position:relative;cursor:pointer;transition:all 0.2s;overflow:hidden}
+.badge-notif{position:absolute;top:2px;right:2px;background:var(--red);color:white;font-size:7px;width:14px;height:14px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900}
+.content{flex:1;overflow-y:auto;padding:10px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.card{background:linear-gradient(160deg,var(--bg-card),var(--bg-tertiary));border:2px solid var(--border-secondary);border-radius:12px;padding:6px;text-align:center;position:relative;cursor:pointer;transition:all 0.2s}
 .card:active{transform:scale(0.95)}
-.card.selected{border-color:var(--gold)!important;box-shadow:0 0 20px rgba(250,204,21,0.4);transform:translateY(-2px)}
-.rarity-common{border-color:#475569}.rarity-rare{border-color:#60a5fa}.rarity-epic{border-color:#a78bfa}.rarity-legendary{border-color:#facc15;box-shadow:0 0 15px rgba(250,204,21,0.4)}.rarity-mythic{border-color:#f43f5e;box-shadow:0 0 20px rgba(244,63,94,0.5)}
-.card-emoji{font-size:32px;display:block;margin:4px 0}
-.card-name{font-size:10px;font-weight:900;margin:3px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-transform:uppercase;letter-spacing:0.5px}
-.card-stats{font-size:9px;color:var(--text-secondary);font-weight:600}
-.card-level{position:absolute;top:4px;left:4px;background:var(--bg-tertiary);padding:2px 6px;border-radius:6px;font-size:9px;font-weight:900;border:1px solid var(--border-secondary)}
-.card-stars{display:flex;gap:2px;justify-content:center;margin-top:3px}
-.card-stars span{font-size:9px}
-.star-on{color:var(--gold)}.star-off{color:var(--border-secondary)}
-.progress-bar{width:100%;height:4px;background:var(--border-secondary);border-radius:2px;margin-top:4px;overflow:hidden}
-.progress-fill{height:100%;border-radius:2px;transition:width 0.3s}
+.card.selected{border-color:var(--gold)!important;box-shadow:0 0 15px rgba(250,204,21,0.4);transform:translateY(-2px)}
+.rarity-common{border-color:#475569}.rarity-rare{border-color:#60a5fa}.rarity-epic{border-color:#a78bfa}.rarity-legendary{border-color:#facc15;box-shadow:0 0 12px rgba(250,204,21,0.3)}.rarity-mythic{border-color:#f43f5e}
+.card-emoji{font-size:28px;display:block;margin:3px 0}
+.card-name{font-size:9px;font-weight:900;margin:2px 0;text-transform:uppercase;white-space:nowrap;overflow:hidden}
+.card-stats{font-size:8px;color:var(--text-secondary)}
+.card-level{position:absolute;top:3px;left:3px;background:var(--bg-tertiary);padding:1px 5px;border-radius:5px;font-size:8px;font-weight:900;border:1px solid var(--border-secondary)}
+.card-stars{display:flex;gap:1px;justify-content:center;margin-top:2px}
+.card-stars span{font-size:8px}.star-on{color:var(--gold)}.star-off{color:var(--border-secondary)}
+.progress-bar{width:100%;height:3px;background:var(--border-secondary);border-radius:2px;margin-top:3px;overflow:hidden}
+.progress-fill{height:100%;border-radius:2px}
 .hunger-fill{background:var(--green)}.hunger-fill.warning{background:var(--gold-dark)}.hunger-fill.danger{background:var(--red)}
-.btn{width:100%;padding:12px;border:none;border-radius:12px;font-weight:900;font-size:13px;cursor:pointer;background:var(--bg-card);color:var(--text-primary);margin:4px 0;transition:all 0.2s}
-.btn:active{transform:scale(0.98)}.btn:disabled{opacity:0.5;cursor:not-allowed}
+.btn{width:100%;padding:10px;border:none;border-radius:10px;font-weight:900;font-size:12px;cursor:pointer;background:var(--bg-card);color:var(--text-primary);margin:3px 0;transition:all 0.2s}
+.btn:active{transform:scale(0.98)}.btn:disabled{opacity:0.5}
 .btn-primary{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:var(--bg-tertiary)}
 .btn-green{background:linear-gradient(135deg,#22c55e,#16a34a);color:white}
 .btn-red{background:linear-gradient(135deg,#ef4444,#dc2626);color:white}
@@ -69,51 +53,26 @@ body{background:var(--bg-primary);color:var(--text-primary);display:flex;justify
 .btn-purple{background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:white}
 .btn-pink{background:linear-gradient(135deg,#ec4899,#db2777);color:white}
 .btn-gold{background:linear-gradient(135deg,#f59e0b,#d97706);color:white}
-.btn-otp{background:linear-gradient(135deg,var(--red),#e11d48);color:white;box-shadow:0 4px 12px rgba(244,63,94,0.3)}
-.btn-dark{background:var(--bg-tertiary);border:2px solid var(--border-secondary);color:var(--text-muted)}
-.panel{background:var(--bg-tertiary);border:1px solid var(--border-primary);border-radius:12px;padding:12px;margin:8px 0}
-.section-title{font-size:14px;font-weight:900;margin:16px 0 8px;color:var(--gold);display:flex;align-items:center;gap:8px}
+.panel{background:var(--bg-tertiary);border:1px solid var(--border-primary);border-radius:10px;padding:10px;margin:6px 0}
+.section-title{font-size:13px;font-weight:900;margin:12px 0 6px;color:var(--gold);display:flex;align-items:center;gap:6px}
 .section-title::after{content:'';flex:1;height:1px;background:var(--border-primary)}
-.premium-banner{background:linear-gradient(135deg,#ec4899,#be185d);border:2px solid var(--premium);border-radius:16px;padding:20px;margin:12px 0;text-align:center;cursor:pointer;transition:0.3s}
-.premium-banner:hover{transform:scale(1.02)}
-.premium-icon{font-size:48px;margin-bottom:8px}
-.premium-title{font-size:18px;font-weight:900;color:white;margin-bottom:4px}
-.premium-sub{font-size:11px;color:rgba(255,255,255,0.8)}
-.premium-features{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
-.premium-feature{background:rgba(255,255,255,0.1);border-radius:10px;padding:10px;text-align:center;font-size:11px;color:white}
-.feature-icon{font-size:24px;display:block;margin-bottom:4px}
-.otp-box{background:var(--bg-tertiary);border:3px solid var(--red);border-radius:16px;padding:20px;text-align:center;margin:16px 0;position:relative}
-.otp-box::before{content:'🔐 KODE RAHASIA';position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--red);color:white;padding:2px 12px;border-radius:10px;font-size:8px;font-weight:900;letter-spacing:2px}
-.otp-code{font-size:42px;font-weight:900;color:var(--red);font-family:'Courier New',monospace;letter-spacing:12px;text-shadow:0 0 20px rgba(244,63,94,0.6);animation:pulse 1.5s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
-.otp-timer{font-size:11px;color:var(--text-muted);margin-top:8px}
-.otp-info{background:var(--bg-card);border-radius:8px;padding:12px;margin-top:12px;font-size:11px;line-height:1.6;text-align:left}
-.otp-step{display:flex;align-items:center;gap:8px;margin:4px 0}
-.otp-step-num{width:20px;height:20px;background:var(--red);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;color:white;flex-shrink:0}
-.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px;opacity:0;pointer-events:none;transition:opacity 0.3s}
-.modal-overlay.active{opacity:1;pointer-events:all}
-.modal-content{background:var(--bg-card);border:2px solid var(--border-secondary);border-radius:16px;padding:20px;max-width:360px;width:100%;max-height:80vh;overflow-y:auto;text-align:center}
-.modal-title{font-size:20px;font-weight:900;margin-bottom:12px;color:var(--gold)}
-.toast-container{position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:2000;display:flex;flex-direction:column;gap:8px;pointer-events:none}
-.toast{background:var(--bg-tertiary);border:2px solid var(--green);color:var(--green);padding:12px 24px;border-radius:12px;font-weight:900;font-size:13px;transform:translateY(-100px);opacity:0;transition:all 0.3s;white-space:nowrap}
-.toast.show{transform:translateY(0);opacity:1}
-.toast.error{border-color:var(--red);color:var(--red)}
-.diamond-shop{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:12px 0}
-.diamond-item{background:var(--bg-card);border:2px solid var(--border-secondary);border-radius:14px;padding:16px;text-align:center;cursor:pointer;transition:0.2s}
-.diamond-item:hover{border-color:var(--gold);transform:translateY(-2px)}
-.diamond-amount{font-size:28px;font-weight:900;color:var(--purple)}
-.diamond-price{font-size:14px;font-weight:700;color:var(--gold);margin-top:4px}
-.diamond-badge{background:var(--green);color:white;font-size:9px;padding:2px 6px;border-radius:8px;display:inline-block;margin-top:4px}
+.rate-display{display:flex;gap:8px;margin:8px 0;text-align:center}
+.rate-card{flex:1;background:var(--bg-card);border-radius:10px;padding:10px;border:2px solid var(--border-secondary)}
+.rate-card .rate-arrow{font-size:20px}.rate-card .rate-value{font-size:16px;font-weight:900}.rate-card .rate-label{font-size:9px;color:var(--text-muted)}
+.wd-form{background:var(--bg-card);border-radius:10px;padding:12px;margin:8px 0}
+.wd-history{max-height:200px;overflow-y:auto}
+.wd-item{background:var(--bg-tertiary);border-radius:8px;padding:8px;margin:4px 0;font-size:10px;border-left:3px solid var(--border-secondary)}
+.wd-item.approved{border-left-color:var(--green)}.wd-item.rejected{border-left-color:var(--red)}.wd-item.pending{border-left-color:var(--gold-dark)}
 .hidden{display:none!important}
-.footer{text-align:center;padding:8px;font-size:10px;color:var(--text-muted);background:var(--bg-tertiary);border-top:1px solid var(--border-primary);min-height:36px;display:flex;align-items:center;justify-content:center}
+.footer{text-align:center;padding:6px;font-size:9px;color:var(--text-muted);background:var(--bg-tertiary);border-top:1px solid var(--border-primary);min-height:30px}
 .admin-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);z-index:3000;display:none;align-items:center;justify-content:center;padding:20px}
 .admin-overlay.active{display:flex}
 .admin-panel{background:var(--bg-tertiary);border:2px solid var(--red);border-radius:16px;width:100%;max-width:420px;max-height:90vh;overflow-y:auto;padding:20px}
-input,select,textarea{width:100%;padding:12px;background:var(--bg-card);border:2px solid var(--border-secondary);border-radius:10px;color:var(--text-primary);font-size:14px;margin:4px 0}
+input,select{width:100%;padding:10px;background:var(--bg-card);border:2px solid var(--border-secondary);border-radius:8px;color:var(--text-primary);font-size:13px;margin:3px 0}
 input:focus,select:focus{outline:none;border-color:var(--gold)}
-.battle-arena{background:var(--bg-tertiary);border:2px solid var(--border-secondary);border-radius:16px;padding:20px;margin:12px 0;text-align:center}
-.battle-log{font-size:11px;color:var(--text-secondary);margin-top:12px;max-height:150px;overflow-y:auto;text-align:left;font-family:monospace;background:#0a0d14;border-radius:8px;padding:8px;line-height:1.6}
-.tx-item{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:var(--bg-card);border-radius:8px;margin:4px 0;font-size:11px;border-left:3px solid var(--border-secondary)}
+.toast-container{position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:2000;display:flex;flex-direction:column;gap:6px;pointer-events:none}
+.toast{background:var(--bg-tertiary);border:2px solid var(--green);color:var(--green);padding:10px 20px;border-radius:10px;font-weight:900;font-size:12px;transform:translateY(-100px);opacity:0;transition:all 0.3s;white-space:nowrap}
+.toast.show{transform:translateY(0);opacity:1}.toast.error{border-color:var(--red);color:var(--red)}.toast.warning{border-color:var(--gold-dark);color:var(--gold-dark)}
 </style>
 </head>
 <body>
@@ -121,10 +80,7 @@ input:focus,select:focus{outline:none;border-color:var(--gold)}
 <div class="app" id="app">
   <div class="header">
     <div class="header-top">
-      <div class="logo" id="logoBtn">
-        ⚡ EVO CARDS v9.4
-        <span class="logo-badge">SECURE</span>
-      </div>
+      <div class="logo" id="logoBtn">⚡ EVO CARDS v9.5<span class="logo-badge">WD</span></div>
       <span class="premium-badge hidden" id="premiumBadge">👑 PREMIUM</span>
     </div>
     <div class="resource-bar">
@@ -135,75 +91,76 @@ input:focus,select:focus{outline:none;border-color:var(--gold)}
   </div>
 
   <nav class="nav" id="navBar">
-    <div class="nav-item active" data-tab="cards">🃏 Kartu</div>
-    <div class="nav-item" data-tab="feed">🍖 Feed</div>
-    <div class="nav-item" data-tab="breed">🧬 Breed</div>
-    <div class="nav-item" data-tab="battle">⚔️ Battle</div>
-    <div class="nav-item" data-tab="market">🏪 Pasar</div>
-    <div class="nav-item" data-tab="earn">💰 Earn</div>
-    <div class="nav-item" data-tab="admin">🏦 Diamond</div>
-    <div class="nav-item" data-tab="shop">🛒 Shop</div>
+    <div class="nav-item active" data-tab="cards">🃏</div>
+    <div class="nav-item" data-tab="feed">🍖</div>
+    <div class="nav-item" data-tab="breed">🧬</div>
+    <div class="nav-item" data-tab="battle">⚔️</div>
+    <div class="nav-item" data-tab="market">🏪</div>
+    <div class="nav-item" data-tab="wd">💸WD</div>
+    <div class="nav-item" data-tab="diamond">💎Beli</div>
+    <div class="nav-item" data-tab="shop">🛒</div>
   </nav>
 
   <main class="content" id="content"></main>
-  <div class="footer" id="footerLog">⏳ Loading...</div>
+  <div class="footer" id="footerLog">⏳ Loading v9.5...</div>
 </div>
 
-<div class="modal-overlay" id="modalOverlay"><div class="modal-content" id="modalContent"></div></div>
 <div class="toast-container" id="toastContainer"></div>
 
-<!-- ADMIN PANEL (POPUP) -->
+<!-- ADMIN PANEL -->
 <div class="admin-overlay" id="adminOverlay">
   <div class="admin-panel">
-    <div style="text-align:center;margin-bottom:20px;padding-bottom:16px;border-bottom:2px solid var(--border-primary);">
-      <div style="font-size:22px;font-weight:900;color:var(--red);">🔐 PANEL ADMIN</div>
-      <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Verifikasi Transaksi OTP</div>
+    <div style="text-align:center;margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid var(--border-primary);">
+      <div style="font-size:20px;font-weight:900;color:var(--red);">🔐 PANEL ADMIN</div>
     </div>
     <div id="adminLoginSection">
       <div style="text-align:center;padding:20px;">
-        <div style="font-size:64px;margin:20px 0;">🔒</div>
-        <div style="font-size:16px;font-weight:900;margin-bottom:16px;">Autentikasi Diperlukan</div>
-        <input type="password" id="adminPasswordInput" placeholder="Masukkan password..." style="text-align:center;font-size:20px;letter-spacing:6px;" maxlength="20">
-        <button class="btn btn-otp" id="adminLoginBtn" style="margin-top:12px;">🔓 Buka Panel</button>
-        <button class="btn btn-dark" id="adminCloseBtn" style="margin-top:8px;">❌ Tutup</button>
+        <div style="font-size:48px;">🔒</div>
+        <input type="password" id="adminPasswordInput" placeholder="Password..." style="text-align:center;font-size:18px;letter-spacing:4px;margin:12px 0;">
+        <button class="btn btn-red" id="adminLoginBtn">🔓 Buka Panel</button>
+        <button class="btn btn-dark" id="adminCloseBtn">❌ Tutup</button>
       </div>
     </div>
     <div id="adminDashboardSection" class="hidden">
-      <div style="background:var(--bg-card);border-radius:10px;padding:12px;margin:10px 0;">
-        <h4 style="font-size:12px;font-weight:900;color:var(--gold);margin-bottom:8px;">📨 OTP Aktif</h4>
-        <div id="activeOtpList"><p style="font-size:11px;color:var(--text-muted);text-align:center;">Tidak ada OTP aktif</p></div>
+      <div style="background:var(--bg-card);border-radius:8px;padding:10px;margin:8px 0;">
+        <b>📊 Ekonomi</b>
+        <div id="economyStats" style="font-size:10px;margin-top:4px;"></div>
       </div>
-      <div style="background:var(--bg-card);border-radius:10px;padding:12px;margin:10px 0;">
-        <h4 style="font-size:12px;font-weight:900;color:var(--gold);margin-bottom:8px;">⏳ Pending</h4>
-        <div id="pendingTxList"><p style="font-size:11px;color:var(--text-muted);text-align:center;">Tidak ada transaksi pending</p></div>
+      <div style="background:var(--bg-card);border-radius:8px;padding:10px;margin:8px 0;">
+        <b>⏳ WD Pending</b>
+        <div id="wdPendingList" style="font-size:10px;"></div>
       </div>
-      <div style="background:var(--bg-card);border-radius:10px;padding:12px;margin:10px 0;">
-        <h4 style="font-size:12px;font-weight:900;color:var(--gold);margin-bottom:8px;">✅ Verifikasi OTP</h4>
-        <input type="text" id="otpVerifyInput" placeholder="6 digit OTP..." style="text-align:center;font-size:18px;letter-spacing:6px;" maxlength="6">
-        <div style="display:flex;gap:8px;margin-top:8px;">
-          <button class="btn btn-green" id="approveOtpBtn" style="flex:1;">✅ Approve</button>
-          <button class="btn btn-red" id="rejectOtpBtn" style="flex:1;">❌ Reject</button>
+      <div style="background:var(--bg-card);border-radius:8px;padding:10px;margin:8px 0;">
+        <b>✅ Verifikasi OTP</b>
+        <input type="text" id="otpVerifyInput" placeholder="6 digit OTP..." style="text-align:center;font-size:16px;letter-spacing:4px;">
+        <div style="display:flex;gap:6px;margin-top:6px;">
+          <button class="btn btn-green" id="approveOtpBtn">✅ Approve</button>
+          <button class="btn btn-red" id="rejectOtpBtn">❌ Reject</button>
         </div>
       </div>
-      <button class="btn btn-red" id="adminLogoutBtn" style="margin-top:12px;">🚪 Logout</button>
+      <button class="btn btn-red" id="adminLogoutBtn">🚪 Logout</button>
     </div>
   </div>
 </div>
 
 <script>
-// ===== CONFIG =====
-var CONFIG = {
-  MAX_ENERGY: 20, ENERGY_REGEN_MINUTES: 5, HUNGER_DECAY_MINUTES: 10, HUNGER_DECAY_AMOUNT: 5,
+// ==================== CONFIG ====================
+var CFG = {
+  MAX_ENERGY: 20, ENERGY_REGEN_MIN: 5, HUNGER_DECAY_MIN: 10, HUNGER_DECAY_AMT: 5,
   MAX_BATTLE_DAY: 30, BATTLE_COST: 3, BATTLE_REWARD_BASE: 10,
-  EVOLVE_COST: 50, EVOLVE_STARS_REQ: 5, BREED_COST_ENERGY: 3, BREED_MIN_HUNGER: 30,
-  OTP_LENGTH: 6, OTP_EXPIRY_MINUTES: 5, ADMIN_PASSWORD: '727277',
-  PREMIUM_PRICE: 50, PREMIUM_DURATION_DAYS: 30, PREMIUM_ENERGY_BONUS: 10, PREMIUM_REWARD_BONUS: 0.2,
-  DIAMOND_PACKS: [
-    { amount: 120, price: 15000, label: '120 💎', badge: '' },
-    { amount: 300, price: 35000, label: '300 💎', badge: 'HEMAT' },
-    { amount: 600, price: 65000, label: '600 💎', badge: 'BEST VALUE' },
-    { amount: 1500, price: 150000, label: '1500 💎', badge: 'WHALE' },
-  ],
+  EVOLVE_COST: 50, EVOLVE_STARS_REQ: 5, BREED_COST: 3, BREED_MIN_HUNGER: 30,
+  PREMIUM_PRICE: 50, PREMIUM_DURATION: 30, PREMIUM_ENERGY_BONUS: 10, PREMIUM_REWARD_BONUS: 0.2,
+  ADMIN_PASS: '727277', OTP_EXPIRY_MIN: 5,
+  
+  // 🔥 ECONOMY
+  MAX_DIAMOND_DEFAULT: 5000,
+  MAX_DIAMOND_PREMIUM: 25000,
+  MAX_WD_PER_DAY: 500,
+  MIN_WD: 100,
+  WD_FEE: 0.05, // 5% fee WD
+  BASE_BUY_RATE: 12500, // Rp per 1000💎
+  BASE_SELL_RATE: 10000, // Rp per 1000💎
+  TOTAL_SUPPLY_TARGET: 500000, // Target total diamond beredar
 };
 
 var PETS = [
@@ -216,453 +173,315 @@ var PETS = [
   { id: 'phoenix', name: 'Phoenix', emoji: '🔥', rarity: 'epic', atk: 50, def: 18, hp: 120, stage: 3 },
   { id: 'zeus', name: 'Zeus', emoji: '⚡', rarity: 'legendary', atk: 70, def: 25, hp: 150, stage: 4 },
 ];
+var RARITY_W = { common: 50, rare: 30, epic: 15, legendary: 4.5, mythic: 0.5 };
 
-var RARITY_WEIGHTS = { common: 50, rare: 30, epic: 15, legendary: 4.5, mythic: 0.5 };
-
-// ===== UTILS =====
-function uid() { return 'c_' + Date.now().toString(36) + '_' + Math.random().toString(36).substr(2, 9); }
-function txId() { return 'TX' + Date.now().toString(36).toUpperCase(); }
-function clamp(val, min, max) { return Math.max(min, Math.min(max, val)); }
-function fmtNum(num) { return (num||0).toLocaleString('id-ID'); }
-function fmtRp(num) { return 'Rp' + (num||0).toLocaleString('id-ID'); }
-
-// ===== GAME STATE =====
-var state = {
-  gold: 100, gem: 20, energy: 15, maxEnergy: CONFIG.MAX_ENERGY,
+// ==================== STATE ====================
+var S = {
+  gold: 100, gem: 20, energy: 15, maxEnergy: CFG.MAX_ENERGY,
   cards: [], selected: [], market: [], battleCount: 0, battleDate: '',
   premium: false, premiumExpiry: 0, dailyStreak: 0, lastDailyClaim: '',
-  totalSpent: 0, totalEarned: 0, txHistory: [], pendingTx: [], otpList: [],
+  wdHistory: [], wdPending: [],
+  totalSpent: 0, totalEarned: 0,
+  // 🔥 Server-side economy (disimulasikan di localStorage)
+  serverTotalSupply: parseInt(localStorage.getItem('evo_supply')||'0'),
+  serverBuyRate: CFG.BASE_BUY_RATE,
+  serverSellRate: CFG.BASE_SELL_RATE,
 };
 
-// ===== ADMIN =====
-var adminLoggedIn = false;
-var adminClickCount = 0;
-var adminLastClick = 0;
-
-function handleLogoClick() {
-  var now = Date.now();
-  if (now - adminLastClick > 2000) adminClickCount = 0;
-  adminLastClick = now;
-  adminClickCount++;
-  if (adminClickCount >= 5) {
-    adminClickCount = 0;
-    openAdminPanel();
-  } else if (adminClickCount >= 3) {
-    showToast((5 - adminClickCount) + 'x tap lagi untuk Admin Panel', 'warning');
-  }
+// ==================== UTILS ====================
+function uid(){ return 'c'+Date.now().toString(36)+Math.random().toString(36).substr(2,6); }
+function txId(){ return 'WD'+Date.now().toString(36).toUpperCase(); }
+function clamp(v,min,max){ return Math.max(min,Math.min(max,v)); }
+function fmt(n){ return (n||0).toLocaleString('id-ID'); }
+function fmtRp(n){ return 'Rp'+(n||0).toLocaleString('id-ID'); }
+function save(){ 
+  localStorage.setItem('evo95', JSON.stringify(S));
+  localStorage.setItem('evo_supply', S.serverTotalSupply.toString());
+}
+function log(m){ document.getElementById('footerLog').textContent = m; }
+function toast(m,t){
+  t=t||'success'; var c=document.getElementById('toastContainer');
+  var el=document.createElement('div'); el.className='toast '+t; el.textContent=m;
+  c.appendChild(el); setTimeout(function(){el.classList.add('show')},10);
+  setTimeout(function(){el.classList.remove('show');setTimeout(function(){el.remove()},300)},2500);
+}
+function updateUI(){
+  document.getElementById('goldDisplay').textContent=fmt(S.gold);
+  document.getElementById('gemDisplay').textContent=fmt(S.gem);
+  document.getElementById('energyDisplay').textContent=S.energy;
+  document.getElementById('maxEnergyDisplay').textContent=S.maxEnergy;
+  document.getElementById('premiumBadge').classList.toggle('hidden',!S.premium);
 }
 
-function openAdminPanel() {
-  document.getElementById('adminOverlay').classList.add('active');
-  document.getElementById('adminPasswordInput').value = '';
-  document.getElementById('adminLoginSection').classList.remove('hidden');
-  document.getElementById('adminDashboardSection').classList.add('hidden');
-}
-
-function closeAdminPanel() {
-  document.getElementById('adminOverlay').classList.remove('active');
-  adminLoggedIn = false;
-}
-
-function adminLogin() {
-  var pass = document.getElementById('adminPasswordInput').value;
-  if (pass === CONFIG.ADMIN_PASSWORD) {
-    adminLoggedIn = true;
-    document.getElementById('adminLoginSection').classList.add('hidden');
-    document.getElementById('adminDashboardSection').classList.remove('hidden');
-    refreshAdminDashboard();
+// ==================== ECONOMY ENGINE ====================
+function getMaxDiamond(){ return S.premium ? CFG.MAX_DIAMOND_PREMIUM : CFG.MAX_DIAMOND_DEFAULT; }
+function getCurrentRates(){
+  // Dynamic rate based on supply
+  var supply = S.serverTotalSupply;
+  var target = CFG.TOTAL_SUPPLY_TARGET;
+  var ratio = supply / target;
+  
+  if (ratio > 0.8) {
+    // Over supply → turunkan rate beli, naikkan rate jual
+    S.serverBuyRate = Math.floor(CFG.BASE_BUY_RATE * 0.85);
+    S.serverSellRate = Math.floor(CFG.BASE_SELL_RATE * 0.9);
+  } else if (ratio < 0.3) {
+    // Under supply → naikkan rate beli
+    S.serverBuyRate = Math.floor(CFG.BASE_BUY_RATE * 1.2);
+    S.serverSellRate = Math.floor(CFG.BASE_SELL_RATE * 0.7);
   } else {
-    showToast('❌ Password salah!', 'error');
+    S.serverBuyRate = CFG.BASE_BUY_RATE;
+    S.serverSellRate = CFG.BASE_SELL_RATE;
   }
+  
+  return { buy: S.serverBuyRate, sell: S.serverSellRate };
 }
 
-function adminLogout() {
-  adminLoggedIn = false;
-  closeAdminPanel();
+function canAddDiamond(amount){
+  var max = getMaxDiamond();
+  if (S.gem + amount > max) { toast('❌ Max diamond: '+fmt(max)+'💎! Upgrade ke Premium untuk '+fmt(CFG.MAX_DIAMOND_PREMIUM)+'💎', 'error'); return false; }
+  return true;
 }
 
-function approveOtp() {
-  var input = document.getElementById('otpVerifyInput').value.trim();
-  if (input.length !== 6) return showToast('Masukkan 6 digit!', 'error');
-  var found = state.otpList.find(function(o) { return o.otp === input && o.status === 'pending'; });
-  if (!found) return showToast('OTP tidak ditemukan!', 'error');
-  if (Date.now() > found.expiry) return showToast('OTP expired!', 'error');
-  found.status = 'approved';
-  var pending = state.pendingTx.find(function(t) { return t.id === found.id; });
-  if (pending) { pending.status = 'approved'; if (pending.type === 'buy') { state.gem += pending.amount; log('✅ Beli ' + pending.amount + '💎 disetujui!'); } }
-  saveState(); refreshAdminDashboard();
-  document.getElementById('otpVerifyInput').value = '';
-  showToast('✅ Transaksi APPROVED!', 'success');
+function canWD(amount){
+  var today = new Date().toDateString();
+  if (S._wdDate !== today) { S._wdToday = 0; S._wdDate = today; }
+  if ((S._wdToday||0) + amount > CFG.MAX_WD_PER_DAY) { toast('❌ Max WD '+fmt(CFG.MAX_WD_PER_DAY)+'💎/hari!', 'error'); return false; }
+  if (amount < CFG.MIN_WD) { toast('❌ Min WD '+fmt(CFG.MIN_WD)+'💎!', 'error'); return false; }
+  return true;
 }
 
-function rejectOtp() {
-  var input = document.getElementById('otpVerifyInput').value.trim();
-  if (input.length !== 6) return showToast('Masukkan 6 digit!', 'error');
-  var found = state.otpList.find(function(o) { return o.otp === input && o.status === 'pending'; });
-  if (!found) return showToast('OTP tidak ditemukan!', 'error');
-  found.status = 'rejected';
-  var pending = state.pendingTx.find(function(t) { return t.id === found.id; });
-  if (pending) { pending.status = 'rejected'; if (pending.type === 'sell') state.gem += pending.amount; }
-  saveState(); refreshAdminDashboard();
-  document.getElementById('otpVerifyInput').value = '';
-  showToast('❌ Transaksi DITOLAK', 'error');
+function spend(g,dm,en,reason){
+  if (S.gold<g||S.gem<dm||S.energy<en) { toast('❌ Resource tidak cukup!', 'error'); return false; }
+  S.gold-=g; S.gem-=dm; S.energy-=en;
+  if (dm>0) { S.totalSpent+=dm; S.serverTotalSupply = Math.max(0, S.serverTotalSupply - dm); }
+  log(reason); updateUI(); save(); return true;
 }
 
-function refreshAdminDashboard() {
-  var activeOTPs = state.otpList.filter(function(o) { return o.status === 'pending' && Date.now() < o.expiry; });
-  var otpHTML = '';
-  if (activeOTPs.length === 0) otpHTML = '<p style="font-size:11px;color:var(--text-muted);text-align:center;">Tidak ada OTP aktif</p>';
-  else activeOTPs.forEach(function(o) { otpHTML += '<div style="padding:8px;background:var(--bg-tertiary);border-radius:8px;margin:4px 0;border-left:3px solid var(--red);"><b>' + o.otp + '</b> | ' + o.type + ' ' + o.amount + '💎 | Rp' + (o.rupiah||0).toLocaleString() + '</div>'; });
-  document.getElementById('activeOtpList').innerHTML = otpHTML;
-
-  var pending = state.pendingTx.filter(function(t) { return t.status === 'pending'; });
-  var pendHTML = '';
-  if (pending.length === 0) pendHTML = '<p style="font-size:11px;color:var(--text-muted);text-align:center;">Tidak ada transaksi pending</p>';
-  else pending.forEach(function(t) { pendHTML += '<div style="padding:8px;background:var(--bg-tertiary);border-radius:8px;margin:4px 0;"><b>' + t.type.toUpperCase() + '</b> ' + t.amount + '💎 | Rp' + (t.rupiah||0).toLocaleString() + '</div>'; });
-  document.getElementById('pendingTxList').innerHTML = pendHTML;
+function earn(g,dm,en,reason){
+  if (dm>0 && !canAddDiamond(dm)) return false;
+  var bonus = S.premium ? CFG.PREMIUM_REWARD_BONUS : 0;
+  var tg = Math.floor(g*(1+bonus)), td = Math.floor(dm*(1+bonus));
+  S.gold+=tg; S.gem+=td; S.energy=Math.min(S.maxEnergy,S.energy+en);
+  S.totalEarned+=tg; S.serverTotalSupply += td;
+  if (tg>0||td>0) toast('+'+fmt(tg)+'💰 +'+td+'💎','success');
+  log(reason); updateUI(); save(); return true;
 }
 
-// ===== SAVE/LOAD =====
-function saveState() { localStorage.setItem('evocards_v94', JSON.stringify(state)); }
-function log(msg) { document.getElementById('footerLog').textContent = msg; }
-function showToast(msg, type) {
-  type = type || 'success';
-  var container = document.getElementById('toastContainer');
-  var toast = document.createElement('div');
-  toast.className = 'toast ' + type;
-  toast.textContent = msg;
-  container.appendChild(toast);
-  setTimeout(function() { toast.classList.add('show'); }, 10);
-  setTimeout(function() { toast.classList.remove('show'); setTimeout(function() { toast.remove(); }, 300); }, 2500);
+// ==================== CARD HELPERS ====================
+function createCard(bid, lvl){
+  lvl=lvl||1; var b=PETS.find(function(p){return p.id===bid}); if(!b)return null;
+  var m=1+(lvl-1)*0.1;
+  return {uid:uid(),baseId:b.id,name:b.name,emoji:b.emoji,rarity:b.rarity,stage:b.stage,level:lvl,atk:Math.floor(b.atk*m),def:Math.floor(b.def*m),hp:Math.floor(b.hp*m),maxHp:Math.floor(b.hp*m),stars:0,hunger:100,xp:0};
 }
+function selectCard(i){ var p=S.selected.indexOf(i); if(p>=0)S.selected.splice(p,1); else if(S.selected.length<2)S.selected.push(i); renderTab(curTab); }
 
-function updateUI() {
-  document.getElementById('goldDisplay').textContent = fmtNum(state.gold);
-  document.getElementById('gemDisplay').textContent = fmtNum(state.gem);
-  document.getElementById('energyDisplay').textContent = state.energy;
-  document.getElementById('maxEnergyDisplay').textContent = state.maxEnergy;
-  document.getElementById('premiumBadge').classList.toggle('hidden', !state.premium);
-}
-
-function createCard(baseId, level) {
-  level = level || 1;
-  var base = PETS.find(function(p) { return p.id === baseId; });
-  if (!base) return null;
-  var mult = 1 + (level - 1) * 0.1;
-  return { uid: uid(), baseId: base.id, name: base.name, emoji: base.emoji, rarity: base.rarity, stage: base.stage, level: level, atk: Math.floor(base.atk * mult), def: Math.floor(base.def * mult), hp: Math.floor(base.hp * mult), maxHp: Math.floor(base.hp * mult), stars: 0, hunger: 100, xp: 0 };
-}
-
-function spend(g, dm, en, reason) {
-  if (state.gold < g || state.gem < dm || state.energy < en) { showToast('❌ Resource tidak cukup!', 'error'); return false; }
-  state.gold -= g; state.gem -= dm; state.energy -= en;
-  if (dm > 0) state.totalSpent += dm;
-  log(reason); updateUI(); saveState(); return true;
-}
-
-function earn(g, dm, en, reason) {
-  var bonus = state.premium ? CONFIG.PREMIUM_REWARD_BONUS : 0;
-  var tg = Math.floor(g * (1 + bonus)), tdm = Math.floor(dm * (1 + bonus));
-  state.gold += tg; state.gem += tdm;
-  state.energy = Math.min(state.maxEnergy, state.energy + en);
-  if (tg > 0 || tdm > 0) showToast('+' + fmtNum(tg) + '💰 +' + tdm + '💎', 'success');
-  log(reason); updateUI(); saveState(); return true;
-}
-
-// ===== RENDER =====
-var currentTab = 'cards';
-
-function renderTab(tab) {
-  currentTab = tab;
-  document.querySelectorAll('.nav-item').forEach(function(item) { item.classList.toggle('active', item.dataset.tab === tab); });
-  var c = document.getElementById('content');
-  if (tab === 'cards') renderCards(c);
-  else if (tab === 'feed') renderFeed(c);
-  else if (tab === 'breed') renderBreed(c);
-  else if (tab === 'battle') renderBattle(c);
-  else if (tab === 'market') renderMarket(c);
-  else if (tab === 'earn') renderEarn(c);
-  else if (tab === 'admin') renderAdmin(c);
-  else if (tab === 'shop') renderShop(c);
+// ==================== RENDER ====================
+var curTab='cards';
+function renderTab(tab){
+  curTab=tab;
+  document.querySelectorAll('.nav-item').forEach(function(el){el.classList.toggle('active',el.dataset.tab===tab)});
+  var c=document.getElementById('content');
+  var renders={
+    cards: function(){
+      var h='<div style="display:flex;justify-content:space-between;margin-bottom:6px;"><span style="font-size:10px;color:var(--text-muted);">Total: '+S.cards.length+'</span><span style="font-size:10px;color:var(--gold);">Dipilih: '+S.selected.length+'/2</span></div><div class="grid">';
+      if(!S.cards.length)h+='<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-muted);"><div style="font-size:40px;">🃏</div><div>Kosong</div></div>';
+      else S.cards.forEach(function(cd,i){
+        var sel=S.selected.indexOf(i)>=0?' selected':'',stars='';
+        for(var s=0;s<5;s++)stars+='<span class="'+(s<cd.stars?'star-on':'star-off')+'">'+(s<cd.stars?'⭐':'☆')+'</span>';
+        var hc=cd.hunger>=70?'':cd.hunger>=30?'warning':'danger';
+        h+='<div class="card rarity-'+cd.rarity+sel+'" onclick="selectCard('+i+')"><div class="card-level">Lv'+cd.level+'</div><div class="card-emoji">'+cd.emoji+'</div><div class="card-name">'+cd.name+'</div><div class="card-stars">'+stars+'</div><div class="card-stats">⚔'+cd.atk+' 🛡'+cd.def+'</div><div class="progress-bar"><div class="progress-fill hunger-fill '+hc+'" style="width:'+cd.hunger+'%"></div></div></div>';
+      });
+      h+='</div><button class="btn btn-green" onclick="evolveCard()" '+(S.selected.length!==1?'disabled':'')+'>✨ Evolve (⭐5)</button><button class="btn btn-red" onclick="sellCards()">💵 Jual Terpilih</button>';
+      c.innerHTML=h;
+    },
+    feed: function(){
+      var h='<div class="section-title">🍖 Feeding</div><select id="feedTarget"><option value="">Pilih pet...</option>';
+      S.cards.forEach(function(cd,i){h+='<option value="'+i+'">'+cd.emoji+' '+cd.name+' 🍖'+cd.hunger+'%</option>'});
+      h+='</select><div style="display:flex;gap:6px;margin-top:6px;"><button class="btn" onclick="doFeed(\'bread\')">🍞10💰</button><button class="btn btn-primary" onclick="doFeed(\'meat\')">🥩25💰</button><button class="btn btn-blue" onclick="doFeed(\'premium\')">🍰2💎</button></div>';
+      c.innerHTML=h;
+    },
+    breed: function(){
+      var h='<div class="section-title">🧬 Breeding</div><p style="font-size:10px;color:var(--text-muted);">Biaya: '+CFG.BREED_COST+'⚡</p>';
+      if(S.selected.length===2){var c1=S.cards[S.selected[0]],c2=S.cards[S.selected[1]];h+='<div style="display:flex;justify-content:center;align-items:center;gap:16px;margin:16px 0;"><div style="text-align:center;"><div style="font-size:40px;">'+c1.emoji+'</div><div>'+c1.name+'</div></div><div style="font-size:24px;color:var(--gold);">+</div><div style="text-align:center;"><div style="font-size:40px;">'+c2.emoji+'</div><div>'+c2.name+'</div></div></div>';}
+      h+='<button class="btn btn-purple" onclick="breedCards()" '+(S.selected.length!==2?'disabled':'')+'>🧬 Breed! ('+CFG.BREED_COST+'⚡)</button>';
+      c.innerHTML=h;
+    },
+    battle: function(){
+      var today=new Date().toDateString();if(S.battleDate!==today){S.battleDate=today;S.battleCount=0;}
+      var h='<div class="section-title">⚔️ Battle ('+S.battleCount+'/'+CFG.MAX_BATTLE_DAY+')</div>';
+      if(S.cards.length){h+='<select id="battleTarget"><option value="">Pilih petarung...</option>';S.cards.forEach(function(cd,i){h+='<option value="'+i+'">'+cd.emoji+' '+cd.name+' (⚔'+cd.atk+')</option>'});h+='</select><button class="btn btn-green" onclick="doBattle()">⚔️ Bertarung! ('+CFG.BATTLE_COST+'⚡)</button><div id="battleResult"></div>';}
+      c.innerHTML=h;
+    },
+    market: function(){
+      var h='<div class="section-title">🏪 Pasar</div>';
+      if(S.selected.length)h+='<input type="number" id="listPrice" placeholder="Harga 💎..." value="10"><button class="btn btn-primary" onclick="listToMarket()">📤 List '+S.selected.length+' Kartu</button>';
+      h+='<div class="section-title" style="font-size:11px;">📦 Listing ('+S.market.length+')</div>';
+      if(!S.market.length)h+='<p style="text-align:center;color:var(--text-muted);">Kosong</p>';
+      else S.market.forEach(function(it,i){h+='<div class="tx-item" style="display:flex;justify-content:space-between;padding:6px;background:var(--bg-card);border-radius:6px;margin:3px 0;font-size:10px;"><div>'+it.emoji+' <b>'+it.name+'</b> Lv'+it.level+'</div><div style="text-align:right;">'+it.price+'💎 <button class="btn btn-green" style="padding:2px 8px;font-size:9px;width:auto;" onclick="buyFromMarket('+i+')">Beli</button></div></div>';});
+      c.innerHTML=h;
+    },
+    wd: function(){
+      var rates=getCurrentRates();
+      var h='<div class="section-title">💸 Tarik Tunai (WD)</div>';
+      h+='<div class="rate-display"><div class="rate-card"><div class="rate-label">💎 Kamu</div><div class="rate-value">'+fmt(S.gem)+'</div></div><div class="rate-card"><div class="rate-label">💰 Rate Jual</div><div class="rate-value">'+fmtRp(rates.sell)+'</div><div class="rate-label">/1000💎</div></div></div>';
+      h+='<div class="wd-form"><b>Ajukan Withdraw</b><input type="number" id="wdAmount" placeholder="Jumlah 💎 (min '+CFG.MIN_WD+')"><input type="text" id="wdRek" placeholder="No. Rekening / E-Wallet"><p style="font-size:9px;color:var(--text-muted);">Fee: '+(CFG.WD_FEE*100)+'% | Max: '+CFG.MAX_WD_PER_DAY+'💎/hari</p><button class="btn btn-gold" onclick="submitWD()">💸 Ajukan WD</button></div>';
+      h+='<div class="section-title" style="font-size:11px;">📋 Riwayat WD</div><div class="wd-history">';
+      var all=S.wdHistory.concat(S.wdPending);
+      if(!all.length)h+='<p style="text-align:center;color:var(--text-muted);">Belum ada</p>';
+      else all.slice(-20).reverse().forEach(function(w){h+='<div class="wd-item '+w.status+'"><b>'+w.id+'</b> | '+fmt(w.amount)+'💎 → '+fmtRp(w.rupiah)+' | '+w.rek+'<br><span style="color:'+(w.status==='approved'?'var(--green)':w.status==='rejected'?'var(--red)':'var(--gold-dark)')+';">'+w.status.toUpperCase()+'</span> <span style="font-size:8px;">'+w.time+'</span></div>';});
+      h+='</div>';
+      c.innerHTML=h;
+    },
+    diamond: function(){
+      var rates=getCurrentRates();
+      var h='<div class="section-title">💎 Beli Diamond</div>';
+      h+='<div class="rate-display"><div class="rate-card"><div class="rate-label">🟢 Rate Beli</div><div class="rate-value">'+fmtRp(rates.buy)+'</div><div class="rate-label">/1000💎</div></div><div class="rate-card"><div class="rate-label">🔴 Rate Jual</div><div class="rate-value">'+fmtRp(rates.sell)+'</div><div class="rate-label">/1000💎</div></div></div>';
+      h+='<p style="font-size:9px;color:var(--text-muted);text-align:center;">💡 Rate fluktuatif berdasarkan supply</p>';
+      h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">';
+      h+='<div class="rate-card" onclick="buyDiamond(1000)" style="cursor:pointer;"><div style="font-size:20px;">💎</div><div>1.000💎</div><div style="color:var(--gold);">'+fmtRp(rates.buy)+'</div></div>';
+      h+='<div class="rate-card" onclick="buyDiamond(3000)" style="cursor:pointer;"><div style="font-size:20px;">💎💎</div><div>3.000💎</div><div style="color:var(--gold);">'+fmtRp(rates.buy*3)+'</div></div>';
+      h+='</div>';
+      c.innerHTML=h;
+    },
+    shop: function(){
+      var h='<div class="section-title">🛒 Shop</div>';
+      if(!S.premium){h+='<div style="background:linear-gradient(135deg,#ec4899,#be185d);border-radius:12px;padding:16px;text-align:center;cursor:pointer;margin:8px 0;" onclick="buyPremium()"><div style="font-size:40px;">👑</div><div style="font-weight:900;">PREMIUM</div><div>'+CFG.PREMIUM_PRICE+'💎/'+CFG.PREMIUM_DURATION+'hr</div><div style="font-size:10px;">Max 💎: '+fmt(CFG.MAX_DIAMOND_PREMIUM)+' | +'+CFG.PREMIUM_ENERGY_BONUS+'⚡ | +'+(CFG.PREMIUM_REWARD_BONUS*100)+'% Reward</div></div>';}
+      else{var d=Math.ceil((S.premiumExpiry-Date.now())/86400000);h+='<div style="background:linear-gradient(135deg,#ec4899,#be185d);border-radius:12px;padding:16px;text-align:center;opacity:0.8;margin:8px 0;"><div style="font-size:40px;">👑</div><div style="font-weight:900;">PREMIUM AKTIF</div><div>'+d+' hari tersisa</div></div>';}
+      h+='<div class="section-title" style="font-size:11px;">🎁 Booster</div>';
+      h+='<button class="btn btn-primary" onclick="openPack(1,10)">🥉 Silver (1) 10💎</button>';
+      h+='<button class="btn btn-gold" onclick="openPack(3,25)">🥈 Gold (3) 25💎</button>';
+      h+='<button class="btn btn-purple" onclick="openPack(5,50)">🥇 Platinum (5+1) 50💎</button>';
+      h+='<div id="packResult" style="text-align:center;min-height:30px;margin-top:6px;"></div>';
+      c.innerHTML=h;
+    },
+  };
+  if(renders[tab])renders[tab]();
   updateUI();
 }
 
-function selectCard(i) {
-  var p = state.selected.indexOf(i);
-  if (p >= 0) state.selected.splice(p, 1);
-  else if (state.selected.length < 2) state.selected.push(i);
-  renderTab(currentTab);
+// ==================== ACTIONS ====================
+function evolveCard(){
+  if(S.selected.length!==1)return; var cd=S.cards[S.selected[0]];
+  if(cd.stars<CFG.EVOLVE_STARS_REQ)return toast('Butuh '+CFG.EVOLVE_STARS_REQ+'⭐!','error');
+  if(!spend(CFG.EVOLVE_COST,0,0,'Evolve'))return;
+  cd.level=Math.min(10,cd.level+1);cd.stars=0;cd.hunger=100;
+  var b=PETS.find(function(p){return p.id===cd.baseId});var m=1+(cd.level-1)*0.1;
+  if(b){cd.atk=Math.floor(b.atk*m);cd.def=Math.floor(b.def*m);cd.hp=Math.floor(b.hp*m);cd.maxHp=cd.hp;}
+  S.selected=[];save();toast('✨ '+cd.name+' Lv'+cd.level+'!');renderTab('cards');
+}
+function sellCards(){
+  if(!S.selected.length)return;var ix=S.selected.slice().sort(function(a,b){return b-a});var t=0;
+  ix.forEach(function(i){t+=Math.floor((S.cards[i].atk+S.cards[i].def)/2);S.cards.splice(i,1);});
+  S.gold+=t;S.selected=[];save();toast('💵 +'+t+'💰');renderTab('cards');
+}
+function doFeed(tp){
+  var i=parseInt(document.getElementById('feedTarget')?.value);if(isNaN(i))return;
+  var cd=S.cards[i],fd={bread:{c:10,h:25,ct:'gold'},meat:{c:25,h:50,ct:'gold'},premium:{c:2,h:100,ct:'gem'}};
+  var f=fd[tp];if(!f)return;
+  if(f.ct==='gold'&&!spend(f.c,0,0,'Feed'))return;if(f.ct==='gem'&&!spend(0,f.c,0,'Feed'))return;
+  cd.hunger=Math.min(100,cd.hunger+f.h);if(Math.random()<0.25)cd.stars=Math.min(5,cd.stars+1);
+  save();toast('🍖 +'+f.h+'%');renderTab('feed');
+}
+function breedCards(){
+  if(S.selected.length!==2)return;if(!spend(0,0,CFG.BREED_COST,'Breed'))return;
+  var ix=S.selected.slice().sort(function(a,b){return b-a});var p1=S.cards[ix[0]],p2=S.cards[ix[1]];
+  if(p1.hunger<30||p2.hunger<30)return toast('Lapar!','error');
+  S.cards.splice(ix[0],1);S.cards.splice(ix[1],1);
+  var ns=Math.min(5,Math.max(p1.stage,p2.stage)+1);var pool=PETS.filter(function(p){return p.stage===ns});
+  var b=pool.length?pool[Math.floor(Math.random()*pool.length)]:PETS[0];
+  var ch=createCard(b.id,Math.floor((p1.level+p2.level)/2));S.cards.push(ch);S.selected=[];
+  save();toast('🧬 '+ch.emoji+' '+ch.name+'!');renderTab('cards');
+}
+function doBattle(){
+  var i=parseInt(document.getElementById('battleTarget')?.value);if(isNaN(i))return;
+  var cd=S.cards[i];if(cd.hunger<20)return toast('Lapar!','error');
+  if(!spend(0,0,CFG.BATTLE_COST,'Battle'))return;if(S.battleCount>=CFG.MAX_BATTLE_DAY)return toast('Max '+CFG.MAX_BATTLE_DAY+'/hari!','error');
+  var pp=Math.floor(cd.atk*1.5+cd.def),ep=Math.floor(pp*(0.7+Math.random()*0.6));
+  var ph=cd.hp,eh=Math.floor(ep*0.6),r=0,logs=[];
+  while(ph>0&&eh>0&&r<20){r++;var pd=Math.max(1,Math.floor(cd.atk*(0.8+Math.random()*0.4)));eh-=pd;logs.push('R'+r+':⚔️-'+pd);if(eh<=0)break;var ed=Math.max(1,Math.floor(ep*0.3*(0.7+Math.random()*0.6)));ph-=ed;logs.push('R'+r+':🛡️+'+ed);}
+  var w=ph>0;var rg=w?Math.floor(CFG.BATTLE_REWARD_BASE*(1+cd.level*0.2)):Math.floor(CFG.BATTLE_REWARD_BASE*0.3);
+  var rd=w?Math.floor(1+cd.stars*0.5):0;S.battleCount++;cd.hunger=Math.max(0,cd.hunger-15);
+  earn(rg,rd,0,w?'Menang!':'Kalah');if(w&&Math.random()<0.3&&cd.stars<5){cd.stars++;log('⭐ Battle Star!');}
+  save();document.getElementById('battleResult').innerHTML='<div style="background:var(--bg-tertiary);border-radius:10px;padding:12px;margin-top:8px;text-align:center;border:2px solid '+(w?'var(--green)':'var(--red)')+';"><div style="font-size:18px;font-weight:900;color:'+(w?'var(--green)':'var(--red)')+';">'+(w?'🏆 MENANG!':'💀 KALAH')+'</div><div>+'+rg+'💰 '+rd+'💎</div><div style="font-size:10px;max-height:100px;overflow-y:auto;text-align:left;">'+logs.map(function(l){return'<div>'+l+'</div>'}).join('')+'</div></div>';
+}
+function listToMarket(){var p=parseInt(document.getElementById('listPrice')?.value)||10;var ix=S.selected.slice().sort(function(a,b){return b-a});ix.forEach(function(i){S.market.push({...S.cards[i],price:clamp(p,1,999)});S.cards.splice(i,1);});S.selected=[];save();toast('📤 Listed!');renderTab('market');}
+function buyFromMarket(i){var it=S.market[i];if(!it)return;if(!spend(0,it.price,0,'Beli'))return;S.market.splice(i,1);S.cards.push({...it,uid:uid()});save();toast('🛒 Dibeli!');renderTab('market');}
+function buyPremium(){if(S.gem<CFG.PREMIUM_PRICE)return toast('💎 Butuh '+CFG.PREMIUM_PRICE+'!','error');S.gem-=CFG.PREMIUM_PRICE;S.premium=true;S.premiumExpiry=Date.now()+CFG.PREMIUM_DURATION*86400000;S.maxEnergy=CFG.MAX_ENERGY+CFG.PREMIUM_ENERGY_BONUS;S.energy=S.maxEnergy;document.getElementById('premiumBadge').classList.remove('hidden');save();updateUI();toast('👑 Premium Aktif!');renderTab('shop');}
+function openPack(n,cost){if(S.gem<cost)return toast('💎 Kurang!','error');S.gem-=cost;var res='';for(var i=0;i<n;i++){var r=Math.random()*100,rar='common',cum=0;for(var k in RARITY_W){cum+=RARITY_W[k];if(r<=cum){rar=k;break;}}var pool=PETS.filter(function(p){return p.rarity===rar});var b=pool.length?pool[Math.floor(Math.random()*pool.length)]:PETS[0];var cd=createCard(b.id);S.cards.push(cd);res+='<span style="font-size:24px;">'+cd.emoji+'</span> ';}if(n>=5){var rp=PETS.filter(function(p){return p.rarity==='epic'||p.rarity==='legendary'});var bn=createCard(rp[Math.floor(Math.random()*rp.length)].id);S.cards.push(bn);res+='<br><b>🎁 Bonus:</b> '+bn.emoji+' '+bn.name;}document.getElementById('packResult').innerHTML=res;save();toast('🎁 '+n+' pet!');}
+function buyDiamond(amount){var rates=getCurrentRates();var rp=Math.floor(amount/1000)*rates.buy;var nm=prompt('Nama/ID:');if(!nm)return;var otp=Math.floor(100000+Math.random()*900000).toString();var tid=txId();S.otpList=S.otpList||[];S.otpList.unshift({id:tid,otp:otp,type:'buy',amount:amount,rupiah:rp,note:nm,expiry:Date.now()+CFG.OTP_EXPIRY_MIN*60000,status:'pending'});save();alert('🔐 OTP: '+otp+'\n\nTransfer Rp'+fmt(rp)+'\nKirim OTP ke WA Admin');}
+function submitWD(){
+  if(!canWD(parseInt(document.getElementById('wdAmount')?.value||0)))return;
+  var amt=parseInt(document.getElementById('wdAmount').value);var rek=document.getElementById('wdRek').value;
+  if(!amt||amt<CFG.MIN_WD)return toast('Min '+CFG.MIN_WD+'💎!','error');if(!rek)return toast('Isi rekening!','error');
+  if(S.gem<amt)return toast('💎 Tidak cukup!','error');
+  var rates=getCurrentRates();var fee=Math.floor(amt*CFG.WD_FEE);var net=amt-fee;var rp=Math.floor(net/1000)*rates.sell;
+  if(!confirm('WD '+amt+'💎\nFee: '+fee+'💎\nTerima: '+fmtRp(rp)+'\nKe: '+rek))return;
+  S.gem-=amt;S._wdToday=(S._wdToday||0)+amt;var tid=txId();
+  S.wdPending.unshift({id:tid,amount:amt,fee:fee,net:net,rupiah:rp,rek:rek,time:new Date().toLocaleString(),status:'pending'});
+  save();toast('✅ WD #'+tid+' diajukan!');renderTab('wd');
 }
 
-// ===== RENDER FUNCTIONS =====
-function renderCards(c) {
-  var h = '<div style="display:flex;justify-content:space-between;margin-bottom:8px;"><span style="font-size:11px;color:var(--text-muted);">Total: ' + state.cards.length + '</span><span style="font-size:11px;color:var(--gold);">Dipilih: ' + state.selected.length + '/2</span></div><div class="grid">';
-  if (!state.cards.length) h += '<div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--text-muted);"><div style="font-size:48px;">🃏</div><div>Belum ada kartu</div></div>';
-  else state.cards.forEach(function(card, i) {
-    var sel = state.selected.indexOf(i) >= 0 ? ' selected' : '';
-    var stars = '';
-    for (var s = 0; s < 5; s++) stars += '<span class="' + (s < card.stars ? 'star-on' : 'star-off') + '">' + (s < card.stars ? '⭐' : '☆') + '</span>';
-    var hc = card.hunger >= 70 ? '' : card.hunger >= 30 ? 'warning' : 'danger';
-    h += '<div class="card rarity-' + card.rarity + sel + '" onclick="selectCard(' + i + ')"><div class="card-level">Lv' + card.level + '</div><div class="card-emoji">' + card.emoji + '</div><div class="card-name">' + card.name + '</div><div class="card-stars">' + stars + '</div><div class="card-stats">⚔' + card.atk + ' 🛡' + card.def + '</div><div class="progress-bar"><div class="progress-fill hunger-fill ' + hc + '" style="width:' + card.hunger + '%"></div></div></div>';
-  });
-  h += '</div><button class="btn btn-green" onclick="evolveCard()" ' + (state.selected.length !== 1 ? 'disabled' : '') + '>✨ Evolve (⭐5)</button><button class="btn btn-red" onclick="sellCards()">💵 Jual Terpilih</button>';
-  c.innerHTML = h;
-}
-
-function renderFeed(c) {
-  var h = '<div class="section-title">🍖 Feeding</div><select id="feedTarget"><option value="">Pilih pet...</option>';
-  state.cards.forEach(function(cd, i) { h += '<option value="' + i + '">' + cd.emoji + ' ' + cd.name + ' 🍖' + cd.hunger + '%</option>'; });
-  h += '</select><div style="display:flex;gap:8px;margin-top:8px;"><button class="btn" onclick="doFeed(\'bread\')">🍞 10💰</button><button class="btn btn-primary" onclick="doFeed(\'meat\')">🥩 25💰</button><button class="btn btn-blue" onclick="doFeed(\'premium\')">🍰 2💎</button></div>';
-  c.innerHTML = h;
-}
-
-function renderBreed(c) {
-  var h = '<div class="section-title">🧬 Breeding</div><p style="font-size:11px;color:var(--text-muted);">Biaya: ' + CONFIG.BREED_COST_ENERGY + '⚡</p>';
-  if (state.selected.length === 2) {
-    var c1 = state.cards[state.selected[0]], c2 = state.cards[state.selected[1]];
-    h += '<div style="display:flex;justify-content:center;align-items:center;gap:20px;margin:20px 0;"><div style="text-align:center;"><div style="font-size:48px;">' + c1.emoji + '</div><div>' + c1.name + '</div></div><div style="font-size:28px;color:var(--gold);">+</div><div style="text-align:center;"><div style="font-size:48px;">' + c2.emoji + '</div><div>' + c2.name + '</div></div></div>';
+// ==================== ADMIN ====================
+var adC=0,adT=0;
+function handleLogo(){var n=Date.now();if(n-adT>2000)adC=0;adT=n;adC++;if(adC>=5){adC=0;document.getElementById('adminOverlay').classList.add('active');document.getElementById('adminPasswordInput').value='';}}
+function closeAdmin(){document.getElementById('adminOverlay').classList.remove('active');}
+function adminLogin(){
+  if(document.getElementById('adminPasswordInput').value===CFG.ADMIN_PASS){
+    document.getElementById('adminLoginSection').classList.add('hidden');
+    document.getElementById('adminDashboardSection').classList.remove('hidden');
+    refreshAdmin();
   }
-  h += '<button class="btn btn-purple" onclick="breedCards()" ' + (state.selected.length !== 2 ? 'disabled' : '') + '>🧬 Breed! (' + CONFIG.BREED_COST_ENERGY + '⚡)</button>';
-  c.innerHTML = h;
+}
+function adminLogout(){document.getElementById('adminLoginSection').classList.remove('hidden');document.getElementById('adminDashboardSection').classList.add('hidden');closeAdmin();}
+function approveOtp(){
+  var inp=document.getElementById('otpVerifyInput').value.trim();if(inp.length!==6)return;
+  var found=(S.otpList||[]).find(function(o){return o.otp===inp&&o.status==='pending'});
+  if(!found)return toast('OTP tidak ditemukan!','error');if(Date.now()>found.expiry)return toast('Expired!','error');
+  found.status='approved';if(found.type==='buy'){S.gem+=found.amount;S.serverTotalSupply+=found.amount;log('✅ Beli '+found.amount+'💎');}
+  // Also check WD
+  var wd=S.wdPending.find(function(w){return w.id===found.id});
+  if(wd){wd.status='approved';S.wdHistory.push(wd);S.wdPending=S.wdPending.filter(function(w){return w.id!==found.id});}
+  save();refreshAdmin();document.getElementById('otpVerifyInput').value='';toast('✅ Approved!');
+}
+function rejectOtp(){
+  var inp=document.getElementById('otpVerifyInput').value.trim();if(inp.length!==6)return;
+  var found=(S.otpList||[]).find(function(o){return o.otp===inp&&o.status==='pending'});
+  if(!found)return toast('OTP tidak ditemukan!','error');
+  found.status='rejected';
+  var wd=S.wdPending.find(function(w){return w.id===found.id});
+  if(wd){wd.status='rejected';S.gem+=wd.amount;S.wdHistory.push(wd);S.wdPending=S.wdPending.filter(function(w){return w.id!==found.id});}
+  save();refreshAdmin();document.getElementById('otpVerifyInput').value='';toast('❌ Rejected');
+}
+function refreshAdmin(){
+  var rates=getCurrentRates();
+  document.getElementById('economyStats').innerHTML='💎 Supply: <b>'+fmt(S.serverTotalSupply)+'</b> | Target: '+fmt(CFG.TOTAL_SUPPLY_TARGET)+'<br>🟢 Buy: '+fmtRp(rates.buy)+'/1000💎 | 🔴 Sell: '+fmtRp(rates.sell)+'/1000💎';
+  var wd=S.wdPending.filter(function(w){return w.status==='pending'});
+  document.getElementById('wdPendingList').innerHTML=wd.length?wd.map(function(w){return'<div style="padding:4px;background:var(--bg-tertiary);border-radius:4px;margin:2px 0;">#'+w.id+' | '+fmt(w.amount)+'💎 → '+fmtRp(w.rupiah)+' | '+w.rek+'</div>'}).join(''):'<span style="color:var(--text-muted);">Tidak ada</span>';
 }
 
-function renderBattle(c) {
-  var today = new Date().toDateString();
-  if (state.battleDate !== today) { state.battleDate = today; state.battleCount = 0; }
-  var h = '<div class="section-title">⚔️ Battle Arena</div><div class="panel" style="display:flex;justify-content:space-around;text-align:center;"><div><div style="font-size:20px;font-weight:900;color:var(--gold);">' + state.battleCount + '/' + CONFIG.MAX_BATTLE_DAY + '</div><div style="font-size:10px;color:var(--text-muted);">Battle Hari Ini</div></div></div>';
-  if (state.cards.length) {
-    h += '<select id="battleTarget"><option value="">Pilih petarung...</option>';
-    state.cards.forEach(function(cd, i) { h += '<option value="' + i + '">' + cd.emoji + ' ' + cd.name + ' (⚔' + cd.atk + ')</option>'; });
-    h += '</select><button class="btn btn-green" onclick="doBattle()">⚔️ Bertarung! (' + CONFIG.BATTLE_COST + '⚡)</button><div id="battleResult"></div>';
-  }
-  c.innerHTML = h;
-}
-
-function renderMarket(c) {
-  var h = '<div class="section-title">🏪 Pasar</div>';
-  if (state.selected.length) h += '<input type="number" id="listPrice" placeholder="Harga 💎..." value="10"><button class="btn btn-primary" onclick="listToMarket()">📤 List ' + state.selected.length + ' Kartu</button>';
-  h += '<div class="section-title" style="font-size:12px;">📦 Listing (' + state.market.length + ')</div>';
-  if (!state.market.length) h += '<p style="text-align:center;color:var(--text-muted);">Market kosong.</p>';
-  else state.market.forEach(function(item, i) { h += '<div class="tx-item"><div><span style="font-size:20px;">' + item.emoji + '</span> <b>' + item.name + '</b> Lv' + item.level + '</div><div style="text-align:right;"><div style="color:var(--purple);font-weight:900;">' + item.price + '💎</div><button class="btn btn-green" style="padding:4px 12px;font-size:10px;width:auto;" onclick="buyFromMarket(' + i + ')">Beli</button></div></div>'; });
-  c.innerHTML = h;
-}
-
-function renderEarn(c) {
-  var today = new Date().toDateString();
-  var canClaim = state.lastDailyClaim !== today;
-  var h = '<div class="section-title">💰 Earn</div><button class="btn btn-gold" onclick="claimDaily()" ' + (!canClaim ? 'disabled' : '') + '>🔥 Klaim Daily Reward</button>';
-  c.innerHTML = h;
-}
-
-function renderAdmin(c) {
-  var h = '<div class="section-title">🏦 Beli Diamond</div><div class="diamond-shop">';
-  CONFIG.DIAMOND_PACKS.forEach(function(p) { h += '<div class="diamond-item" onclick="buyDiamond(' + p.amount + ',' + p.price + ')"><div class="diamond-amount">' + p.label + '</div><div class="diamond-price">' + fmtRp(p.price) + '</div>' + (p.badge ? '<div class="diamond-badge">' + p.badge + '</div>' : '') + '</div>'; });
-  h += '</div>';
-  c.innerHTML = h;
-}
-
-function renderShop(c) {
-  var h = '<div class="section-title">🛒 Premium Shop</div>';
-  if (!state.premium) {
-    h += '<div class="premium-banner" onclick="buyPremium()"><div class="premium-icon">👑</div><div class="premium-title">PREMIUM</div><div class="premium-sub">' + CONFIG.PREMIUM_PRICE + '💎/' + CONFIG.PREMIUM_DURATION_DAYS + ' hari</div><div class="premium-features"><div class="premium-feature"><span class="feature-icon">⚡</span>+' + CONFIG.PREMIUM_ENERGY_BONUS + ' Energy</div><div class="premium-feature"><span class="feature-icon">💎</span>+' + (CONFIG.PREMIUM_REWARD_BONUS * 100) + '% Reward</div></div><div style="margin-top:8px;font-weight:900;">TAP UNTUK AKTIFKAN</div></div>';
-  } else {
-    var days = Math.ceil((state.premiumExpiry - Date.now()) / 86400000);
-    h += '<div class="premium-banner" style="opacity:0.8;cursor:default;"><div class="premium-icon">👑</div><div class="premium-title">PREMIUM AKTIF</div><div class="premium-sub">' + days + ' hari tersisa</div></div>';
-  }
-  h += '<div class="section-title">💎 Beli Diamond</div><div class="diamond-shop">';
-  CONFIG.DIAMOND_PACKS.forEach(function(p) { h += '<div class="diamond-item" onclick="buyDiamond(' + p.amount + ',' + p.price + ')"><div class="diamond-amount">' + p.label + '</div><div class="diamond-price">' + fmtRp(p.price) + '</div>' + (p.badge ? '<div class="diamond-badge">' + p.badge + '</div>' : '') + '</div>'; });
-  h += '</div><div class="section-title">🎁 Booster</div>';
-  h += '<button class="btn btn-primary" onclick="openPack(1,10)">🥉 Silver (1) 10💎</button>';
-  h += '<button class="btn btn-gold" onclick="openPack(3,25)">🥈 Gold (3) 25💎</button>';
-  h += '<button class="btn btn-purple" onclick="openPack(5,50)">🥇 Platinum (5+1) 50💎</button>';
-  h += '<div id="packResult" style="text-align:center;min-height:40px;margin-top:8px;"></div>';
-  c.innerHTML = h;
-}
-
-// ===== ACTIONS =====
-function evolveCard() {
-  if (state.selected.length !== 1) return;
-  var card = state.cards[state.selected[0]];
-  if (card.stars < CONFIG.EVOLVE_STARS_REQ) return showToast('Butuh ' + CONFIG.EVOLVE_STARS_REQ + '⭐!', 'error');
-  if (!spend(CONFIG.EVOLVE_COST, 0, 0, 'Evolve')) return;
-  card.level = Math.min(10, card.level + 1); card.stars = 0; card.hunger = 100;
-  var base = PETS.find(function(p) { return p.id === card.baseId; });
-  var mult = 1 + (card.level - 1) * 0.1;
-  if (base) { card.atk = Math.floor(base.atk * mult); card.def = Math.floor(base.def * mult); card.hp = Math.floor(base.hp * mult); card.maxHp = card.hp; }
-  state.selected = []; saveState(); showToast('✨ ' + card.name + ' Lv' + card.level + '!'); renderTab('cards');
-}
-
-function sellCards() {
-  if (!state.selected.length) return;
-  var indices = state.selected.slice().sort(function(a, b) { return b - a; });
-  var total = 0;
-  indices.forEach(function(i) { total += Math.floor((state.cards[i].atk + state.cards[i].def) / 2); state.cards.splice(i, 1); });
-  state.gold += total; state.selected = []; saveState(); showToast('💵 +' + total + '💰'); renderTab('cards');
-}
-
-function doFeed(type) {
-  var idx = parseInt(document.getElementById('feedTarget')?.value);
-  if (isNaN(idx)) return showToast('Pilih pet!', 'warning');
-  var card = state.cards[idx];
-  var foods = { bread: { cost: 10, hunger: 25, costType: 'gold' }, meat: { cost: 25, hunger: 50, costType: 'gold' }, premium: { cost: 2, hunger: 100, costType: 'gem' } };
-  var food = foods[type]; if (!food) return;
-  if (food.costType === 'gold' && !spend(food.cost, 0, 0, 'Feed')) return;
-  if (food.costType === 'gem' && !spend(0, food.cost, 0, 'Feed')) return;
-  card.hunger = Math.min(100, card.hunger + food.hunger);
-  if (Math.random() < 0.25) card.stars = Math.min(5, card.stars + 1);
-  saveState(); showToast('🍖 ' + card.name + ' +' + food.hunger + '%'); renderTab('feed');
-}
-
-function breedCards() {
-  if (state.selected.length !== 2) return;
-  if (!spend(0, 0, CONFIG.BREED_COST_ENERGY, 'Breed')) return;
-  var indices = state.selected.slice().sort(function(a, b) { return b - a; });
-  var p1 = state.cards[indices[0]], p2 = state.cards[indices[1]];
-  if (p1.hunger < 30 || p2.hunger < 30) return showToast('Kartu terlalu lapar!', 'error');
-  state.cards.splice(indices[0], 1); state.cards.splice(indices[1], 1);
-  var ns = Math.min(5, Math.max(p1.stage, p2.stage) + 1);
-  var pool = PETS.filter(function(p) { return p.stage === ns; });
-  var base = pool.length ? pool[Math.floor(Math.random() * pool.length)] : PETS[0];
-  var child = createCard(base.id, Math.floor((p1.level + p2.level) / 2));
-  state.cards.push(child); state.selected = [];
-  saveState(); showToast('🧬 ' + child.emoji + ' ' + child.name + '!'); renderTab('cards');
-}
-
-function doBattle() {
-  var idx = parseInt(document.getElementById('battleTarget')?.value);
-  if (isNaN(idx)) return showToast('Pilih petarung!', 'warning');
-  var card = state.cards[idx];
-  if (card.hunger < 20) return showToast('Kartu terlalu lapar!', 'error');
-  if (!spend(0, 0, CONFIG.BATTLE_COST, 'Battle')) return;
-  if (state.battleCount >= CONFIG.MAX_BATTLE_DAY) return showToast('Max ' + CONFIG.MAX_BATTLE_DAY + '/hari!', 'error');
-  var playerPower = Math.floor(card.atk * 1.5 + card.def);
-  var enemyPower = Math.floor(playerPower * (0.7 + Math.random() * 0.6));
-  var pHp = card.hp, eHp = Math.floor(enemyPower * 0.6), round = 0, logs = [];
-  while (pHp > 0 && eHp > 0 && round < 20) {
-    round++;
-    var pd = Math.max(1, Math.floor(card.atk * (0.8 + Math.random() * 0.4)));
-    eHp -= pd; logs.push('R' + round + ': ⚔️ -' + pd);
-    if (eHp <= 0) break;
-    var ed = Math.max(1, Math.floor(enemyPower * 0.3 * (0.7 + Math.random() * 0.6)));
-    pHp -= ed; logs.push('R' + round + ': 🛡️ +' + ed);
-  }
-  var win = pHp > 0;
-  var rwG = win ? Math.floor(CONFIG.BATTLE_REWARD_BASE * (1 + card.level * 0.2)) : Math.floor(CONFIG.BATTLE_REWARD_BASE * 0.3);
-  var rwDm = win ? Math.floor(1 + card.stars * 0.5) : 0;
-  state.battleCount++; card.hunger = Math.max(0, card.hunger - 15);
-  earn(rwG, rwDm, 0, win ? 'Menang!' : 'Kalah');
-  if (win && Math.random() < 0.3 && card.stars < 5) { card.stars++; log('⭐ Battle Star!'); }
-  saveState();
-  document.getElementById('battleResult').innerHTML = '<div class="battle-arena" style="border-color:' + (win ? 'var(--green)' : 'var(--red)') + ';margin-top:12px;"><div style="font-size:20px;font-weight:900;color:' + (win ? 'var(--green)' : 'var(--red)') + ';">' + (win ? '🏆 MENANG!' : '💀 KALAH') + '</div><div>+' + rwG + '💰 ' + (rwDm > 0 ? '+' + rwDm + '💎' : '') + '</div><div class="battle-log">' + logs.map(function(l) { return '<div>' + l + '</div>'; }).join('') + '</div></div>';
-}
-
-function listToMarket() {
-  var price = parseInt(document.getElementById('listPrice')?.value) || 10;
-  var indices = state.selected.slice().sort(function(a, b) { return b - a; });
-  indices.forEach(function(i) { state.market.push({ ...state.cards[i], price: clamp(price, 1, 999) }); state.cards.splice(i, 1); });
-  state.selected = []; saveState(); showToast('📤 Terlisting!'); renderTab('market');
-}
-
-function buyFromMarket(i) {
-  var item = state.market[i]; if (!item) return;
-  if (!spend(0, item.price, 0, 'Beli')) return;
-  state.market.splice(i, 1); state.cards.push({ ...item, uid: uid() });
-  saveState(); showToast('🛒 Dibeli!'); renderTab('market');
-}
-
-function claimDaily() {
-  var today = new Date().toDateString();
-  if (state.lastDailyClaim === today) return showToast('Sudah diklaim!', 'warning');
-  state.dailyStreak = Math.min(7, (state.dailyStreak || 0) + 1);
-  state.lastDailyClaim = today;
-  var rewards = [50, 75, 100, 150, 200, 300, 500];
-  earn(rewards[Math.min(state.dailyStreak - 1, 6)], 0, 0, 'Streak Hari ' + state.dailyStreak);
-  saveState(); renderTab('earn');
-}
-
-function buyPremium() {
-  if (state.gem < CONFIG.PREMIUM_PRICE) return showToast('💎 Butuh ' + CONFIG.PREMIUM_PRICE + '!', 'error');
-  state.gem -= CONFIG.PREMIUM_PRICE; state.premium = true;
-  state.premiumExpiry = Date.now() + CONFIG.PREMIUM_DURATION_DAYS * 86400000;
-  state.maxEnergy = CONFIG.MAX_ENERGY + CONFIG.PREMIUM_ENERGY_BONUS;
-  state.energy = state.maxEnergy; state.totalSpent += CONFIG.PREMIUM_PRICE;
-  document.getElementById('premiumBadge').classList.remove('hidden');
-  saveState(); updateUI(); showToast('👑 Premium Aktif!'); renderTab('shop');
-}
-
-function buyDiamond(amount, price) {
-  var playerName = prompt('Nama/ID:', 'Player'); if (!playerName) return;
-  var otp = Math.floor(100000 + Math.random() * 900000).toString();
-  var tId = txId(); var expiry = Date.now() + CONFIG.OTP_EXPIRY_MINUTES * 60000;
-  state.otpList.unshift({ id: tId, otp: otp, type: 'buy', amount: amount, rupiah: price, note: playerName, expiry: expiry, status: 'pending' });
-  state.pendingTx.unshift({ id: tId, type: 'buy', amount: amount, rupiah: price, note: playerName, status: 'pending', created: Date.now() });
-  saveState();
-  showModal('🔐 Kode OTP', '<div class="otp-box"><div class="otp-code">' + otp + '</div><div class="otp-timer">⏱️ Berlaku ' + CONFIG.OTP_EXPIRY_MINUTES + ' menit</div></div><div class="otp-info"><div class="otp-step"><span class="otp-step-num">1</span>Transfer <b>' + fmtRp(price) + '</b></div><div class="otp-step"><span class="otp-step-num">2</span>Kirim OTP ke WA Admin</div><div class="otp-step"><span class="otp-step-num">3</span>Tunggu verifikasi</div></div>');
-}
-
-function openPack(count, cost) {
-  if (state.gem < cost) return showToast('💎 Kurang!', 'error');
-  state.gem -= cost; var res = '';
-  for (var i = 0; i < count; i++) {
-    var r = Math.random() * 100, rarity = 'common', cum = 0;
-    for (var rty in RARITY_WEIGHTS) { cum += RARITY_WEIGHTS[rty]; if (r <= cum) { rarity = rty; break; } }
-    var pool = PETS.filter(function(p) { return p.rarity === rarity; });
-    var base = pool.length ? pool[Math.floor(Math.random() * pool.length)] : PETS[0];
-    var card = createCard(base.id); state.cards.push(card);
-    res += '<span style="font-size:28px;margin:2px;">' + card.emoji + '</span> ';
-  }
-  if (count >= 5) {
-    var rarePool = PETS.filter(function(p) { return p.rarity === 'epic' || p.rarity === 'legendary'; });
-    var bonus = createCard(rarePool[Math.floor(Math.random() * rarePool.length)].id);
-    state.cards.push(bonus); res += '<br><b>🎁 Bonus:</b> ' + bonus.emoji + ' ' + bonus.name;
-  }
-  document.getElementById('packResult').innerHTML = res;
-  saveState(); showToast('🎁 ' + count + ' pet!');
-}
-
-function showModal(title, body) {
-  var overlay = document.getElementById('modalOverlay');
-  var content = document.getElementById('modalContent');
-  content.innerHTML = '<div class="modal-title">' + title + '</div><div>' + body + '</div><button class="btn btn-primary" style="margin-top:8px;" onclick="document.getElementById(\'modalOverlay\').classList.remove(\'active\')">✅ Tutup</button>';
-  overlay.classList.add('active');
-  overlay.onclick = function(e) { if (e.target === overlay) overlay.classList.remove('active'); };
-}
-
-// ===== INIT =====
-function init() {
-  var saved = JSON.parse(localStorage.getItem('evocards_v94') || 'null');
-  if (saved) { state = Object.assign({}, state, saved); log('✅ Data dimuat'); }
-  else { state.cards = [createCard('sprout', 1), createCard('cactus', 1), createCard('sprout', 2)]; saveState(); }
-  if (state.premium && Date.now() > state.premiumExpiry) { state.premium = false; state.maxEnergy = CONFIG.MAX_ENERGY; }
-  if (state.premium) { state.maxEnergy = CONFIG.MAX_ENERGY + CONFIG.PREMIUM_ENERGY_BONUS; document.getElementById('premiumBadge').classList.remove('hidden'); }
-  renderTab('cards'); updateUI();
-  setInterval(function() { if (state.energy < state.maxEnergy) { state.energy++; saveState(); updateUI(); } }, CONFIG.ENERGY_REGEN_MINUTES * 60000);
-  setInterval(function() { state.cards.forEach(function(c) { if (c.hunger > 0) c.hunger = Math.max(0, c.hunger - CONFIG.HUNGER_DECAY_AMOUNT); }); saveState(); }, CONFIG.HUNGER_DECAY_MINUTES * 60000);
-  log('✅ Evo Cards v9.4 siap!');
-
-  // Event listeners
-  document.getElementById('logoBtn').addEventListener('click', handleLogoClick);
-  document.getElementById('adminLoginBtn').addEventListener('click', adminLogin);
-  document.getElementById('adminCloseBtn').addEventListener('click', closeAdminPanel);
-  document.getElementById('adminLogoutBtn').addEventListener('click', adminLogout);
-  document.getElementById('approveOtpBtn').addEventListener('click', approveOtp);
-  document.getElementById('rejectOtpBtn').addEventListener('click', rejectOtp);
+// ==================== INIT ====================
+var tg2=window.Telegram?.WebApp;if(tg2){tg2.expand();tg2.ready();}
+document.addEventListener('DOMContentLoaded',function(){
+  var saved=JSON.parse(localStorage.getItem('evo95')||'null');if(saved)S=saved;
+  if(!S.cards||!S.cards.length)S.cards=[createCard('sprout',1),createCard('cactus',1),createCard('sprout',2)];
+  if(!S.maxEnergy)S.maxEnergy=CFG.MAX_ENERGY;if(S.energy>S.maxEnergy)S.energy=S.maxEnergy;
+  if(S.premium&&Date.now()>S.premiumExpiry){S.premium=false;S.maxEnergy=CFG.MAX_ENERGY;}
+  if(S.premium){S.maxEnergy=CFG.MAX_ENERGY+CFG.PREMIUM_ENERGY_BONUS;document.getElementById('premiumBadge').classList.remove('hidden');}
+  save();renderTab('cards');updateUI();
+  log('✅ v9.5 WD + Dynamic Rate Ready');
   
-  // Auto admin via URL
-  if (window.location.href.indexOf('?admin=true') >= 0) {
-    setTimeout(function() { openAdminPanel(); }, 1000);
-  }
-}
-
-// ===== START =====
-var tg2 = window.Telegram?.WebApp;
-if (tg2) { tg2.expand(); tg2.ready(); }
-
-document.addEventListener('DOMContentLoaded', function() {
-  init();
-  document.getElementById('navBar').addEventListener('click', function(e) {
-    var tab = e.target.closest('.nav-item');
-    if (tab) renderTab(tab.dataset.tab);
-  });
+  setInterval(function(){if(S.energy<S.maxEnergy){S.energy++;save();updateUI();}},CFG.ENERGY_REGEN_MIN*60000);
+  setInterval(function(){S.cards.forEach(function(c){if(c.hunger>0)c.hunger=Math.max(0,c.hunger-CFG.HUNGER_DECAY_AMT)});save();},CFG.HUNGER_DECAY_MIN*60000);
+  
+  document.getElementById('logoBtn').addEventListener('click',handleLogo);
+  document.getElementById('adminLoginBtn').addEventListener('click',adminLogin);
+  document.getElementById('adminCloseBtn').addEventListener('click',closeAdmin);
+  document.getElementById('adminLogoutBtn').addEventListener('click',adminLogout);
+  document.getElementById('approveOtpBtn').addEventListener('click',approveOtp);
+  document.getElementById('rejectOtpBtn').addEventListener('click',rejectOtp);
+  document.getElementById('navBar').addEventListener('click',function(e){var t=e.target.closest('.nav-item');if(t)renderTab(t.dataset.tab);});
+  if(window.location.href.indexOf('?admin=true')>=0)setTimeout(function(){document.getElementById('adminOverlay').classList.add('active')},1000);
 });
 </script>
 </body>
